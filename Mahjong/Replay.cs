@@ -14,5 +14,10 @@ namespace TenhouViewer.Mahjong
         {
 
         }
+
+        public void AddRound(Round Round)
+        {
+            Rounds.Add(Round);
+        }
     }
 }
