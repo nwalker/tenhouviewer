@@ -43,6 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mahjong\Hand.cs" />
+    <Compile Include="Mahjong\Naki.cs" />
+    <Compile Include="Mahjong\Player.cs" />
+    <Compile Include="Mahjong\Replay.cs" />
+    <Compile Include="Mahjong\Round.cs" />
+    <Compile Include="Mahjong\Tile.cs" />
+    <Compile Include="Mahjong\Wall.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
