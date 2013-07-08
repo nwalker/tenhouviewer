@@ -48,10 +48,13 @@
     <Compile Include="Mahjong\Player.cs" />
     <Compile Include="Mahjong\Replay.cs" />
     <Compile Include="Mahjong\Round.cs" />
+    <Compile Include="Mahjong\Step.cs" />
     <Compile Include="Mahjong\Tile.cs" />
     <Compile Include="Mahjong\Wall.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tenhou\MT19937AR.cs" />
+    <Compile Include="Tenhou\WallGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
