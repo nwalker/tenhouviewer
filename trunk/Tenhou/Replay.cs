@@ -10,6 +10,10 @@ namespace TenhouViewer.Tenhou
 {
     class Replay
     {
+        Mahjong.Replay R = new Mahjong.Replay();
+        WallGenerator Generator;
+
+
         public Replay()
         {
 
@@ -35,12 +39,12 @@ namespace TenhouViewer.Tenhou
 
         private void Parse(XmlReader Reader)
         {
-            reader.MoveToContent();
-            while (reader.Read())
+            Reader.MoveToContent();
+            while (Reader.Read())
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                if (Reader.NodeType == XmlNodeType.Element)
                 {
-                    switch(reader.Name)
+                    switch (Reader.Name)
                     {
                     case "GO":
                         // Player goes online
@@ -52,7 +56,8 @@ namespace TenhouViewer.Tenhou
                         // Player goes offline
                         break;
                     case "SHUFFLE":
-                        // Seed for generating walls
+                        // Seed for generating walls]
+                        SHUFFLE(Reader);
                         break;
                     case "INIT":
                         // Init game: hands
@@ -81,6 +86,13 @@ namespace TenhouViewer.Tenhou
                     }
                 }
             }
+        }
+
+        private void SHUFFLE(XmlReader Reader)
+        {
+            string Seed = Reader.GetAttribute("seed");
+
+            Generator = new WallGenerator(Seed);
         }
     }
 }
