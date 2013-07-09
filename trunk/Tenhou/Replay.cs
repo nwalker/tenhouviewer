@@ -12,7 +12,7 @@ namespace TenhouViewer.Tenhou
     {
         Mahjong.Replay R = new Mahjong.Replay();
         WallGenerator Generator;
-
+        int GameIndex = 0;
 
         public Replay()
         {
@@ -39,6 +39,8 @@ namespace TenhouViewer.Tenhou
 
         private void Parse(XmlReader Reader)
         {
+            GameIndex = 0;
+
             Reader.MoveToContent();
             while (Reader.Read())
             {
@@ -47,10 +49,13 @@ namespace TenhouViewer.Tenhou
                     switch (Reader.Name)
                     {
                     case "GO":
-                        // Player goes online
+                        // Start of round
+                        // Lobby info, type info
                         break;
                     case "UN":
                         // Player info
+                        // Player reconnect
+                        UN(Reader);
                         break;
                     case "BYE":
                         // Player goes offline
@@ -93,6 +98,76 @@ namespace TenhouViewer.Tenhou
             string Seed = Reader.GetAttribute("seed");
 
             Generator = new WallGenerator(Seed);
+        }
+
+        private void UN(XmlReader Reader)
+        {
+            string Dan = Reader.GetAttribute("dan");
+            string Rate = Reader.GetAttribute("rate");
+            string Sex = Reader.GetAttribute("sx");
+
+            int[] DanList = DecompositeIntList(Dan);
+            int[] RateList = DecompositeIntList(Rate);
+            string[] SexList = DecompositeStringList(Sex);
+
+            for (int i = 0; i < 4; i++)
+            {
+                string NickName = Reader.GetAttribute("n" + i.ToString());
+
+                if (NickName != null) NickName = Uri.UnescapeDataString(NickName);
+            }
+        }
+
+        private void INIT(XmlReader Reader)
+        {
+            Mahjong.Wall Wall = new Mahjong.Wall();
+            Mahjong.Hand[] Hands = new Mahjong.Hand[4];
+
+            // Generate wall
+            Generator.Generate(GameIndex);
+
+            for (int i = 0; i < 4; i++)
+            {
+                string HandString = Reader.GetAttribute("hai" + i.ToString());
+
+                // Tile list, 13 tiles
+                int[] TileList = DecompositeIntList(HandString);
+
+                Hands[i] = new Mahjong.Hand();
+                Hands[i].SetArray(TileList);
+            }
+        }
+
+        private int[] DecompositeIntList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+            string[] Temp;
+            int[] Result = null;
+
+            if (Text == null) return null;
+
+            Temp = Text.Split(delimiter, StringSplitOptions.None);
+            Result = new int[Temp.Length];
+
+            for (int i = 0; i < Temp.Length; i++)
+            {
+                // Отрежем текст до точки
+                int Index = Temp[i].IndexOf('.');
+                if(Index >= 0) Temp[i] = Temp[i].Substring(0, Index);
+
+                Result[i] = Convert.ToUInt16(Temp[i]);
+            }
+
+            return Result;
+        }
+
+        private string[] DecompositeStringList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+
+            if (Text == null) return null;
+
+            return Text.Split(delimiter, StringSplitOptions.None);
         }
     }
 }
