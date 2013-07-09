@@ -35,7 +35,52 @@ namespace TenhouViewer.Tenhou
 
         private void Parse(XmlReader Reader)
         {
-
+            reader.MoveToContent();
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    switch(reader.Name)
+                    {
+                    case "GO":
+                        // Player goes online
+                        break;
+                    case "UN":
+                        // Player info
+                        break;
+                    case "BYE":
+                        // Player goes offline
+                        break;
+                    case "SHUFFLE":
+                        // Seed for generating walls
+                        break;
+                    case "INIT":
+                        // Init game: hands
+                        break;
+                    case "TAIKYOKU":
+                        // Current round
+                        break;
+                    case "RYUUKYOKU":
+                        // Draw
+                        break;
+                    case "N":
+                        // Naki - open set
+                        break;
+                    case "DORA":
+                        // Open new dora indicator
+                        break;
+                    case "AGARI":
+                        // Ron or Tsumo
+                        break;
+                    case "REACH":
+                        // declare riichi! 2 steps
+                        break;
+                    default:
+                        // Action: draw and discard tile
+                        break;
+                    }
+                }
+            }
         }
     }
 }
