@@ -10,9 +10,11 @@ namespace TenhouViewer.Tenhou
 {
     class Replay
     {
-        Mahjong.Replay R = new Mahjong.Replay();
-        WallGenerator Generator;
-        int GameIndex = 0;
+        private Mahjong.Replay R = new Mahjong.Replay();
+        private WallGenerator Generator;
+        private int GameIndex = 0;
+
+        private Mahjong.Round CurrentRound;
 
         public Replay()
         {
@@ -51,6 +53,7 @@ namespace TenhouViewer.Tenhou
                     case "GO":
                         // Start of round
                         // Lobby info, type info
+                        GO(Reader);
                         break;
                     case "UN":
                         // Player info
@@ -59,6 +62,7 @@ namespace TenhouViewer.Tenhou
                         break;
                     case "BYE":
                         // Player goes offline
+                        BYE(Reader);
                         break;
                     case "SHUFFLE":
                         // Seed for generating walls]
@@ -66,38 +70,44 @@ namespace TenhouViewer.Tenhou
                         break;
                     case "INIT":
                         // Init game: hands
+                        INIT(Reader);
                         break;
                     case "TAIKYOKU":
                         // Current round
+                        TAIKYOKU(Reader);
                         break;
                     case "RYUUKYOKU":
                         // Draw
+                        RYUUKYOKU(Reader);
                         break;
                     case "N":
                         // Naki - open set
+                        N(Reader);
                         break;
                     case "DORA":
                         // Open new dora indicator
+                        DORA(Reader);
                         break;
                     case "AGARI":
                         // Ron or Tsumo
+                        AGARI(Reader);
                         break;
                     case "REACH":
                         // declare riichi! 2 steps
+                        REACH(Reader);
                         break;
                     default:
                         // Action: draw and discard tile
+                        ACTION(Reader);
                         break;
                     }
                 }
             }
         }
 
-        private void SHUFFLE(XmlReader Reader)
+        private void GO(XmlReader Reader)
         {
-            string Seed = Reader.GetAttribute("seed");
-
-            Generator = new WallGenerator(Seed);
+            int Lobby = Convert.ToInt16(Reader.GetAttribute("lobby"));
         }
 
         private void UN(XmlReader Reader)
@@ -117,6 +127,19 @@ namespace TenhouViewer.Tenhou
                 if (NickName != null) NickName = Uri.UnescapeDataString(NickName);
             }
         }
+        
+        private void BYE(XmlReader Reader)
+        {
+            // Player goes offline
+            int Who = Convert.ToInt16(Reader.GetAttribute("who"));
+        }
+
+        private void SHUFFLE(XmlReader Reader)
+        {
+            string Seed = Reader.GetAttribute("seed");
+
+            Generator = new WallGenerator(Seed);
+        }
 
         private void INIT(XmlReader Reader)
         {
@@ -126,15 +149,95 @@ namespace TenhouViewer.Tenhou
             // Generate wall
             Generator.Generate(GameIndex);
 
+            // Balance
+            int[] Balance = DecompositeIntList(Reader.GetAttribute("ten"));
+
             for (int i = 0; i < 4; i++)
             {
-                string HandString = Reader.GetAttribute("hai" + i.ToString());
-
                 // Tile list, 13 tiles
-                int[] TileList = DecompositeIntList(HandString);
+                int[] TileList = DecompositeIntList(Reader.GetAttribute("hai" + i.ToString()));
 
                 Hands[i] = new Mahjong.Hand();
                 Hands[i].SetArray(TileList);
+            }
+
+            // Start new round!
+            CurrentRound = new Mahjong.Round();
+            CurrentRound.SetStartHands(Hands);
+        }
+
+        private void TAIKYOKU(XmlReader Reader)
+        {
+
+        }
+
+        private void RYUUKYOKU(XmlReader Reader)
+        {
+            // Draw
+        }
+
+        private void N(XmlReader Reader)
+        {
+            // Naki
+            uint Who = Convert.ToUInt16(Reader.GetAttribute("who"));
+            uint m = Convert.ToUInt16(Reader.GetAttribute("m"));
+
+        }
+
+        private void DORA(XmlReader Reader)
+        {
+            // Open dora indicator
+        }
+
+        private void AGARI(XmlReader Reader)
+        {
+            // Ron or tsumo!
+        }
+
+        private void REACH(XmlReader Reader)
+        {
+            // Riichi!
+            uint Who = Convert.ToUInt16(Reader.GetAttribute("who"));
+            uint Step = Convert.ToUInt16(Reader.GetAttribute("step"));
+
+            // Step 1: declare riichi
+            // discard tile
+            // Step 2: pay 1k
+        }
+
+        private void ACTION(XmlReader Reader)
+        {
+            // Step!
+            string Value = Reader.Name.Substring(1);
+            uint Tile;
+
+            try
+            {
+                Tile = Convert.ToUInt16(Value);
+            }
+            catch (Exception E)
+            {
+                return;
+            }
+
+            switch (Reader.Name[0])
+            {
+                case 'T': // first player draw tile
+                    break;
+                case 'D': // first player discard tile
+                    break;
+                case 'U': // second player draw tile
+                    break;
+                case 'E': // second player discard tile
+                    break;
+                case 'V': // third player draw tile
+                    break;
+                case 'F': // third player discard tile
+                    break;
+                case 'W': // fourth player draw tile
+                    break;
+                case 'G': // fourth player discard tile
+                    break;
             }
         }
 
