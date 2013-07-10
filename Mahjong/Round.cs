@@ -20,5 +20,10 @@ namespace TenhouViewer.Mahjong
         {
             for (int i = 0; i < 4; i++) HandList[i] = List[i];
         }
+
+        public void AddStep(Step Step)
+        {
+            Steps.Add(Step);
+        }
     }
 }

@@ -208,12 +208,13 @@ namespace TenhouViewer.Tenhou
         private void ACTION(XmlReader Reader)
         {
             // Step!
+            Mahjong.Step Step = null;
             string Value = Reader.Name.Substring(1);
-            uint Tile;
+            int Tile;
 
             try
             {
-                Tile = Convert.ToUInt16(Value);
+                Tile = Convert.ToInt16(Value);
             }
             catch (Exception E)
             {
@@ -223,22 +224,42 @@ namespace TenhouViewer.Tenhou
             switch (Reader.Name[0])
             {
                 case 'T': // first player draw tile
+                    Step = new Mahjong.Step(0);
+                    Step.DrawTile(Tile);
                     break;
                 case 'D': // first player discard tile
+                    Step = new Mahjong.Step(0);
+                    Step.DiscardTile(Tile);
                     break;
                 case 'U': // second player draw tile
+                    Step = new Mahjong.Step(1);
+                    Step.DrawTile(Tile);
                     break;
                 case 'E': // second player discard tile
+                    Step = new Mahjong.Step(1);
+                    Step.DiscardTile(Tile);
                     break;
                 case 'V': // third player draw tile
+                    Step = new Mahjong.Step(2);
+                    Step.DrawTile(Tile);
                     break;
                 case 'F': // third player discard tile
+                    Step = new Mahjong.Step(2);
+                    Step.DiscardTile(Tile);
                     break;
                 case 'W': // fourth player draw tile
+                    Step = new Mahjong.Step(3);
+                    Step.DrawTile(Tile);
                     break;
                 case 'G': // fourth player discard tile
+                    Step = new Mahjong.Step(3);
+                    Step.DiscardTile(Tile);
                     break;
+                default:
+                    return;
             }
+
+            CurrentRound.AddStep(Step);
         }
 
         private int[] DecompositeIntList(string Text)
