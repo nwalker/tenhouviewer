@@ -21,7 +21,10 @@ namespace TenhouViewer.Mahjong
         STEP_RIICHI1000,  // Pay for riichi
         
         STEP_TSUMO,       // Tsumo
-        STEP_RON          // Ron
+        STEP_RON,         // Ron
+        STEP_DRAW,        // Draw
+
+        STEP_NEWDORA      // Open next dora indicator
     }
 
     class Step
@@ -29,6 +32,7 @@ namespace TenhouViewer.Mahjong
         private int Player = -1;
         private int FromWho = -1;
         private int Tile = -1;
+        private int Reason = -1;
         private int[] Set = null;
         private StepType Type;
 
@@ -113,6 +117,18 @@ namespace TenhouViewer.Mahjong
         public void Tsumo()
         {
             this.Type = StepType.STEP_TSUMO;
+        }
+
+        public void Draw(int Reason)
+        {
+            this.Reason = Reason;
+            this.Type = StepType.STEP_DRAW;
+        }
+
+        public void NewDora(int Tile)
+        {
+            this.Tile = Tile;
+            this.Type = StepType.STEP_DRAW;
         }
     }
 }
