@@ -10,6 +10,8 @@ namespace TenhouViewer.Tenhou
 {
     class Replay
     {
+        private string[] delimiter = new string[] { "," };
+
         private Mahjong.Replay R = new Mahjong.Replay();
         private WallGenerator Generator;
         private int GameIndex = 0;
@@ -174,6 +176,10 @@ namespace TenhouViewer.Tenhou
         private void RYUUKYOKU(XmlReader Reader)
         {
             // Draw
+            Mahjong.Step Step = new Mahjong.Step(-1);
+
+            Step.Draw(0);
+            CurrentRound.AddStep(Step);
         }
 
         private void N(XmlReader Reader)
@@ -187,11 +193,76 @@ namespace TenhouViewer.Tenhou
         private void DORA(XmlReader Reader)
         {
             // Open dora indicator
+            Mahjong.Step Step = new Mahjong.Step(-1);
+
+            //Step.NewDora(???);
+            //CurrentRound.AddStep(Step);
         }
 
         private void AGARI(XmlReader Reader)
         {
             // Ron or tsumo!
+            int Who = Convert.ToInt16(Reader.GetAttribute("who"));
+            int fromWho = Convert.ToInt16(Reader.GetAttribute("fromWho"));
+
+            Mahjong.Step Step = new Mahjong.Step(Who);
+
+            if (Who == fromWho)
+            {
+                // Tsumo!
+                Step.Tsumo();
+                CurrentRound.AddStep(Step);
+            }
+            else
+            {
+                // Ron!
+                Step.Ron(fromWho);
+                CurrentRound.AddStep(Step);
+            }
+
+            // Sticks count
+            {
+                int[] Ba = DecompositeIntList(Reader.GetAttribute("ba"));
+
+                int RenchanStick = Ba[0];
+                int RiichiStick = Ba[1];
+            }
+
+            // Hand and waiting
+            {
+                // hai - tiles
+                // machi - waiting
+                string Hai = Reader.GetAttribute("hai");
+                int Machi = Convert.ToInt16(Reader.GetAttribute("machi"));
+            }
+
+            // Dora
+            {
+                string Dora = Reader.GetAttribute("doraHai");
+                string UraDora = Reader.GetAttribute("doraHaiUra");
+            }
+
+            // Hand cost
+            {
+                int[] Ten = DecompositeIntList(Reader.GetAttribute("ten"));
+
+                int Fu = Ten[0];
+                int Cost = Ten[1];
+            }
+
+            // Yaku list
+            {
+                bool Yakuman = false;
+                string YakuList = Reader.GetAttribute("yaku");
+                if (YakuList == null)
+                {
+                    YakuList = Reader.GetAttribute("yakuman");
+                    Yakuman = true;
+                }
+
+                int[] Yaku = DecompositeIntList(YakuList);
+
+            }
         }
 
         private void REACH(XmlReader Reader)
