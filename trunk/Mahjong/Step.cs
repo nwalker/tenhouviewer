@@ -36,7 +36,7 @@ namespace TenhouViewer.Mahjong
         private int FromWho = -1;
         private int Tile = -1;
         private int Reason = -1;
-        private int[] Set = null;
+        private List<int> Set = null;
         private StepType Type;
 
         public Step(int Player)
@@ -62,7 +62,7 @@ namespace TenhouViewer.Mahjong
             this.Type = StepType.STEP_DISCARDTILE;
         }
 
-        public void Chi(int Tile, int[] Set, int From)
+        public void Chi(int Tile, List<int> Set, int From)
         {
             this.Tile = Tile;
             this.Set = Set;
@@ -70,7 +70,7 @@ namespace TenhouViewer.Mahjong
             this.Type = StepType.STEP_CHITILE;
         }
 
-        public void Pon(int Tile, int[] Set, int From)
+        public void Pon(int Tile, List<int> Set, int From)
         {
             this.Tile = Tile;
             this.Set = Set;
@@ -78,7 +78,7 @@ namespace TenhouViewer.Mahjong
             this.Type = StepType.STEP_PONTILE;
         }
 
-        public void Minkan(int Tile, int[] Set, int From)
+        public void Minkan(int Tile, List<int> Set, int From)
         {
             this.Tile = Tile;
             this.Set = Set;
@@ -86,15 +86,14 @@ namespace TenhouViewer.Mahjong
             this.Type = StepType.STEP_MINKANTILE;
         }
 
-        public void Ankan(int Tile, int[] Set, int From)
+        public void Ankan(int Tile, List<int> Set)
         {
             this.Tile = Tile;
             this.Set = Set;
-            this.FromWho = From;
             this.Type = StepType.STEP_ANKANTILE;
         }
 
-        public void Chakan(int Tile, int[] Set)
+        public void Chakan(int Tile, List<int> Set)
         {
             this.Tile = Tile;
             this.Set = Set;
