@@ -197,10 +197,32 @@ namespace TenhouViewer.Tenhou
         private void N(XmlReader Reader)
         {
             // Naki
-            uint Who = Convert.ToUInt16(Reader.GetAttribute("who"));
-            uint m = Convert.ToUInt16(Reader.GetAttribute("m"));
+            int Who = Convert.ToInt16(Reader.GetAttribute("who"));
+            int m = Convert.ToInt16(Reader.GetAttribute("m"));
 
+            NakiDecoder Naki = new NakiDecoder(m);
+            Mahjong.Step Step = new Mahjong.Step(Who);
 
+            switch (Naki.Type)
+            {
+                case NakiType.CHI:
+                    Step.Chi(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
+                    break;
+                case NakiType.PON:
+                    Step.Pon(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
+                    break;
+                case NakiType.MINKAN:
+                    Step.Minkan(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
+                    break;
+                case NakiType.ANKAN:
+                    Step.Ankan(Naki.Tiles[0], Naki.Tiles);
+                    break;
+                case NakiType.CHAKAN:
+                    Step.Ankan(Naki.Tiles[0], Naki.Tiles);
+                    break;
+            }
+
+            CurrentRound.AddStep(Step);
         }
 
         private void DORA(XmlReader Reader)
