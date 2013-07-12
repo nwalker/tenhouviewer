@@ -197,8 +197,8 @@ namespace TenhouViewer.Tenhou
         private void N(XmlReader Reader)
         {
             // Naki
-            int Who = Convert.ToInt16(Reader.GetAttribute("who"));
-            int m = Convert.ToInt16(Reader.GetAttribute("m"));
+            int Who = Convert.ToInt32(Reader.GetAttribute("who"));
+            int m = Convert.ToInt32(Reader.GetAttribute("m"));
 
             NakiDecoder Naki = new NakiDecoder(m);
             Mahjong.Step Step = new Mahjong.Step(Who);
