@@ -112,6 +112,7 @@ namespace TenhouViewer.Tenhou
             int Lobby = Convert.ToInt16(Reader.GetAttribute("lobby"));
         }
 
+        // Player info
         private void UN(XmlReader Reader)
         {
             string Dan = Reader.GetAttribute("dan");
@@ -122,11 +123,19 @@ namespace TenhouViewer.Tenhou
             int[] RateList = DecompositeIntList(Rate);
             string[] SexList = DecompositeStringList(Sex);
 
+            Mahjong.Player[] Players = new Mahjong.Player[4];
+
             for (int i = 0; i < 4; i++)
             {
                 string NickName = Reader.GetAttribute("n" + i.ToString());
 
                 if (NickName != null) NickName = Uri.UnescapeDataString(NickName);
+
+                R.Players[i] = new Mahjong.Player();
+                R.Players[i].NickName = NickName;
+                R.Players[i].Rank = DanList[i];
+                R.Players[i].Rating = RateList[i];
+                R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Male : Female;
             }
         }
         
