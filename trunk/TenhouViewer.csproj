@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{01FA4648-A55D-4E45-A502-D07E5DB654A4}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -55,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tenhou\Hash.cs" />
     <Compile Include="Tenhou\MT19937AR.cs" />
+    <Compile Include="Tenhou\NakiDecoder.cs" />
     <Compile Include="Tenhou\Replay.cs" />
     <Compile Include="Tenhou\WallGenerator.cs" />
   </ItemGroup>
