@@ -7,7 +7,7 @@ namespace TenhouViewer.Mahjong
 {
     class Replay
     {
-        private List<Player> Players = new List<Player>();
+        public Player[] Players = new Player[4];
         private List<Round> Rounds = new List<Round>();
 
         public Replay()
