@@ -135,7 +135,7 @@ namespace TenhouViewer.Tenhou
                 R.Players[i].NickName = NickName;
                 R.Players[i].Rank = DanList[i];
                 R.Players[i].Rating = RateList[i];
-                R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Male : Female;
+                R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Mahjong.Sex.Male : Mahjong.Sex.Female;
             }
         }
         
@@ -143,6 +143,11 @@ namespace TenhouViewer.Tenhou
         {
             // Player goes offline
             int Who = Convert.ToInt16(Reader.GetAttribute("who"));
+
+            Mahjong.Step Step = new Mahjong.Step(Who);
+            Step.Disconnect();
+
+            CurrentRound.AddStep(Step);
         }
 
         private void SHUFFLE(XmlReader Reader)
@@ -154,8 +159,10 @@ namespace TenhouViewer.Tenhou
 
         private void INIT(XmlReader Reader)
         {
-            Mahjong.Wall Wall = new Mahjong.Wall();
-            Mahjong.Hand[] Hands = new Mahjong.Hand[4];
+            // Start new round!
+            CurrentRound = new Mahjong.Round();
+            CurrentRound.Wall = new Mahjong.Wall();
+
 
             // Generate wall
             Generator.Generate(GameIndex);
@@ -168,13 +175,9 @@ namespace TenhouViewer.Tenhou
                 // Tile list, 13 tiles
                 int[] TileList = DecompositeIntList(Reader.GetAttribute("hai" + i.ToString()));
 
-                Hands[i] = new Mahjong.Hand();
-                Hands[i].SetArray(TileList);
+                CurrentRound.Hands[i] = new Mahjong.Hand();
+                CurrentRound.Hands[i].SetArray(TileList);
             }
-
-            // Start new round!
-            CurrentRound = new Mahjong.Round();
-            CurrentRound.SetStartHands(Hands);
         }
 
         private void TAIKYOKU(XmlReader Reader)
@@ -196,6 +199,7 @@ namespace TenhouViewer.Tenhou
             // Naki
             uint Who = Convert.ToUInt16(Reader.GetAttribute("who"));
             uint m = Convert.ToUInt16(Reader.GetAttribute("m"));
+
 
         }
 

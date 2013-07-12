@@ -7,18 +7,13 @@ namespace TenhouViewer.Mahjong
 {
     class Round
     {
-        private Wall Wall = new Wall();
-        private List<Step> Steps = new List<Step>();
-        private Hand[] HandList = new Hand[4]; // Start hands
+        public Wall Wall = new Wall();
+        public List<Step> Steps = new List<Step>();
+        public Hand[] Hands = new Hand[4]; // Start hands
 
         public Round()
         {
             
-        }
-
-        public void SetStartHands(Hand[] List)
-        {
-            for (int i = 0; i < 4; i++) HandList[i] = List[i];
         }
 
         public void AddStep(Step Step)

@@ -24,7 +24,10 @@ namespace TenhouViewer.Mahjong
         STEP_RON,         // Ron
         STEP_DRAW,        // Draw
 
-        STEP_NEWDORA      // Open next dora indicator
+        STEP_NEWDORA,     // Open next dora indicator
+
+        STEP_DISCONNECT,  // Player disconnected
+        STEP_CONNECT      // Player connected
     }
 
     class Step
@@ -129,6 +132,16 @@ namespace TenhouViewer.Mahjong
         {
             this.Tile = Tile;
             this.Type = StepType.STEP_DRAW;
+        }
+
+        public void Disconnect()
+        {
+            this.Type = StepType.STEP_DISCONNECT;
+        }
+
+        public void Connect()
+        {
+            this.Type = StepType.STEP_CONNECT;
         }
     }
 }
