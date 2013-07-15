@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace TenhouViewer.Mahjong
 {
@@ -129,6 +130,84 @@ namespace TenhouViewer.Mahjong
             this.Type = StepType.STEP_CONNECT;
 
             Console.WriteLine(String.Format("[{0:d}] Connect", Player));
+        }
+
+        public void WriteXml(XmlWriter F)
+        {
+            switch (Type)
+            {
+            case StepType.STEP_DRAWTILE:     // Draw fram wall
+                F.WriteStartElement("drawtile");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_DISCARDTILE:  // Discard
+                F.WriteStartElement("discardtile");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_DRAWDEADTILE: // Draw from dead wall
+                F.WriteStartElement("drawdeadtile");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_NAKI:         // Naki
+                F.WriteStartElement("naki");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_RIICHI:       // Riichi!
+                F.WriteStartElement("riichi1");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_RIICHI1000:   // Pay for riichi
+                F.WriteStartElement("riichi2");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_TSUMO:        // Tsumo
+                F.WriteStartElement("tsumo");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_RON:          // Ron
+                F.WriteStartElement("ron");
+
+                F.WriteEndElement();
+                break;
+ 
+            case StepType.STEP_DRAW:         // Draw
+                F.WriteStartElement("draw");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_NEWDORA:      // Open next dora indicator
+                F.WriteStartElement("newdora");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_DISCONNECT:   // Player disconnected
+                F.WriteStartElement("disconnect");
+
+                F.WriteEndElement();
+                break;
+
+            case StepType.STEP_CONNECT:       // Player connected
+                F.WriteStartElement("connect");
+
+                F.WriteEndElement();
+                break;
+            }
         }
     }
 }

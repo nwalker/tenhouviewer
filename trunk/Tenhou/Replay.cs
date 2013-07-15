@@ -147,7 +147,7 @@ namespace TenhouViewer.Tenhou
             Mahjong.Step Step = new Mahjong.Step(Who);
             Step.Disconnect();
 
-            CurrentRound.AddStep(Step);
+            CurrentRound.Steps.Add(Step);
         }
 
         private void SHUFFLE(XmlReader Reader)
@@ -163,6 +163,7 @@ namespace TenhouViewer.Tenhou
             CurrentRound = new Mahjong.Round();
             CurrentRound.Wall = new Mahjong.Wall();
 
+            R.Rounds.Add(CurrentRound);
 
             // Generate wall
             Generator.Generate(GameIndex);
@@ -191,7 +192,7 @@ namespace TenhouViewer.Tenhou
             Mahjong.Step Step = new Mahjong.Step(-1);
 
             Step.Draw(0);
-            CurrentRound.AddStep(Step);
+            CurrentRound.Steps.Add(Step);
         }
 
         private void N(XmlReader Reader)
@@ -205,7 +206,7 @@ namespace TenhouViewer.Tenhou
 
             Step.Naki(Naki.GetNaki());
 
-            CurrentRound.AddStep(Step);
+            CurrentRound.Steps.Add(Step);
         }
 
         private void DORA(XmlReader Reader)
@@ -214,7 +215,7 @@ namespace TenhouViewer.Tenhou
             Mahjong.Step Step = new Mahjong.Step(-1);
 
             //Step.NewDora(???);
-            //CurrentRound.AddStep(Step);
+            //CurrentRound.Steps.Add(Step);
         }
 
         private void AGARI(XmlReader Reader)
@@ -229,13 +230,13 @@ namespace TenhouViewer.Tenhou
             {
                 // Tsumo!
                 Step.Tsumo();
-                CurrentRound.AddStep(Step);
+                CurrentRound.Steps.Add(Step);
             }
             else
             {
                 // Ron!
                 Step.Ron(fromWho);
-                CurrentRound.AddStep(Step);
+                CurrentRound.Steps.Add(Step);
             }
 
             // Sticks count
@@ -300,7 +301,7 @@ namespace TenhouViewer.Tenhou
                     break;
             }
 
-            CurrentRound.AddStep(Step);
+            CurrentRound.Steps.Add(Step);
         }
 
         private void ACTION(XmlReader Reader)
@@ -357,7 +358,7 @@ namespace TenhouViewer.Tenhou
                     return;
             }
 
-            CurrentRound.AddStep(Step);
+            CurrentRound.Steps.Add(Step);
         }
 
         private int[] DecompositeIntList(string Text)
