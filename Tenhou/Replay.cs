@@ -203,24 +203,7 @@ namespace TenhouViewer.Tenhou
             NakiDecoder Naki = new NakiDecoder(m);
             Mahjong.Step Step = new Mahjong.Step(Who);
 
-            switch (Naki.Type)
-            {
-                case NakiType.CHI:
-                    Step.Chi(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
-                    break;
-                case NakiType.PON:
-                    Step.Pon(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
-                    break;
-                case NakiType.MINKAN:
-                    Step.Minkan(Naki.Tiles[0], Naki.Tiles, Naki.fromWho);
-                    break;
-                case NakiType.ANKAN:
-                    Step.Ankan(Naki.Tiles[0], Naki.Tiles);
-                    break;
-                case NakiType.CHAKAN:
-                    Step.Ankan(Naki.Tiles[0], Naki.Tiles);
-                    break;
-            }
+            Step.Naki(Naki.GetNaki());
 
             CurrentRound.AddStep(Step);
         }
@@ -303,12 +286,21 @@ namespace TenhouViewer.Tenhou
         private void REACH(XmlReader Reader)
         {
             // Riichi!
-            uint Who = Convert.ToUInt16(Reader.GetAttribute("who"));
-            uint Step = Convert.ToUInt16(Reader.GetAttribute("step"));
+            int Who = Convert.ToInt16(Reader.GetAttribute("who"));
+            int S = Convert.ToInt16(Reader.GetAttribute("step"));
+            Mahjong.Step Step = new Mahjong.Step(Who);
 
-            // Step 1: declare riichi
-            // discard tile
-            // Step 2: pay 1k
+            switch (S)
+            {
+                case 1: // declare riichi
+                    Step.DeclareRiichi();
+                    break;
+                case 2: // pay 1k
+                    Step.PayRiichi();
+                    break;
+            }
+
+            CurrentRound.AddStep(Step);
         }
 
         private void ACTION(XmlReader Reader)
