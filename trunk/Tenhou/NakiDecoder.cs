@@ -4,24 +4,13 @@ using System.Text;
 
 namespace TenhouViewer.Tenhou
 {
-    enum NakiType
-    {
-        NOTYPE,
-        CHI,
-        PON,
-        ANKAN,  // Concealed kan
-        MINKAN, // Open kan
-        CHAKAN, // Extended kan
-        NUKI
-    }
-
     class NakiDecoder
     {
         public List<int> Tiles = new List<int>();
         public int fromWho;
         public bool Opened = true;
 
-        public NakiType Type = NakiType.NOTYPE;
+        public Mahjong.NakiType Type = Mahjong.NakiType.NOTYPE;
 
         public NakiDecoder(int m)
         {
@@ -55,7 +44,7 @@ namespace TenhouViewer.Tenhou
                 int tile = (m & 0xFF00) >> 8;
 
                 Tiles.Add(tile);
-                Type = NakiType.NUKI;
+                Type = Mahjong.NakiType.NUKI;
             }
 
             // Open or concealed kan
@@ -99,7 +88,7 @@ namespace TenhouViewer.Tenhou
                     break;
             }
 
-            Type = NakiType.CHI;
+            Type = Mahjong.NakiType.CHI;
         }
 
         private void PON(int m)
@@ -180,7 +169,7 @@ namespace TenhouViewer.Tenhou
                 Tiles.Insert(0, T);
             }
 
-            Type = NakiType.PON;
+            Type = Mahjong.NakiType.PON;
         }
 
         private void KAN(int m)
@@ -227,12 +216,12 @@ namespace TenhouViewer.Tenhou
             if (fromWho != 0)
             {
                 // Open kan
-                Type = NakiType.MINKAN;
+                Type = Mahjong.NakiType.MINKAN;
             }
             else
             {
                 // Concealed kan
-                Type = NakiType.ANKAN;
+                Type = Mahjong.NakiType.ANKAN;
                 Opened = false;
             }
         }
@@ -305,7 +294,18 @@ namespace TenhouViewer.Tenhou
                 case 3: Tiles.Insert(0, tile3); break;
             }
 
-            Type = NakiType.CHAKAN;
+            Type = Mahjong.NakiType.CHAKAN;
+        }
+
+        public Mahjong.Naki GetNaki()
+        {
+            Mahjong.Naki N = new Mahjong.Naki();
+
+            N.FromWho = fromWho;
+            N.Type = Type;
+            N.Tiles = Tiles;
+
+            return N;
         }
     }
 }
