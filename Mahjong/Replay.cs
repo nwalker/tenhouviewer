@@ -8,16 +8,11 @@ namespace TenhouViewer.Mahjong
     class Replay
     {
         public Player[] Players = new Player[4];
-        private List<Round> Rounds = new List<Round>();
+        public List<Round> Rounds = new List<Round>();
 
         public Replay()
         {
 
-        }
-
-        public void AddRound(Round Round)
-        {
-            Rounds.Add(Round);
         }
     }
 }
