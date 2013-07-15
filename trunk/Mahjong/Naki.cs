@@ -26,5 +26,89 @@ namespace TenhouViewer.Mahjong
         {
 
         }
+
+        public string GetText()
+        {
+            Tile[] TileList = new Tile[Tiles.Count];
+            string[] TileName = new string[Tiles.Count];
+
+            for (int i = 0; i < Tiles.Count; i++)
+            {
+                TileList[i] = new Tile(Convert.ToUInt16(Tiles[i]));
+                TileName[i] = TileList[i].Value.ToString();
+            }
+
+            string TType = TileList[0].TileType;
+
+            switch (Type)
+            {
+                case NakiType.NUKI:
+                    return TileList[0].TileName;
+
+                case NakiType.CHI:
+                    {
+                        string A = TileName[0];
+                        string B = TileName[1];
+                        string C = TileName[2];
+
+                        return "[" + A + "]" + B + C + TType;
+                    }
+                case NakiType.PON:
+                    {
+                        string A = TileName[0];
+                        string B = TileName[1];
+                        string C = TileName[2];
+
+                        switch (FromWho)
+                        {
+                            case 1: return A + B + "[" + C + "]" + TType;
+                            case 2: return A + "[" + B + "]" + C + TType;
+                            case 3: return "[" + A + "]" + B + C + TType;
+                        }
+                    }
+                    break;
+                case NakiType.ANKAN:
+                    {
+                        string A = TileName[0];
+                        string B = TileName[1];
+                        string C = TileName[2];
+                        string D = TileName[2];
+                        
+                        return "[" + A + B + C + D + TType + "]";
+                    }
+                case NakiType.MINKAN:
+                    {
+                        string A = TileName[0];
+                        string B = TileName[1];
+                        string C = TileName[2];
+                        string D = TileName[2];
+
+                        switch (FromWho)
+                        {
+                            case 1: return A + B + C + "[" + D + "]" + TType;
+                            case 2: return A + "[" + B + "]" + C + D + TType;
+                            case 3: return "[" + A + "]" + B + C + D + TType;
+                        }
+                    }
+                    break;
+                case NakiType.CHAKAN:
+                    {
+                        string A = TileName[0];
+                        string B = TileName[1];
+                        string C = TileName[2];
+                        string D = TileName[2];
+
+                        switch (FromWho)
+                        {
+                            case 1: return A + B + "[" + C + "][" + D + "]" + TType;
+                            case 2: return A + "[" + B + "][" + C + "]" + D + TType;
+                            case 3: return "[" + A + "][" + B + "]" + C + D + TType;
+                        }
+                    }
+                    break;
+            }
+
+            return "";
+        }
     }
 }

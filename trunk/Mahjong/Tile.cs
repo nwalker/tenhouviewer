@@ -8,9 +8,9 @@ namespace TenhouViewer.Mahjong
     class Tile
     {
         public string TileName;
-        public uint Value;
-        public uint Index;
-        public uint TileId;
+        public int Value;
+        public int Index;
+        public int TileId;
         public bool Red;
         public string TileType;
 
@@ -34,7 +34,7 @@ namespace TenhouViewer.Mahjong
         //36 - 発 (зелёный дракон)
         //37 - 中 (красный дракон)
 
-        public Tile(uint Index)
+        public Tile(int Index)
         {
             this.Index = Index;
 
@@ -70,9 +70,9 @@ namespace TenhouViewer.Mahjong
             }
         }
 
-        private uint CalcTileId(uint Index)
+        private int CalcTileId(int Index)
         {
-            uint Id = (Index / 4) + 1; // Tile index
+            int Id = (Index / 4) + 1; // Tile index
 
             // compensate spaces
             if (Id > 9) Id++;
