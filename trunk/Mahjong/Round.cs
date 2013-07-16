@@ -15,6 +15,8 @@ namespace TenhouViewer.Mahjong
         public List<Step> Steps = new List<Step>();
         public Hand[] Hands = new Hand[4]; // Start hands
 
+        public int[] Pay = new int[4];
+
         private XmlWriter F;
 
         public Round()

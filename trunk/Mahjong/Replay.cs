@@ -12,6 +12,8 @@ namespace TenhouViewer.Mahjong
         public Player[] Players = new Player[4];
         public List<Round> Rounds = new List<Round>();
 
+        public int[] Place = new int[4];
+
         private XmlWriter F;
 
         public Replay()
