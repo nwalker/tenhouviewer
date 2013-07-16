@@ -187,6 +187,8 @@ namespace TenhouViewer.Tenhou
 
                 CurrentRound.Hands[i] = new Mahjong.Hand();
                 CurrentRound.Hands[i].SetArray(TileList);
+
+                CurrentRound.BalanceBefore[i] = Balance[i];
             }
         }
 
@@ -202,6 +204,8 @@ namespace TenhouViewer.Tenhou
 
             Step.Draw(0);
             CurrentRound.Steps.Add(Step);
+
+            CheckScore(Reader);
         }
 
         private void N(XmlReader Reader)
@@ -289,7 +293,25 @@ namespace TenhouViewer.Tenhou
                 }
 
                 int[] Yaku = DecompositeIntList(YakuList);
+            }
 
+            CheckScore(Reader);
+        }
+
+        private void CheckScore(XmlReader Reader)
+        {
+            string score = Reader.GetAttribute("sc");
+
+            if (score == null) return;
+            string[] Temp = score.Split(delimiter, StringSplitOptions.None);
+
+            for (int i = 0; i < 4; i++)
+            {
+                int Balance = Convert.ToInt16(Temp[i * 2 + 0]) * 100;
+                int Pay = Convert.ToInt16(Temp[i * 2 + 1]) * 100;
+
+                CurrentRound.Pay[i] += Pay;
+                CurrentRound.BalanceAfter[i] = Balance + Pay;
             }
         }
 

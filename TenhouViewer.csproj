@@ -51,6 +51,7 @@
     <Compile Include="Mahjong\Step.cs" />
     <Compile Include="Mahjong\Tile.cs" />
     <Compile Include="Mahjong\Wall.cs" />
+    <Compile Include="Mahjong\Xml.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tenhou\Hash.cs" />

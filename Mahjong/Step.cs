@@ -132,95 +132,96 @@ namespace TenhouViewer.Mahjong
             Console.WriteLine(String.Format("[{0:d}] Connect", Player));
         }
 
-        public void WriteXml(XmlWriter F)
+        public void WriteXml(Xml X)
         {
             switch (Type)
             {
             case StepType.STEP_DRAWTILE:     // Draw fram wall
-                F.WriteStartElement("drawtile");
-                F.WriteAttributeString("player", Player.ToString());
-                F.WriteAttributeString("tile", Tile.ToString());
-                F.WriteEndElement();
+                X.StartTag("drawtile");
+                X.Attribute("player", Player);
+                X.Attribute("tile", Tile);
+
+                X.EndTag();
                 break;
 
             case StepType.STEP_DISCARDTILE:  // Discard
-                F.WriteStartElement("discardtile");
-                F.WriteAttributeString("player", Player.ToString());
-                F.WriteAttributeString("tile", Tile.ToString());
+                X.StartTag("discardtile");
+                X.Attribute("player", Player);
+                X.Attribute("tile", Tile);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_DRAWDEADTILE: // Draw from dead wall
-                F.WriteStartElement("drawdeadtile");
-                F.WriteAttributeString("player", Player.ToString());
-                F.WriteAttributeString("tile", Tile.ToString());
+                X.StartTag("drawdeadtile");
+                X.Attribute("player", Player);
+                X.Attribute("tile", Tile);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_NAKI:         // Naki
-                F.WriteStartElement("naki");
-                F.WriteAttributeString("player", Player.ToString());
-                NakiData.WriteXml(F);
-                F.WriteEndElement();
+                X.StartTag("naki");
+                X.Attribute("player", Player);
+                NakiData.WriteXml(X);
+                X.EndTag();
                 break;
 
             case StepType.STEP_RIICHI:       // Riichi!
-                F.WriteStartElement("riichi1");
-                F.WriteAttributeString("player", Player.ToString());
+                X.StartTag("riichi1");
+                X.Attribute("player", Player);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_RIICHI1000:   // Pay for riichi
-                F.WriteStartElement("riichi2");
-                F.WriteAttributeString("player", Player.ToString());
+                X.StartTag("riichi2");
+                X.Attribute("player", Player);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_TSUMO:        // Tsumo
-                F.WriteStartElement("tsumo");
-                F.WriteAttributeString("player", Player.ToString());
+                X.StartTag("tsumo");
+                X.Attribute("player", Player);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_RON:          // Ron
-                F.WriteStartElement("ron");
-                F.WriteAttributeString("player", Player.ToString());
-                F.WriteAttributeString("from", FromWho.ToString());
+                X.StartTag("ron");
+                X.Attribute("player", Player);
+                X.Attribute("from", FromWho);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
  
             case StepType.STEP_DRAW:         // Draw
-                F.WriteStartElement("draw");
-                F.WriteAttributeString("player", Player.ToString());
-                F.WriteAttributeString("reason", Reason.ToString());
+                X.StartTag("draw");
+                X.Attribute("player", Player);
+                X.Attribute("reason", Reason);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_NEWDORA:      // Open next dora indicator
-                F.WriteStartElement("newdora");
-                F.WriteAttributeString("tile", Tile.ToString());
-                F.WriteEndElement();
+                X.StartTag("newdora");
+                X.Attribute("tile", Tile);
+                X.EndTag();
                 break;
 
             case StepType.STEP_DISCONNECT:   // Player disconnected
-                F.WriteStartElement("disconnect");
-                F.WriteAttributeString("player", Player.ToString());
+                X.StartTag("disconnect");
+                X.Attribute("player", Player);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
 
             case StepType.STEP_CONNECT:       // Player connected
-                F.WriteStartElement("connect");
-                F.WriteAttributeString("player", Player.ToString());
+                X.StartTag("connect");
+                X.Attribute("player", Player);
 
-                F.WriteEndElement();
+                X.EndTag();
                 break;
             }
         }
