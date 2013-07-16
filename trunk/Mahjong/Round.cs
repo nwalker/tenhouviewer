@@ -16,8 +16,8 @@ namespace TenhouViewer.Mahjong
         public Hand[] Hands = new Hand[4]; // Start hands
 
         public int[] Pay = new int[4];
-
-        private XmlWriter F;
+        public int[] BalanceBefore = new int[4];
+        public int[] BalanceAfter = new int[4];
 
         public Round()
         {
@@ -26,66 +26,33 @@ namespace TenhouViewer.Mahjong
 
         public void Save(string FileName)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
+            Xml X = new Xml(FileName);
 
-            {
-                // включаем отступ для элементов XML документа
-                // (позволяет наглядно изобразить иерархию XML документа)
-                settings.Indent = true;
-                settings.IndentChars = "    "; // задаем отступ, здесь у меня 4 пробела
-
-                // задаем переход на новую строку
-                settings.NewLineChars = "\r\n";
-
-                // Нужно ли опустить строку декларации формата XML документа
-                // речь идет о строке вида "<?xml version="1.0" encoding="utf-8"?>"
-                settings.OmitXmlDeclaration = true;
-            }
-
-            // (рассмотрен выше)
-            F = XmlWriter.Create(FileName, settings);
-
-            StartXML("mjround");
+            X.StartXML("mjround");
 
             // Что это за раздача?
-            WriteTag("hash", "value", Hash);
-            WriteTag("game", "index", Index.ToString());
+            X.WriteTag("hash", "value", Hash);
+            X.WriteTag("game", "index", Index);
+
+            X.WriteTag("balancebefore", BalanceBefore);
+            X.WriteTag("balanceafter", BalanceAfter);
+            X.WriteTag("pay", Pay);
 
             // Действия
             {
-                F.WriteStartElement("steps");
-                F.WriteAttributeString("count", Steps.Count.ToString());
+                X.StartTag("steps");
+                X.Attribute("count", Steps.Count);
 
                 for (int j = 0; j < Steps.Count; j++)
                 {
-                    Steps[j].WriteXml(F);
+                    Steps[j].WriteXml(X);
                 }
 
-                F.WriteEndElement();
+                X.EndTag();
             }
 
-            EndXML();
-            F.Close();
-        }
-
-        private void StartXML(string Element)
-        {
-            F.WriteStartElement(Element);
-            F.WriteAttributeString("date", DateTime.Now.ToString());
-            F.WriteAttributeString("v", "1");
-        }
-
-        private void EndXML()
-        {
-            F.WriteEndElement();
-        }
-
-        // Тег с одним аргументом
-        private void WriteTag(string Tag, string Attribute, string Value)
-        {
-            F.WriteStartElement(Tag);
-            F.WriteAttributeString(Attribute, Value);
-            F.WriteEndElement();
+            X.EndXML();
+            X.Close();
         }
     }
 }
