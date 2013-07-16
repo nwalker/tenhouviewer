@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace TenhouViewer.Mahjong
 {
@@ -109,6 +110,24 @@ namespace TenhouViewer.Mahjong
             }
 
             return "";
+        }
+
+        public void WriteXml(XmlWriter F)
+        {
+            F.WriteStartElement("type");
+            F.WriteAttributeString("value", Convert.ToInt16(Type).ToString());
+            F.WriteAttributeString("from", FromWho.ToString());
+            F.WriteAttributeString("count", Tiles.Count.ToString());
+
+            for (int i = 0; i < Tiles.Count; i++)
+            {
+                F.WriteStartElement("tile");
+                F.WriteAttributeString("value", Tiles[i].ToString());
+
+                F.WriteEndElement();
+            }
+
+            F.WriteEndElement();
         }
     }
 }

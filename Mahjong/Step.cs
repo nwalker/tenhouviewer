@@ -138,72 +138,87 @@ namespace TenhouViewer.Mahjong
             {
             case StepType.STEP_DRAWTILE:     // Draw fram wall
                 F.WriteStartElement("drawtile");
-
+                F.WriteAttributeString("player", Player.ToString());
+                F.WriteAttributeString("tile", Tile.ToString());
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_DISCARDTILE:  // Discard
                 F.WriteStartElement("discardtile");
+                F.WriteAttributeString("player", Player.ToString());
+                F.WriteAttributeString("tile", Tile.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_DRAWDEADTILE: // Draw from dead wall
                 F.WriteStartElement("drawdeadtile");
+                F.WriteAttributeString("player", Player.ToString());
+                F.WriteAttributeString("tile", Tile.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_NAKI:         // Naki
                 F.WriteStartElement("naki");
-
+                F.WriteAttributeString("player", Player.ToString());
+                NakiData.WriteXml(F);
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_RIICHI:       // Riichi!
                 F.WriteStartElement("riichi1");
+                F.WriteAttributeString("player", Player.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_RIICHI1000:   // Pay for riichi
                 F.WriteStartElement("riichi2");
+                F.WriteAttributeString("player", Player.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_TSUMO:        // Tsumo
                 F.WriteStartElement("tsumo");
+                F.WriteAttributeString("player", Player.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_RON:          // Ron
                 F.WriteStartElement("ron");
+                F.WriteAttributeString("player", Player.ToString());
+                F.WriteAttributeString("from", FromWho.ToString());
 
                 F.WriteEndElement();
                 break;
  
             case StepType.STEP_DRAW:         // Draw
                 F.WriteStartElement("draw");
+                F.WriteAttributeString("player", Player.ToString());
+                F.WriteAttributeString("reason", Reason.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_NEWDORA:      // Open next dora indicator
                 F.WriteStartElement("newdora");
-
+                F.WriteAttributeString("tile", Tile.ToString());
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_DISCONNECT:   // Player disconnected
                 F.WriteStartElement("disconnect");
+                F.WriteAttributeString("player", Player.ToString());
 
                 F.WriteEndElement();
                 break;
 
             case StepType.STEP_CONNECT:       // Player connected
                 F.WriteStartElement("connect");
+                F.WriteAttributeString("player", Player.ToString());
 
                 F.WriteEndElement();
                 break;
