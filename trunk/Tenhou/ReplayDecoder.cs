@@ -256,8 +256,8 @@ namespace TenhouViewer.Tenhou
             {
                 int[] Ba = DecompositeIntList(Reader.GetAttribute("ba"));
 
-                int RenchanStick = Ba[0];
-                int RiichiStick = Ba[1];
+                CurrentRound.RenchanStick = Ba[0];
+                CurrentRound.RiichiStick = Ba[1];
             }
 
             // Hand and waiting
