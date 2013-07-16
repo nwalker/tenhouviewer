@@ -63,6 +63,7 @@ namespace TenhouViewer.Mahjong
             }
 
             EndXML();
+            F.Close();
         }
 
         private void StartXML(string Element)

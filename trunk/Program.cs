@@ -36,7 +36,7 @@ namespace TenhouViewer
         {
             Tenhou.Replay Replay = new Tenhou.Replay();
 
-            Replay.OpenPlainText("2013070808gm-0089-0000-2f83b7da.xml");
+            Replay.OpenPlainText("2013070808gm-0089-0000-2f83b7da.xml", "2013070808gm-0089-0000-2f83b7da");
         }
     }
 }

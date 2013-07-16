@@ -24,21 +24,28 @@ namespace TenhouViewer.Tenhou
         }
 
         // .xml
-        public void OpenPlainText(string Filename)
+        public void OpenPlainText(string Filename, string Hash)
         {
-            XmlReader Reader = XmlReader.Create(Filename);
+            R.Hash = Hash;
 
+            XmlReader Reader = XmlReader.Create(Filename);
             Parse(Reader);
+
+            R.Save();
         }
 
         // .mjlog
-        public void OpenGZ(string Filename)
+        public void OpenGZ(string Filename, string Hash)
         {
+            R.Hash = Hash;
+
             FileStream File = new FileStream(Filename, FileMode.Open, FileAccess.Read);
             GZipStream Stream = new GZipStream(File, CompressionMode.Decompress);
             XmlReader Reader = XmlReader.Create(Stream);
 
             Parse(Reader);
+
+            R.Save();
         }
 
         private void Parse(XmlReader Reader)
@@ -162,6 +169,8 @@ namespace TenhouViewer.Tenhou
             // Start new round!
             CurrentRound = new Mahjong.Round();
             CurrentRound.Wall = new Mahjong.Wall();
+            CurrentRound.Hash = R.Hash;
+            CurrentRound.Index = R.Rounds.Count;
 
             R.Rounds.Add(CurrentRound);
 
