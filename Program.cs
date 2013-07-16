@@ -34,7 +34,7 @@ namespace TenhouViewer
 
         static private void TestParser()
         {
-            Tenhou.Replay Replay = new Tenhou.Replay();
+            Tenhou.ReplayDecoder Replay = new Tenhou.ReplayDecoder();
 
             Replay.OpenPlainText("2013070808gm-0089-0000-2f83b7da.xml", "2013070808gm-0089-0000-2f83b7da");
         }

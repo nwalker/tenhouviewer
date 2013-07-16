@@ -56,7 +56,7 @@
     <Compile Include="Tenhou\Hash.cs" />
     <Compile Include="Tenhou\MT19937AR.cs" />
     <Compile Include="Tenhou\NakiDecoder.cs" />
-    <Compile Include="Tenhou\Replay.cs" />
+    <Compile Include="Tenhou\ReplayDecoder.cs" />
     <Compile Include="Tenhou\WallGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

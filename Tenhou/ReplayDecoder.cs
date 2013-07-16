@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace TenhouViewer.Tenhou
 {
-    class Replay
+    class ReplayDecoder
     {
         private string[] delimiter = new string[] { "," };
 
@@ -18,7 +18,7 @@ namespace TenhouViewer.Tenhou
 
         private Mahjong.Round CurrentRound;
 
-        public Replay()
+        public ReplayDecoder()
         {
 
         }
