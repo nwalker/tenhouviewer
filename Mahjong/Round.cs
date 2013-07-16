@@ -15,13 +15,21 @@ namespace TenhouViewer.Mahjong
         public List<Step> Steps = new List<Step>();
         public Hand[] Hands = new Hand[4]; // Start hands
 
+        public List<int>[] Yaku = new List<int>[4];
+
         public int[] Pay = new int[4];
         public int[] BalanceBefore = new int[4];
         public int[] BalanceAfter = new int[4];
 
+        public int RenchanStick = 0;
+        public int RiichiStick = 0;
+
         public Round()
         {
-            
+            for (int i = 0; i < 4; i++)
+            {
+
+            }
         }
 
         public void Save(string FileName)
@@ -37,6 +45,9 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("balancebefore", BalanceBefore);
             X.WriteTag("balanceafter", BalanceAfter);
             X.WriteTag("pay", Pay);
+
+            X.WriteTag("riichistick", "value", RenchanStick);
+            X.WriteTag("renchanstick", "value", RiichiStick);
 
             // Действия
             {
