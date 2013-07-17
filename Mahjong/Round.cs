@@ -15,11 +15,15 @@ namespace TenhouViewer.Mahjong
         public List<Step> Steps = new List<Step>();
         public Hand[] Hands = new Hand[4]; // Start hands
 
-        public List<int>[] Yaku = new List<int>[4];
+        public List<Yaku>[] Yaku = new List<Yaku>[4];
 
         public int[] Pay = new int[4];
         public int[] BalanceBefore = new int[4];
         public int[] BalanceAfter = new int[4];
+
+        public int[] HanCount = new int[4];
+        public int[] FuCount = new int[4];
+        public int[] Cost = new int[4];
 
         public int RenchanStick = 0;
         public int RiichiStick = 0;
@@ -28,7 +32,15 @@ namespace TenhouViewer.Mahjong
         {
             for (int i = 0; i < 4; i++)
             {
+                Yaku[i] = new List<Yaku>();
 
+                Pay[i] = 0;
+                HanCount[i] = 0;
+                FuCount[i] = 0;
+                Cost[i] = 0;
+
+                BalanceBefore[i] = 0;
+                BalanceAfter[i] = 0;
             }
         }
 
@@ -49,7 +61,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("riichistick", "value", RenchanStick);
             X.WriteTag("renchanstick", "value", RiichiStick);
 
-            // Действия
+            // Actions
             {
                 X.StartTag("steps");
                 X.Attribute("count", Steps.Count);
@@ -60,6 +72,36 @@ namespace TenhouViewer.Mahjong
                 }
 
                 X.EndTag();
+            }
+
+            // Yaku list
+            {
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (Yaku[i].Count == 0) continue;
+
+                    X.StartTag("agari");
+                    X.Attribute("player", i);
+                    X.Attribute("han", HanCount[i]);
+                    X.Attribute("fu", FuCount[i]);
+                    X.Attribute("cost", Cost[i]);
+                    {
+                        X.StartTag("yakulist");
+                        X.Attribute("count", Yaku[i].Count);
+                        for (int j = 0; j < Yaku[i].Count; j++)
+                        {
+                            X.StartTag("yaku");
+
+                            X.Attribute("index", Yaku[i][j].Index);
+                            X.Attribute("cost", Yaku[i][j].Cost);
+
+                            X.EndTag();
+                        }
+                        X.EndTag();
+                    }
+                    X.EndTag();
+                }
             }
 
             X.EndXML();
