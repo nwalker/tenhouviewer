@@ -66,6 +66,8 @@ namespace TenhouViewer.Mahjong
                             if (Rounds[i].Steps[j].Type == StepType.STEP_DISCARDTILE) StepCount[Rounds[i].Steps[j].Player]++;
                         }
 
+                        X.WriteTag("round", "index", Rounds[i].CurrentRound);
+                        X.WriteTag("renchan", "index", Rounds[i].RenchanStick);
                         X.WriteTag("result", "value", Rounds[i].StringResult);
 
                         X.WriteTag("balancebefore", Rounds[i].BalanceBefore);

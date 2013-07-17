@@ -39,10 +39,14 @@ namespace TenhouViewer.Mahjong
         public bool[] Dealer = new bool[4];
         public bool[] Winner = new bool[4];
         public bool[] Loser = new bool[4];
-        
+
+        public List<int> Dora = new List<int>();
+        public List<int> UraDora = new List<int>();
 
         public RoundResult Result;
-        
+
+        public int CurrentRound = -1; // 0: e1, 1: e2, 2: e3, 3: e4, 4: s1, ...
+
         public int RenchanStick = 0;
         public int RiichiStick = 0;
 
@@ -79,6 +83,7 @@ namespace TenhouViewer.Mahjong
             // Что это за раздача?
             X.WriteTag("hash", "value", Hash);
             X.WriteTag("game", "index", Index);
+            X.WriteTag("round", "index", CurrentRound);
             X.WriteTag("result", "value", StringResult);
 
             X.WriteTag("balancebefore", BalanceBefore);
@@ -135,6 +140,33 @@ namespace TenhouViewer.Mahjong
                     X.EndTag();
                 }
             }
+
+            // Dora
+            {
+                X.StartTag("dora");
+                X.Attribute("count", Dora.Count);
+
+                for (int j = 0; j < Dora.Count; j++)
+                {
+                    X.WriteTag("dora", "value", Dora[j]);
+                }
+
+                X.EndTag();
+            }
+
+            if(UraDora.Count > 0)
+            {
+                X.StartTag("uradora");
+                X.Attribute("count", UraDora.Count);
+
+                for (int j = 0; j < UraDora.Count; j++)
+                {
+                    X.WriteTag("dora", "value", UraDora[j]);
+                }
+
+                X.EndTag();
+            }
+
 
             X.EndXML();
             X.Close();
