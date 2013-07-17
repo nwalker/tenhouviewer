@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -192,6 +193,8 @@ namespace TenhouViewer.Mahjong
 
         public void Save(string FileName)
         {
+            if (!Directory.Exists("round")) Directory.CreateDirectory("round");
+
             FileName = "round/" + FileName;
 
             XmlSave X = new XmlSave(FileName);
