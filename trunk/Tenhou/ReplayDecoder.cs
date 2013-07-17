@@ -280,6 +280,9 @@ namespace TenhouViewer.Tenhou
 
                 int Fu = Ten[0];
                 int Cost = Ten[1];
+
+                CurrentRound.FuCount[Who] = Fu;
+                CurrentRound.Cost[Who] = Cost;
             }
 
             // Yaku list
@@ -293,6 +296,19 @@ namespace TenhouViewer.Tenhou
                 }
 
                 int[] Yaku = DecompositeIntList(YakuList);
+
+                for (int i = 0; i < Yaku.Length / 2; i++)
+                {
+                    int YakuIndex = Yaku[i * 2];
+                    int YakuCost = Yaku[i * 2 + 1];
+
+                    if (YakuCost > 0)
+                    {
+                        CurrentRound.HanCount[Who] += YakuCost;
+
+                        CurrentRound.Yaku[Who].Add(new Mahjong.Yaku(YakuIndex, YakuCost));
+                    }
+                }
             }
 
             CheckScore(Reader);

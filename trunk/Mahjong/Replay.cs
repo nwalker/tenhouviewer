@@ -14,8 +14,6 @@ namespace TenhouViewer.Mahjong
 
         public int[] Place = new int[4];
 
-        private XmlWriter F;
-
         public Replay()
         {
 
