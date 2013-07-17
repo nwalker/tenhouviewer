@@ -6,6 +6,14 @@ using System.Xml;
 
 namespace TenhouViewer.Mahjong
 {
+    enum RoundResult
+    {
+        Unknown,
+        Draw,
+        Ron,
+        Tsumo
+    }
+
     class Round
     {
         public string Hash = "";
@@ -25,11 +33,18 @@ namespace TenhouViewer.Mahjong
         public int[] FuCount = new int[4];
         public int[] Cost = new int[4];
 
+        public bool[] Winner = new bool[4];
+        public bool[] Loser = new bool[4];
+
+        public RoundResult Result;
+        
         public int RenchanStick = 0;
         public int RiichiStick = 0;
 
         public Round()
         {
+            Result = RoundResult.Unknown;
+
             for (int i = 0; i < 4; i++)
             {
                 Yaku[i] = new List<Yaku>();
@@ -38,6 +53,9 @@ namespace TenhouViewer.Mahjong
                 HanCount[i] = 0;
                 FuCount[i] = 0;
                 Cost[i] = 0;
+
+                Loser[i] = false;
+                Winner[i] = false;
 
                 BalanceBefore[i] = 0;
                 BalanceAfter[i] = 0;
@@ -53,10 +71,13 @@ namespace TenhouViewer.Mahjong
             // Что это за раздача?
             X.WriteTag("hash", "value", Hash);
             X.WriteTag("game", "index", Index);
+            X.WriteTag("result", "value", StringResult);
 
             X.WriteTag("balancebefore", BalanceBefore);
             X.WriteTag("balanceafter", BalanceAfter);
             X.WriteTag("pay", Pay);
+            X.WriteTag("winner", Winner);
+            X.WriteTag("loser", Loser);
 
             X.WriteTag("riichistick", "value", RenchanStick);
             X.WriteTag("renchanstick", "value", RiichiStick);
@@ -107,5 +128,21 @@ namespace TenhouViewer.Mahjong
             X.EndXML();
             X.Close();
         }
+
+        public string StringResult
+        {
+            get
+            {
+                switch (Result)
+                {
+                    case RoundResult.Draw: return "draw";
+                    case RoundResult.Ron: return "ron";
+                    case RoundResult.Tsumo: return "tsumo";
+
+                    default: return "unknown";
+                }
+            }
+        }
+
     }
 }

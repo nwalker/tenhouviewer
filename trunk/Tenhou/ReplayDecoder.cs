@@ -204,6 +204,7 @@ namespace TenhouViewer.Tenhou
 
             Step.Draw(0);
             CurrentRound.Steps.Add(Step);
+            CurrentRound.Result = Mahjong.RoundResult.Draw;
 
             CheckScore(Reader);
         }
@@ -244,13 +245,20 @@ namespace TenhouViewer.Tenhou
                 // Tsumo!
                 Step.Tsumo();
                 CurrentRound.Steps.Add(Step);
+
+                CurrentRound.Result = Mahjong.RoundResult.Tsumo;
             }
             else
             {
                 // Ron!
                 Step.Ron(fromWho);
                 CurrentRound.Steps.Add(Step);
+
+                CurrentRound.Result = Mahjong.RoundResult.Ron;
+                CurrentRound.Loser[fromWho] = true;
             }
+
+            CurrentRound.Winner[Who] = true;
 
             // Sticks count
             {
