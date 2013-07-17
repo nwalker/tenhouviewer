@@ -13,6 +13,7 @@ namespace TenhouViewer
             TestHash();
             TestParser();
             TestLoader();
+            TestDownload();
         }
 
         static private void TestWall()
@@ -28,7 +29,7 @@ namespace TenhouViewer
 
         static private void TestHash()
         {
-            Tenhou.Hash Hash = new Tenhou.Hash("2012090306gm-0089-0000-x666f4d41e26b");
+            Tenhou.TenhouHash Hash = new Tenhou.TenhouHash("2012090306gm-0089-0000-x666f4d41e26b");
 
             // Decoded: 2012090306gm-0089-0000-dc81a77a
         }
@@ -45,6 +46,13 @@ namespace TenhouViewer
             Mahjong.Replay Replay = new Mahjong.Replay();
 
             Replay.LoadXml("2013070808gm-0089-0000-2f83b7da");
+        }
+
+        static private void TestDownload()
+        {
+            Tenhou.LogParser Log = new Tenhou.LogParser("log.txt");
+
+            Log.DownloadAll("logs/");
         }
     }
 }

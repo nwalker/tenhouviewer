@@ -56,10 +56,13 @@
     <Compile Include="Mahjong\YakuName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tenhou\Hash.cs" />
+    <Compile Include="Tenhou\Downloader.cs" />
+    <Compile Include="Tenhou\TenhouHash.cs" />
     <Compile Include="Tenhou\MT19937AR.cs" />
     <Compile Include="Tenhou\NakiDecoder.cs" />
     <Compile Include="Tenhou\ReplayDecoder.cs" />
+    <Compile Include="Tenhou\TenhouHashList.cs" />
+    <Compile Include="Tenhou\LogParser.cs" />
     <Compile Include="Tenhou\WallGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
