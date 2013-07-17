@@ -12,7 +12,7 @@ namespace TenhouViewer.Tenhou
     {
         private string[] delimiter = new string[] { "," };
 
-        private Mahjong.Replay R = new Mahjong.Replay();
+        public Mahjong.Replay R = new Mahjong.Replay();
         private WallGenerator Generator;
         private int GameIndex = 0;
         private bool FirstStep;
@@ -33,8 +33,6 @@ namespace TenhouViewer.Tenhou
 
             XmlReader Reader = XmlReader.Create(Filename);
             Parse(Reader);
-
-            R.Save();
         }
 
         // .mjlog
@@ -47,8 +45,6 @@ namespace TenhouViewer.Tenhou
             XmlReader Reader = XmlReader.Create(Stream);
 
             Parse(Reader);
-
-            R.Save();
         }
 
         private void Parse(XmlReader Reader)

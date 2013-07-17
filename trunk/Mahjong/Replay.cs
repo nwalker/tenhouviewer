@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -22,6 +23,8 @@ namespace TenhouViewer.Mahjong
 
         public void Save()
         {
+            if (!Directory.Exists("replay")) Directory.CreateDirectory("replay");
+
             SaveXml("replay/" + Hash + ".xml");
             // Save round info in files
             for (int i = 0; i < Rounds.Count; i++)
