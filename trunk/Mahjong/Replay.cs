@@ -11,6 +11,7 @@ namespace TenhouViewer.Mahjong
         public string Hash = "";
         public Player[] Players = new Player[4];
         public List<Round> Rounds = new List<Round>();
+        public List<string> RoundFiles = new List<string>();
 
         public int[] Place = new int[4];
 
@@ -25,13 +26,88 @@ namespace TenhouViewer.Mahjong
             // Save round info in files
             for (int i = 0; i < Rounds.Count; i++)
             {
-                Rounds[i].Save("round/"+ Hash + "_" + i.ToString() + ".xml");
+                Rounds[i].Save(Hash + "_" + i.ToString() + ".xml");
+            }
+        }
+
+        public void LoadXml(string Hash)
+        {
+            string FileName = "replay/" + Hash + ".xml";
+            XmlLoad X = new XmlLoad();
+
+            if (!X.Load(FileName)) return;
+            while (X.Read())
+            {
+                switch (X.ElementName)
+                {
+                    case "hash": Hash = X.GetAttribute("value"); break;
+                    case "playerlist":
+                        {
+                            int Count = 4;
+                            XmlLoad Subtree = X.GetSubtree();
+
+                            for (int j = 0; j < Count; j++)
+                            {
+                                Players[j] = new Player();
+                                Players[j].ReadXml(Subtree);
+                            }
+                        }
+                        break;
+                    case "roundlist":
+                        {
+                            int Count = X.GetIntAttribute("count");
+
+                            XmlLoad Subtree = X.GetSubtree();
+                            for (int j = 0; j < Count; j++)
+                            {
+                                if (!Subtree.Read()) break;
+
+                                switch (Subtree.ElementName)
+                                {
+                                    case "round":
+                                        string FName = Subtree.GetAttribute("filename");
+                                        int Index = Subtree.GetIntAttribute("index");
+                                        Round R = new Round();
+                                        Rounds.Add(R);
+
+                                        RoundFiles.Add(FName);
+
+                                        XmlLoad RoundData = Subtree.GetSubtree();
+                                        while (RoundData.Read())
+                                        {
+                                            switch (Subtree.ElementName)
+                                            {
+                                                case "round": R.CurrentRound = RoundData.GetIntAttribute("index"); break;
+                                                case "renchan": R.RenchanStick = RoundData.GetIntAttribute("index"); break;
+                                                case "result": R.StringResult = RoundData.GetAttribute("value"); break;
+                                                case "balancebefore": R.BalanceBefore = RoundData.ReadIntArray(); break;
+                                                case "balanceafter": R.BalanceAfter = RoundData.ReadIntArray(); break;
+                                                case "pay": R.Pay = RoundData.ReadIntArray(); break;
+                                                case "han": R.HanCount = RoundData.ReadIntArray(); break;
+                                                case "fu": R.FuCount = RoundData.ReadIntArray(); break;
+                                                case "cost": R.Cost = RoundData.ReadIntArray(); break;
+                                                case "winner": R.Winner = RoundData.ReadBoolArray(); break;
+                                                case "loser": R.Loser = RoundData.ReadBoolArray(); break;
+                                                case "openedsets": R.OpenedSets = RoundData.ReadIntArray(); break;
+                                                case "riichi": R.Riichi = RoundData.ReadIntArray(); break;
+                                                case "dealer": R.Dealer = RoundData.ReadBoolArray(); break;
+                                            }
+                                        }
+
+                                        // try to load more data
+                                        R.Load(FName);
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                }
             }
         }
 
         public void SaveXml(string FileName)
         {
-            Xml X = new Xml(FileName);
+            XmlSave X = new XmlSave(FileName);
 
             X.StartXML("mjreplay");
 
@@ -53,9 +129,11 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("count", Rounds.Count);
                 for (int i = 0; i < Rounds.Count; i++)
                 {
+                    if(Rounds[i].FileName.CompareTo("") == 0) Rounds[i].FileName = Hash + "_" + i.ToString() + ".xml";
+
                     X.StartTag("round");
                     X.Attribute("index", i);
-                    X.Attribute("filename", Hash + "_" + i.ToString() + ".xml");
+                    X.Attribute("filename", Rounds[i].FileName);
 
                     // Results
                     {

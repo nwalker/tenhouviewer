@@ -50,7 +50,8 @@
     <Compile Include="Mahjong\Step.cs" />
     <Compile Include="Mahjong\Tile.cs" />
     <Compile Include="Mahjong\Wall.cs" />
-    <Compile Include="Mahjong\Xml.cs" />
+    <Compile Include="Mahjong\XmlLoad.cs" />
+    <Compile Include="Mahjong\XmlSave.cs" />
     <Compile Include="Mahjong\Yaku.cs" />
     <Compile Include="Mahjong\YakuName.cs" />
     <Compile Include="Program.cs" />

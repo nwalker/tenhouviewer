@@ -5,11 +5,11 @@ using System.Xml;
 
 namespace TenhouViewer.Mahjong
 {
-    class Xml
+    class XmlSave
     {
         private XmlWriter F;
 
-        public Xml(string FileName)
+        public XmlSave(string FileName)
         {
             XmlWriterSettings settings = new XmlWriterSettings();
 

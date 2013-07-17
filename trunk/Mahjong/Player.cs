@@ -24,7 +24,31 @@ namespace TenhouViewer.Mahjong
 
         }
 
-        public void WriteXml(Xml X)
+        public void ReadXml(XmlLoad X)
+        {
+            if(!X.Read()) return;
+
+            switch (X.ElementName)
+            {
+                case "player":
+                    NickName = X.GetAttribute("nick");
+                    Rank = X.GetIntAttribute("rank");
+                    Rating = X.GetIntAttribute("rating");
+
+                    string S = X.GetAttribute("sex");
+
+                    switch (S)
+                    {
+                        case "M": Sex = Sex.Male; break;
+                        case "F": Sex = Sex.Female; break;
+
+                        default: Sex = Sex.Unknown; break;
+                    }
+                    break;
+            }
+        }
+
+        public void WriteXml(XmlSave X)
         {
             X.StartTag("player");
             X.Attribute("nick", NickName);

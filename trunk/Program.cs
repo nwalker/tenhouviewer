@@ -12,6 +12,7 @@ namespace TenhouViewer
             TestWall();
             TestHash();
             TestParser();
+            TestLoader();
         }
 
         static private void TestWall()
@@ -37,6 +38,13 @@ namespace TenhouViewer
             Tenhou.ReplayDecoder Replay = new Tenhou.ReplayDecoder();
 
             Replay.OpenPlainText("2013070808gm-0089-0000-2f83b7da.xml", "2013070808gm-0089-0000-2f83b7da");
+        }
+
+        static private void TestLoader()
+        {
+            Mahjong.Replay Replay = new Mahjong.Replay();
+
+            Replay.LoadXml("2013070808gm-0089-0000-2f83b7da");
         }
     }
 }

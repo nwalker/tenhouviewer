@@ -112,7 +112,39 @@ namespace TenhouViewer.Mahjong
             return "";
         }
 
-        public void WriteXml(Xml X)
+        public void ReadXml(XmlLoad X)
+        {
+            if (!X.Read()) return;
+
+            switch (X.ElementName)
+            {
+                case "type":
+                    {
+                        int Count = X.GetIntAttribute("count");
+
+                        Type = (NakiType)X.GetIntAttribute("value");
+                        FromWho = X.GetIntAttribute("from");
+
+                        Tiles = new List<int>();
+
+                        XmlLoad Subtree = X.GetSubtree();
+                        for (int i = 0; i < Tiles.Count; i++)
+                        {
+                            if (!X.Read()) break;
+                            switch (X.ElementName)
+                            {
+                                case "tile":
+                                    Tiles.Add(X.GetIntAttribute("value"));
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        public void WriteXml(XmlSave X)
         {
             X.StartTag("type");
             X.Attribute("value", Convert.ToInt16(Type));

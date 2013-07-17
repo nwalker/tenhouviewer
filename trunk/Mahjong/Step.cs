@@ -132,7 +132,63 @@ namespace TenhouViewer.Mahjong
             Console.WriteLine(String.Format("[{0:d}] Connect", Player));
         }
 
-        public void WriteXml(Xml X)
+        public void ReadXml(XmlLoad X)
+        {
+            if(!X.Read()) return;
+
+            switch (X.ElementName)
+            {
+                case "drawtile":
+                    Player = X.GetIntAttribute("player");
+                    Tile = X.GetIntAttribute("tile");
+
+                    break;
+                case "discardtile":
+                    Player = X.GetIntAttribute("player");
+                    Tile = X.GetIntAttribute("tile");
+                    break;
+                case "drawdeadtile":
+                    Player = X.GetIntAttribute("player");
+                    Tile = X.GetIntAttribute("tile");
+                    break;
+                case "naki":
+                    Player = X.GetIntAttribute("player");
+                    {
+                        XmlLoad Subtree = X.GetSubtree();
+
+                        NakiData = new Naki();
+                        NakiData.ReadXml(X);
+                    }
+                    break;
+                case "riichi1":
+                    Player = X.GetIntAttribute("player");
+                    break;
+                case "riichi2":
+                    Player = X.GetIntAttribute("player");
+                    break;
+                case "tsumo":
+                    Player = X.GetIntAttribute("player");
+                    break;
+                case "ron":
+                    Player = X.GetIntAttribute("player");
+                    FromWho = X.GetIntAttribute("from");
+                    break;
+                case "draw":
+                    Reason = X.GetIntAttribute("reason");
+                    break;
+                case "newdora":
+                    Tile = X.GetIntAttribute("tile");
+                    break;
+                case "disconnect":
+                    Player = X.GetIntAttribute("player");
+                    break;
+                case "connect":
+                    Player = X.GetIntAttribute("player");
+                    break;
+            }
+        }
+
+        public void WriteXml(XmlSave X)
         {
             switch (Type)
             {
@@ -198,7 +254,6 @@ namespace TenhouViewer.Mahjong
  
             case StepType.STEP_DRAW:         // Draw
                 X.StartTag("draw");
-                X.Attribute("player", Player);
                 X.Attribute("reason", Reason);
 
                 X.EndTag();
