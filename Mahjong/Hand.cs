@@ -8,7 +8,6 @@ namespace TenhouViewer.Mahjong
     class Hand
     {
         private int[] TileList = new int[13];
-        private int DrowTile;
 
         public Hand()
         {
