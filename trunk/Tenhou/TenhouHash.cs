@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TenhouViewer.Tenhou
 {
-    class Hash
+    class TenhouHash
     {
         private string InternalHash;
 
@@ -23,7 +23,7 @@ namespace TenhouViewer.Tenhou
         // Hash - типа
         // 2012090306gm-0089-0000-x666f4d41e26b - coded
         // 2012090306gm-0089-0000-dc81a77a - decoded
-        public Hash(string Game)
+        public TenhouHash(string Game)
         {
             InternalHash = DecodeHash(Game);
         }
@@ -56,7 +56,7 @@ namespace TenhouViewer.Tenhou
                 int Second = (B ^ C ^ t[Index] ^ t[Index + 1]) & 0xFFFF;
 
                 // Decode it!
-                return Text.Substring(0, Pos) + Convert.ToString(First, 16) + Convert.ToString(Second, 16);
+                return Text.Substring(0, Pos) + String.Format("{0:x4}", First) + String.Format("{0:x4}", Second);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace TenhouViewer.Tenhou
                 int Second = (A ^ B ^ t[Index]) & 0xFFFF;
                 int Third = (A ^ B ^ C ^ t[Index + 1]) & 0xFFFF;
 
-                return InternalHash.Substring(0, Pos) + "x" + Convert.ToString(First, 16) + Convert.ToString(Second, 16) + Convert.ToString(Third, 16);
+                return InternalHash.Substring(0, Pos) + "x" + String.Format("{0:x4}", First) + String.Format("{0:x4}", Second) + String.Format("{0:x4}", Third);
             }
         }
     }
