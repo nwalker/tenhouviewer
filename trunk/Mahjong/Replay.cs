@@ -39,6 +39,17 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("hash", "value", Hash);
 
             {
+                X.StartTag("playerlist");
+
+                for (int j = 0; j < 4; j++)
+                {
+                    Players[j].WriteXml(X);
+                }
+
+                X.EndTag();
+            }
+
+            {
                 X.StartTag("roundlist");
                 X.Attribute("count", Rounds.Count);
                 for (int i = 0; i < Rounds.Count; i++)
@@ -51,7 +62,7 @@ namespace TenhouViewer.Mahjong
                     {
                         int[] StepCount = new int[4];
                         for (int j = 0; j < 4; j++) StepCount[j] = 0;
-                        for(int j = 0; j < Rounds[i].Steps.Count; j++)
+                        for (int j = 0; j < Rounds[i].Steps.Count; j++)
                         {
                             if (Rounds[i].Steps[j].Type == StepType.STEP_DISCARDTILE) StepCount[Rounds[i].Steps[j].Player]++;
                         }

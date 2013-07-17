@@ -23,5 +23,25 @@ namespace TenhouViewer.Mahjong
         {
 
         }
+
+        public void WriteXml(Xml X)
+        {
+            X.StartTag("player");
+            X.Attribute("nick", NickName);
+            X.Attribute("rank", Rank);
+            X.Attribute("rating", Rating);
+
+            string SexString = "";
+            switch (Sex)
+            {
+                case Sex.Unknown: SexString = "U"; break;
+                case Sex.Female: SexString = "F"; break;
+                case Sex.Male: SexString = "M"; break;
+            }
+
+            X.Attribute("sex", SexString);
+
+            X.EndTag();
+        }
     }
 }
