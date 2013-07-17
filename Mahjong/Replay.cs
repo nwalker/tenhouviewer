@@ -77,6 +77,9 @@ namespace TenhouViewer.Mahjong
                         X.WriteTag("steps", StepCount);
                         X.WriteTag("winner", Rounds[i].Winner);
                         X.WriteTag("loser", Rounds[i].Loser);
+                        X.WriteTag("openedsets", Rounds[i].OpenedSets);
+                        X.WriteTag("riichi", Rounds[i].Riichi);
+                        X.WriteTag("dealer", Rounds[i].Dealer);
                     }
 
                     X.EndTag();

@@ -33,8 +33,13 @@ namespace TenhouViewer.Mahjong
         public int[] FuCount = new int[4];
         public int[] Cost = new int[4];
 
+        public int[] OpenedSets = new int[4];
+        public int[] Riichi = new int[4];
+
+        public bool[] Dealer = new bool[4];
         public bool[] Winner = new bool[4];
         public bool[] Loser = new bool[4];
+        
 
         public RoundResult Result;
         
@@ -53,7 +58,10 @@ namespace TenhouViewer.Mahjong
                 HanCount[i] = 0;
                 FuCount[i] = 0;
                 Cost[i] = 0;
+                Riichi[i] = -1;
+                OpenedSets[i] = 0;
 
+                Dealer[i] = false;
                 Loser[i] = false;
                 Winner[i] = false;
 
@@ -78,6 +86,9 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("pay", Pay);
             X.WriteTag("winner", Winner);
             X.WriteTag("loser", Loser);
+            X.WriteTag("openedsets", OpenedSets);
+            X.WriteTag("riichi", Riichi);
+            X.WriteTag("dealer", Dealer);
 
             X.WriteTag("riichistick", "value", RenchanStick);
             X.WriteTag("renchanstick", "value", RiichiStick);
