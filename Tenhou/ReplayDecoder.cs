@@ -116,7 +116,7 @@ namespace TenhouViewer.Tenhou
 
         private void GO(XmlReader Reader)
         {
-            int Lobby = Convert.ToInt16(Reader.GetAttribute("lobby"));
+            int Lobby = Convert.ToInt32(Reader.GetAttribute("lobby"));
         }
 
         // Player info
@@ -188,7 +188,7 @@ namespace TenhouViewer.Tenhou
                 CurrentRound.Hands[i] = new Mahjong.Hand();
                 CurrentRound.Hands[i].SetArray(TileList);
 
-                CurrentRound.BalanceBefore[i] = Balance[i];
+                CurrentRound.BalanceBefore[i] = Balance[i] * 100;
             }
         }
 
@@ -438,7 +438,7 @@ namespace TenhouViewer.Tenhou
                 int Index = Temp[i].IndexOf('.');
                 if(Index >= 0) Temp[i] = Temp[i].Substring(0, Index);
 
-                Result[i] = Convert.ToUInt16(Temp[i]);
+                Result[i] = Convert.ToInt32(Temp[i]);
             }
 
             return Result;

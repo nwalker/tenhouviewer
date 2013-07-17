@@ -31,24 +31,39 @@ namespace TenhouViewer.Mahjong
 
         public void SaveXml(string FileName)
         {
-            // (рассмотрен выше)
             Xml X = new Xml(FileName);
 
             X.StartXML("mjreplay");
 
-            // Что это за раздача?
+            // replay ID
             X.WriteTag("hash", "value", Hash);
 
-            // список раундов
             {
-                X.StartTag("rounds");
+                X.StartTag("roundlist");
                 X.Attribute("count", Rounds.Count);
-
                 for (int i = 0; i < Rounds.Count; i++)
                 {
                     X.StartTag("round");
                     X.Attribute("index", i);
                     X.Attribute("filename", "round/" + Hash + "_" + i.ToString() + ".xml");
+
+                    // Results
+                    {
+                        int[] StepCount = new int[4];
+                        for (int j = 0; j < 4; j++) StepCount[j] = 0;
+                        for(int j = 0; j < Rounds[i].Steps.Count; j++)
+                        {
+                            if (Rounds[i].Steps[j].Type == StepType.STEP_DISCARDTILE) StepCount[Rounds[i].Steps[j].Player]++;
+                        }
+
+                        X.WriteTag("balancebefore", Rounds[i].BalanceBefore);
+                        X.WriteTag("balanceafter", Rounds[i].BalanceAfter);
+                        X.WriteTag("pay", Rounds[i].Pay);
+                        X.WriteTag("han", Rounds[i].HanCount);
+                        X.WriteTag("fu", Rounds[i].FuCount);
+                        X.WriteTag("cost", Rounds[i].Cost);
+                        X.WriteTag("steps", StepCount);
+                    }
 
                     X.EndTag();
                 }

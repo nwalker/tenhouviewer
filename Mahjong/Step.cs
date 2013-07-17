@@ -29,12 +29,12 @@ namespace TenhouViewer.Mahjong
 
     class Step
     {
-        private int Player = -1;
-        private int FromWho = -1;
-        private int Tile = -1;
-        private int Reason = -1;
-        private StepType Type;
-        private Naki NakiData = null;
+        public int Player = -1;
+        public int FromWho = -1;
+        public int Tile = -1;
+        public int Reason = -1;
+        public StepType Type;
+        public Naki NakiData = null;
 
         public Step(int Player)
         {
