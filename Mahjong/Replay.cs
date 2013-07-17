@@ -45,7 +45,6 @@ namespace TenhouViewer.Mahjong
                 {
                     Players[j].WriteXml(X);
                 }
-
                 X.EndTag();
             }
 
@@ -56,7 +55,7 @@ namespace TenhouViewer.Mahjong
                 {
                     X.StartTag("round");
                     X.Attribute("index", i);
-                    X.Attribute("filename", "round/" + Hash + "_" + i.ToString() + ".xml");
+                    X.Attribute("filename", Hash + "_" + i.ToString() + ".xml");
 
                     // Results
                     {
@@ -67,6 +66,8 @@ namespace TenhouViewer.Mahjong
                             if (Rounds[i].Steps[j].Type == StepType.STEP_DISCARDTILE) StepCount[Rounds[i].Steps[j].Player]++;
                         }
 
+                        X.WriteTag("result", "value", Rounds[i].StringResult);
+
                         X.WriteTag("balancebefore", Rounds[i].BalanceBefore);
                         X.WriteTag("balanceafter", Rounds[i].BalanceAfter);
                         X.WriteTag("pay", Rounds[i].Pay);
@@ -74,6 +75,8 @@ namespace TenhouViewer.Mahjong
                         X.WriteTag("fu", Rounds[i].FuCount);
                         X.WriteTag("cost", Rounds[i].Cost);
                         X.WriteTag("steps", StepCount);
+                        X.WriteTag("winner", Rounds[i].Winner);
+                        X.WriteTag("loser", Rounds[i].Loser);
                     }
 
                     X.EndTag();
