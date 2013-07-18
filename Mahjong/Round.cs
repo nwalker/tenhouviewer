@@ -28,7 +28,8 @@ namespace TenhouViewer.Mahjong
         public List<int>[] Shanten = new List<int>[4];
 
         public List<Yaku>[] Yaku = new List<Yaku>[4];
-        
+
+        public int[] StepCount = new int[4];
         public int[] Pay = new int[4];
         public int[] BalanceBefore = new int[4];
         public int[] BalanceAfter = new int[4];
@@ -70,6 +71,7 @@ namespace TenhouViewer.Mahjong
                 Cost[i] = 0;
                 Riichi[i] = -1;
                 OpenedSets[i] = 0;
+                StepCount[i] = 0;
 
                 Dealer[i] = false;
                 Loser[i] = false;
@@ -108,6 +110,7 @@ namespace TenhouViewer.Mahjong
                     case "openedsets": OpenedSets = X.ReadIntArray(); break;
                     case "riichi": Riichi = X.ReadIntArray(); break;
                     case "dealer": Dealer = X.ReadBoolArray(); break;
+                    case "stepcount": StepCount = X.ReadIntArray(); break;
                     case "steps":
                         {
                             int Count = X.GetIntAttribute("count");
@@ -278,6 +281,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("openedsets", OpenedSets);
             X.WriteTag("riichi", Riichi);
             X.WriteTag("dealer", Dealer);
+            X.WriteTag("stepcount", StepCount);
 
             // Start hands
             {
@@ -447,6 +451,7 @@ namespace TenhouViewer.Mahjong
             {
                 Hands[i].Clear();
                 Hands[i].Add(StartHands[i]);
+                Shanten[i].Add(StartHands[i].Shanten);
 
                 TempHands[i] = new Hand(StartHands[i]);
             }
