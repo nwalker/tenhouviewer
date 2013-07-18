@@ -29,7 +29,6 @@ namespace TenhouViewer
                 Mahjong.Replay ReplayLoaded = new Mahjong.Replay();
 
                 ReplayLoaded.LoadXml("2013070808gm-0089-0000-2f83b7da");
-                
             }
         }
     }

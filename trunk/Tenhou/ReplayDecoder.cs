@@ -438,6 +438,7 @@ namespace TenhouViewer.Tenhou
                 case 'D': // first player discard tile
                     Step = new Mahjong.Step(0);
                     Step.DiscardTile(Tile);
+                    CurrentRound.StepCount[0]++;
                     CheckDealer(0);
                     break;
                 case 'U': // second player draw tile
@@ -447,6 +448,7 @@ namespace TenhouViewer.Tenhou
                 case 'E': // second player discard tile
                     Step = new Mahjong.Step(1);
                     Step.DiscardTile(Tile);
+                    CurrentRound.StepCount[1]++;
                     CheckDealer(1);
                     break;
                 case 'V': // third player draw tile
@@ -456,7 +458,7 @@ namespace TenhouViewer.Tenhou
                 case 'F': // third player discard tile
                     Step = new Mahjong.Step(2);
                     Step.DiscardTile(Tile);
-
+                    CurrentRound.StepCount[2]++;
                     CheckDealer(2);
                     break;
                 case 'W': // fourth player draw tile
@@ -466,6 +468,7 @@ namespace TenhouViewer.Tenhou
                 case 'G': // fourth player discard tile
                     Step = new Mahjong.Step(3);
                     Step.DiscardTile(Tile);
+                    CurrentRound.StepCount[3]++;
                     CheckDealer(3);
                     break;
                 default:
