@@ -47,6 +47,7 @@
     <Compile Include="Mahjong\Player.cs" />
     <Compile Include="Mahjong\Replay.cs" />
     <Compile Include="Mahjong\Round.cs" />
+    <Compile Include="Mahjong\ShantenCalculator.cs" />
     <Compile Include="Mahjong\Step.cs" />
     <Compile Include="Mahjong\Tile.cs" />
     <Compile Include="Mahjong\Wall.cs" />
