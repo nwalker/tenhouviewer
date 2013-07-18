@@ -184,8 +184,8 @@ namespace TenhouViewer.Tenhou
                 // Tile list, 13 tiles
                 int[] TileList = DecompositeIntList(Reader.GetAttribute("hai" + i.ToString()));
 
-                CurrentRound.Hands[i] = new Mahjong.Hand();
-                CurrentRound.Hands[i].SetArray(TileList);
+                CurrentRound.StartHands[i] = new Mahjong.Hand();
+                CurrentRound.StartHands[i].SetArray(TileList);
 
                 CurrentRound.BalanceBefore[i] = Balance[i] * 100;
             }

@@ -20,12 +20,16 @@ namespace TenhouViewer
 
             Mahjong.Replay Replay = R.R;
 
+            // Play!
+            for (int i = 0; i < Replay.Rounds.Count; i++) Replay.Rounds[i].ReplayGame();
+
             Replay.Save();
 
             {
                 Mahjong.Replay ReplayLoaded = new Mahjong.Replay();
 
                 ReplayLoaded.LoadXml("2013070808gm-0089-0000-2f83b7da");
+                
             }
         }
     }

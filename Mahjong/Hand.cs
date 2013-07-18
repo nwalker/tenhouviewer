@@ -16,12 +16,39 @@ namespace TenhouViewer.Mahjong
 
         }
 
+        public Hand(Hand H)
+        {
+            for (int i = 0; i < Tiles.Length; i++) this.Tiles[i] = H.Tiles[i];
+
+            for (int i = 0; i < H.Naki.Count; i++) Naki.Add(H.Naki[i]);
+        }
+
         public void SetArray(int[] Tiles)
         {
             for (int i = 0; i < 13; i++) this.Tiles[i] = Tiles[i];
             this.Tiles[13] = -1;
 
             Array.Sort(this.Tiles);
+        }
+
+        public void Draw(int Tile)
+        {
+            for (int i = 0; i < Tiles.Length; i++)
+            {
+                if (Tiles[i] == -1) Tiles[i] = Tile;
+            }
+
+            Array.Sort(Tiles);
+        }
+
+        public void Discard(int Tile)
+        {
+            for (int i = 0; i < Tiles.Length; i++)
+            {
+                if (Tiles[i] == Tile) Tiles[i] = -1;
+            }
+
+            Array.Sort(Tiles);
         }
 
         public int Shanten
@@ -31,6 +58,17 @@ namespace TenhouViewer.Mahjong
                 ShantenCalculator SC = new ShantenCalculator(this);
 
                 return SC.GetShanten();
+            }
+        }
+
+        public List<int> WaitingList
+        {
+            get
+            {
+                ShantenCalculator SC = new ShantenCalculator(this);
+                SC.GetShanten();
+
+                return SC.WaitingList();
             }
         }
 
