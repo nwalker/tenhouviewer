@@ -49,6 +49,11 @@ namespace TenhouViewer
                         // -dLog.txt
                         DownloadLog(Argument);
                         break;
+                    case 'P':
+                        // Parse game by hash
+                        // -P2013070808gm-0089-0000-2f83b7da
+                        ParseHash(Argument);
+                        break;
                     case 'p':
                         // Parse games by log
                         // -pLog.txt
@@ -86,6 +91,32 @@ namespace TenhouViewer
 
             Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
             Log.DownloadAll(LogDir);
+        }
+
+        static void ParseHash(string Hash)
+        {
+            Console.Write("Parsing game: " + Hash);
+
+            string ReplayFileName = Hash + ".xml";
+
+            Console.Write(Hash);
+
+            if (!File.Exists(ReplayFileName))
+            {
+                Console.WriteLine(" - file not found!");
+                return;
+            }
+
+            Tenhou.ReplayDecoder R = new Tenhou.ReplayDecoder();
+            R.OpenPlainText(ReplayFileName, Hash);
+
+            // replay (calc shanten, waitings and other) and save result
+            Mahjong.Replay Replay = R.R;
+            Replay.ReplayGame();
+            Replay.Save();
+
+            Console.WriteLine(" - ok!");
+
         }
 
         static void ParseLog(string FileName)
