@@ -7,7 +7,8 @@ namespace TenhouViewer.Mahjong
 {
     class Hand
     {
-        private int[] TileList = new int[13];
+        public int[] Tiles = new int[14];
+        public int NakiCount = 0;
 
         public Hand()
         {
@@ -16,20 +17,10 @@ namespace TenhouViewer.Mahjong
 
         public void SetArray(int[] Tiles)
         {
-            for (int i = 0; i < 13; i++) TileList[i] = Tiles[i];
+            for (int i = 0; i < 13; i++) this.Tiles[i] = Tiles[i];
+            this.Tiles[13] = -1;
 
-            Array.Sort(TileList);
-        }
-
-        public int[] Tiles
-        {
-            get
-            {
-                int[] Temp = new int[13];
-                for (int i = 0; i < 13; i++) Temp[i] = TileList[i];
-
-                return Temp;
-            }
+            Array.Sort(this.Tiles);
         }
     }
 }
