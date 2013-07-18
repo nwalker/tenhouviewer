@@ -33,12 +33,12 @@ namespace TenhouViewer.Mahjong
             }
         }
 
-        public void LoadXml(string Hash)
+        public bool LoadXml(string Hash)
         {
             string FileName = "replay/" + Hash + ".xml";
             XmlLoad X = new XmlLoad();
 
-            if (!X.Load(FileName)) return;
+            if (!X.Load(FileName)) return false;
             while (X.Read())
             {
                 switch (X.ElementName)
@@ -106,6 +106,8 @@ namespace TenhouViewer.Mahjong
                         break;
                 }
             }
+
+            return true;
         }
 
         public void SaveXml(string FileName)
