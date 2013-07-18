@@ -39,7 +39,7 @@ namespace TenhouViewer.Tenhou
                 {
                     webClient.DownloadFile(Url, FileName);
                 }
-                catch (Exception E)
+                catch (Exception)
                 {
                     return false;
                 }

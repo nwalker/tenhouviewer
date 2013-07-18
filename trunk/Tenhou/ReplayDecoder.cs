@@ -432,7 +432,7 @@ namespace TenhouViewer.Tenhou
             {
                 Tile = Convert.ToInt16(Value);
             }
-            catch (Exception E)
+            catch (Exception)
             {
                 return;
             }

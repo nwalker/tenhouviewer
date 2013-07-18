@@ -12,6 +12,8 @@ namespace TenhouViewer
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             Console.WriteLine("TenhouViewer [dev.]");
 
             ParseArgs(args);
@@ -21,9 +23,15 @@ namespace TenhouViewer
         static void ShowHelp()
         {
             Console.WriteLine("Help:");
-            Console.WriteLine("TenhouViewer -DHash - download game");
-            Console.WriteLine("TenhouViewer -dLog.txt - download all games from log Log.txt");
-            Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt");
+            Console.WriteLine("TenhouViewer -DHash - download game;");
+            Console.WriteLine("TenhouViewer -dLog.txt - download all games from log Log.txt;");
+            Console.WriteLine("TenhouViewer -PHash - parse game;");
+            Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
+            Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
+            Console.WriteLine(" shanten=N - find all hands started with N shanten number;");
+            Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater than N;");
+            Console.WriteLine(" shantenmax=N - find all hands started with shanten number less than N;");
+            Console.WriteLine(" place=N - find all players, who took N place;");
         }
 
         static void ParseArgs(string[] args)
@@ -58,6 +66,11 @@ namespace TenhouViewer
                         // Parse games by log
                         // -pLog.txt
                         ParseLog(Argument);
+                        break;
+                    case 'f':
+                        // Parse games by log
+                        // -fLog.txt shanten=1
+                        Find(Argument, args);
                         break;
                 }
             }
@@ -96,7 +109,6 @@ namespace TenhouViewer
         static void ParseHash(string Hash)
         {
             Console.Write("Parsing game: " + Hash);
-
             string ReplayFileName = Hash + ".xml";
 
             Console.Write(Hash);
@@ -154,6 +166,132 @@ namespace TenhouViewer
 
                 Console.WriteLine(" - ok!");
             }
+        }
+
+        static void Find(string FileName, string[] args)
+        {
+            Console.WriteLine("Finding games from log: " + FileName);
+
+            if (!File.Exists(FileName))
+            {
+                Console.WriteLine("Error: Log file " + FileName + " not found!");
+                return;
+            }
+
+            Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
+
+            Search.GameFinder Finder = new Search.GameFinder(Log.HashList);
+
+            for (int i = 1; i < args.Length; i++)
+            {
+                string a = args[i];
+                int Delimiter = a.IndexOf('=');
+                if(Delimiter < 0) continue;
+
+                string Param = a.Substring(0, Delimiter);
+                string Value = a.Substring(Delimiter + 1);
+
+                switch (Param)
+                {
+                    case "shanten":
+                        {
+                            int Shanten = ParseIntArg(Value, 0, 6, "shanten");
+
+                            if (Shanten != -1)
+                            {
+                                Finder.ShantenMax = Shanten;
+                                Finder.ShantenMin = Shanten;
+                            }
+                        }
+                        break;
+                    case "shantenmin":
+                        {
+                            int Shanten = ParseIntArg(Value, 0, 6, "shantenmin");
+
+                            if (Shanten != -1) Finder.ShantenMin = Shanten;
+                        }
+                        break;
+                    case "shantenmax":
+                        {
+                            int Shanten = ParseIntArg(Value, 0, 6, "shantenmax");
+
+                            if (Shanten != -1) Finder.ShantenMax = Shanten;
+                        }
+                        break;
+                    case "place":
+                        {
+                            int Place = ParseIntArg(Value, 1, 4, "place");
+
+                            if (Place != -1) Finder.Place = Place;
+                        }
+                        break;
+                }
+            }
+
+            List<Search.Result> ResultList = Finder.Find();
+
+            Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
+            PrintList(ResultList);
+        }
+
+        static private string YakuList(List<Mahjong.Yaku> Yaku)
+        {
+            string Text = "";
+
+            for (int i = 0; i < Yaku.Count; i++)
+            {
+                Text += Mahjong.YakuName.GetYakuName(Yaku[i].Index) + " ";
+            }
+
+            return Text;
+        }
+
+        static private void PrintList(List<Search.Result> ResultList)
+        {
+            for (int i = 0; i < ResultList.Count; i++)
+            {
+                Search.Result R = ResultList[i];
+
+                for (int r = 0; r < R.Replay.Rounds.Count; r++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[r];
+
+                    for (int k = 0; k < 4; k++)
+                    {
+                        if (R.HandMark[r][k])
+                        {
+                            string Format = "http://tenhou.net/0/?log={0:s}&ts={1:d}&tw={2:d}\t{3:d}\t{4:d}\t{5:s}\t{6:s}";
+                            Console.WriteLine(String.Format(Format,
+                                              R.Replay.Hash, r, k, R.Replay.Rounds[r].Pay[k],
+                                              Rnd.StepCount[k],
+                                              R.Replay.Players[k].NickName, YakuList(Rnd.Yaku[k])));                        }
+                    }
+                }
+            }
+        }
+
+        private static int ParseIntArg(string Value, int Min, int Max, string ArgName)
+        {
+            int Temp = -1;
+
+            try
+            {
+                Temp = Convert.ToInt32(Value);
+            }
+            catch (Exception)
+            {
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): {s:3}",
+                    ArgName, Min, Max, Value));
+                return -1;
+            }
+            if ((Temp < Min) || (Temp > Max))
+            {
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): {s:3}",
+                    ArgName, Min, Max, Value));
+                return -1;
+            }
+
+            return Temp;
         }
     }
 }
