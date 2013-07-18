@@ -23,10 +23,12 @@ namespace TenhouViewer.Mahjong
 
         public Wall Wall = new Wall();
         public List<Step> Steps = new List<Step>();
-        public Hand[] Hands = new Hand[4]; // Start hands
+        public Hand[] StartHands = new Hand[4]; // Start hands
+        public List<Hand>[] Hands = new List<Hand>[4];
+        public List<int>[] Shanten = new List<int>[4];
 
         public List<Yaku>[] Yaku = new List<Yaku>[4];
-
+        
         public int[] Pay = new int[4];
         public int[] BalanceBefore = new int[4];
         public int[] BalanceAfter = new int[4];
@@ -59,6 +61,8 @@ namespace TenhouViewer.Mahjong
             for (int i = 0; i < 4; i++)
             {
                 Yaku[i] = new List<Yaku>();
+                Hands[i] = new List<Hand>();
+                Shanten[i] = new List<int>();
 
                 Pay[i] = 0;
                 HanCount[i] = 0;
@@ -131,9 +135,42 @@ namespace TenhouViewer.Mahjong
                                             int Player = Subtree.GetIntAttribute("player");
 
                                             XmlLoad HandData = Subtree.GetSubtree();
-                                            Hands[Player] = new Hand();
+                                            StartHands[Player] = new Hand();
 
-                                            Hands[Player].ReadXml(HandData);
+                                            StartHands[Player].ReadXml(HandData);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+                    case "shantenlist":
+                        {
+                            XmlLoad Subtree = X.GetSubtree();
+
+                            while (Subtree.Read())
+                            {
+                                switch (Subtree.ElementName)
+                                {
+                                    case "shanten":
+                                        {
+                                            int Player = Subtree.GetIntAttribute("player");
+                                            int Count = Subtree.GetIntAttribute("shanten");
+
+                                            XmlLoad ShantenData = Subtree.GetSubtree();
+
+                                            while (ShantenData.Read())
+                                            {
+                                                switch (ShantenData.ElementName)
+                                                {
+                                                    case "step":
+                                                        {
+                                                            int Value = ShantenData.GetIntAttribute("value");
+                                                            Shanten[Player].Add(Value);
+                                                        }
+                                                        break;
+                                                }
+                                            }
                                         }
                                         break;
                                 }
@@ -242,6 +279,22 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("riichi", Riichi);
             X.WriteTag("dealer", Dealer);
 
+            // Start hands
+            {
+                X.StartTag("hands");
+                for (int i = 0; i < StartHands.Length; i++)
+                {
+                    X.StartTag("hand");
+                    X.Attribute("player", i);
+
+                    StartHands[i].WriteXml(X);
+
+                    X.EndTag();
+                }
+
+                X.EndTag();
+            }
+
             // Actions
             {
                 X.StartTag("steps");
@@ -250,6 +303,25 @@ namespace TenhouViewer.Mahjong
                 for (int j = 0; j < Steps.Count; j++)
                 {
                     Steps[j].WriteXml(X);
+                }
+
+                X.EndTag();
+            }
+
+            // Shanten dynamic
+            {
+                X.StartTag("shantenlist");
+                for (int i = 0; i < Shanten.Length; i++)
+                {
+                    if (Shanten[i].Count == 0) continue;
+
+                    X.StartTag("shanten");
+                    X.Attribute("player", i);
+                    X.Attribute("count", Shanten[i].Count);
+
+                    for (int j = 0; j < Shanten[i].Count; j++) X.WriteTag("step", "value", Shanten[i][j]);
+
+                    X.EndTag();
                 }
 
                 X.EndTag();
@@ -281,6 +353,28 @@ namespace TenhouViewer.Mahjong
                         }
                         X.EndTag();
                     }
+
+                    if (Hands[i].Count > 0)
+                    {
+                        // Can find waitings?
+                        for (int j = Hands[i].Count - 1; j >= 0; j--)
+                        {
+                            if (Hands[i][j].Shanten == 0)
+                            {
+                                // Waiting hand
+                                List<int> WaitingList = Hands[i][j].WaitingList;
+
+                                X.StartTag("waitings");
+                                X.Attribute("count", WaitingList.Count);
+                                for (int k = 0; k < WaitingList.Count; k++)
+                                {
+                                    X.WriteTag("waiting", "value", WaitingList[k]);
+                                }
+                                X.EndTag();
+                                break;
+                            }
+                        }
+                    }
                     X.EndTag();
                 }
             }
@@ -306,22 +400,6 @@ namespace TenhouViewer.Mahjong
                 for (int j = 0; j < UraDora.Count; j++)
                 {
                     X.WriteTag("dora", "value", UraDora[j]);
-                }
-
-                X.EndTag();
-            }
-
-            // Start hands
-            {
-                X.StartTag("hands");
-                for (int i = 0; i < Hands.Length; i++)
-                {
-                    X.StartTag("hand");
-                    X.Attribute("player", i);
-
-                    Hands[i].WriteXml(X);
-
-                    X.EndTag();
                 }
 
                 X.EndTag();
@@ -358,5 +436,68 @@ namespace TenhouViewer.Mahjong
             }
         }
 
+        // Get all hands in round
+        public void ReplayGame()
+        {
+            Hand[] TempHands = new Hand[4];
+            int LastTile = -1;
+
+            // Init hands
+            for (int i = 0; i < 4; i++)
+            {
+                Hands[i].Clear();
+                Hands[i].Add(StartHands[i]);
+
+                TempHands[i] = new Hand(StartHands[i]);
+            }
+
+            for (int i = 0; i < Steps.Count; i++)
+            {
+                Step S = Steps[i];
+
+                switch (Steps[i].Type)
+                {
+                    case StepType.STEP_DRAWTILE:
+                        {
+                            TempHands[S.Player].Draw(S.Tile);
+                        }
+                        break;
+                    case StepType.STEP_DRAWDEADTILE:
+                        {
+                            LastTile = S.Tile;
+
+                            TempHands[S.Player].Draw(S.Tile);
+                        }
+                        break;
+                    case StepType.STEP_DISCARDTILE:
+                        {
+                            TempHands[S.Player].Discard(S.Tile);
+
+                            Hands[S.Player].Add(new Hand(TempHands[S.Player]));
+                            Shanten[S.Player].Add(TempHands[S.Player].Shanten);
+                        }
+                        break;
+                    case StepType.STEP_NAKI:
+                        {
+                            TempHands[S.Player].Naki.Add(S.NakiData);
+                        }
+                        break;
+                    case StepType.STEP_TSUMO:
+                        {
+                            Hands[S.Player].Add(new Hand(TempHands[S.Player]));
+                            Shanten[S.Player].Add(-1);
+                        }
+                        break;
+                    case StepType.STEP_RON:
+                        {
+                            TempHands[S.Player].Draw(LastTile);
+
+                            Hands[S.Player].Add(new Hand(TempHands[S.Player]));
+                            Shanten[S.Player].Add(-1);
+                        }
+                        break;
+                }
+            }
+        }
     }
 }

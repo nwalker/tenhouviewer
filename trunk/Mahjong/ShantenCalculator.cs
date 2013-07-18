@@ -1,13 +1,30 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace TenhouViewer.Mahjong
 {
+    enum FormType
+    {
+        Toitsu,  // Pair;
+        Ankou,   // 3 similar tiles;
+        Mentsu,  // 3 run tiles (1-2-3);
+        Kanchan, // closed wait form : 1-3, 2-4, 3-5;
+        Ryanmen, // opened wait form and end wait form: 12-, -23-, -34-, -45- и т.д.
+        ToitsuWait, // Pair (to ankou);
+    }
+
     class ShantenCalculator
     {
         private Hand Hand;
         private uint[] Tehai = new uint[38]; // Для анализа руки
+
+        private int WaitingCount = -1; // количество сторон в выигрышном ожидании
+        private uint[] Waitings = new uint[38]; // Выигрышные ожидания
+
+        // Completed and uncompleted forms in hand
+        private Stack Forms = new Stack();
 
         private int Mentsu; // Mentsu = Set
         private int Kouho;  // Kouho  = Incomplete set
@@ -19,7 +36,9 @@ namespace TenhouViewer.Mahjong
 
         private int TempShantenNormal;
 
-        private int Shanten;
+        private int Shanten = -1;
+
+        public bool CompletedHand = false;
 
         public ShantenCalculator(Hand Hand)
         {
@@ -32,8 +51,11 @@ namespace TenhouViewer.Mahjong
         {
             int i;
 
+            WaitingCount = 0;
+
             for (i = 0; i < 38; i++)
             {
+                Waitings[i] = 0;
                 Tehai[i] = 0;
             }
 
@@ -59,7 +81,66 @@ namespace TenhouViewer.Mahjong
             return Shanten;
         }
 
-        // Шантен до читойцу
+        public List<int> WaitingList()
+        {
+            List<int> TempList = new List<int>();
+
+            for (int i = 0; i < Waitings.Length; i++)
+            {
+                if (Waitings[i] > 0) TempList.Add(i);
+            }
+
+            return TempList;
+        }
+
+        private void CalcWaitings()
+        {
+            int i;
+
+            Stack Temp = (Stack)Forms.Clone();
+            bool IsSyanpon = false;
+
+            for (i = 0; i < Forms.Count; i++)
+            {
+                uint Form = Convert.ToUInt32(Temp.Pop());
+
+                // Decode form info
+                FormType FormType = (FormType)((Form >> 24) & 0xFF);
+                int Tile1 = Convert.ToInt32((Form >> 16) & 0xFF);
+                int Tile2 = Convert.ToInt32((Form >> 8) & 0xFF);
+                int Tile3 = Convert.ToInt32((Form >> 0) & 0xFF);
+
+                switch (FormType)
+                {
+                    case FormType.Toitsu:
+                        if (!IsSyanpon) break;
+                        if (Waitings[Tile1] == 0) { Waitings[Tile1] = 1; WaitingCount++; }
+
+                        break;
+                    case FormType.ToitsuWait:
+                        IsSyanpon = true;
+                        if (Waitings[Tile1] == 0) { Waitings[Tile1] = 1; WaitingCount++; }
+                        break;
+                    case FormType.Ryanmen:
+                        // Wait from lower numbers
+                        if (Tile1 % 10 != 1)
+                        {
+                            if (Waitings[Tile1 - 1] == 0) { Waitings[Tile1 - 1] = 1; WaitingCount++; }
+                        }
+                        // Wait from higher numbers
+                        if (Tile2 % 10 != 9)
+                        {
+                            if (Waitings[Tile2 + 1] == 0) { Waitings[Tile2 + 1] = 1; WaitingCount++; }
+                        }
+                        break;
+                    case FormType.Kanchan:
+                        if (Waitings[Tile1 + 1] == 0) { Waitings[Tile1 + 1] = 1; WaitingCount++; }
+                        break;
+                }
+            }
+        }
+
+        // Shanten to chiitoi hand
         private int CalcShantenChiitoi()
         {
             int i;
@@ -79,6 +160,15 @@ namespace TenhouViewer.Mahjong
 
             // 4 similar tiles - not 2 pair
             if (TypesCount < 7) TempShanten += 7 - TypesCount;
+
+            // Waiting calculation
+            if (TempShanten == 0)
+            {
+                for (i = 0; i < 38; i++)
+                {
+                    if ((Tehai[i] == 1)&&(Waitings[i] == 0)) { Waitings[i] = 1; WaitingCount++; }
+                }
+            }
 
             return TempShanten;
         }
@@ -108,18 +198,49 @@ namespace TenhouViewer.Mahjong
                     if ((Tehai[i] >= 2) && (KokushiPair == 0)) KokushiPair = 1;
                 }
             }
-            // Если есть пара - уменьшим шантен
             TempShanten -= KokushiPair;
 
+            // Waiting calculation
+            if (TempShanten == 0)
+            {
+                for (i = 1; i < 30; i++)
+                {
+                    if ((i % 10 == 1) || (i % 10 == 9))
+                    {
+                        if (Tehai[i] == 0)
+                        {
+                            if (Waitings[i] == 0) { Waitings[i] = 1; WaitingCount++; }
+                        }
+                    }
+                }
+
+                for (i = 31; i < 38; i++)
+                {
+                    if (Tehai[i] == 0)
+                    {
+                        if (Waitings[i] == 0) { Waitings[i] = 1; WaitingCount++; }
+                    }
+                }
+            }
+
             return TempShanten;
+        }
+
+        private uint EncodeForm(FormType Type, int Tile1, int Tile2, int Tile3)
+        {
+            return (Convert.ToUInt32(Type) << 24) | (((uint)Tile1 & 0xFF) << 16) | (((uint)Tile2 & 0xFF) << 8) | ((uint)Tile3 & 0xFF);
         }
 
         private int CalcShantenNormal()
         {
             int i;
 
-            // Maximal shanten in normal hand
+            // Maximal shanten in normal hand is 8
             TempShantenNormal = 8;
+            CompletedHand = false;
+
+            // Clear forms list
+            Forms.Clear();
 
             Mentsu = Hand.Naki.Count;
             Toitsu = 0;
@@ -132,7 +253,9 @@ namespace TenhouViewer.Mahjong
                     Toitsu++;
                     Tehai[i] -= 2;
 
+                    Forms.Push(EncodeForm(FormType.Toitsu, i, i, 0));
                     CutMentsu(1);
+                    Forms.Pop();
 
                     Tehai[i] += 2;
                     Toitsu--;
@@ -155,7 +278,9 @@ namespace TenhouViewer.Mahjong
                 Mentsu++;
                 Tehai[i] -= 3;
 
+                Forms.Push(EncodeForm(FormType.Ankou, i, i, i));
                 CutMentsu(i);
+                Forms.Pop();
 
                 Tehai[i] += 3;
                 Mentsu--;
@@ -168,7 +293,9 @@ namespace TenhouViewer.Mahjong
                 Tehai[i + 1]--;
                 Tehai[i + 2]--;
 
+                Forms.Push(EncodeForm(FormType.Mentsu, i, i + 1, i + 2));
                 CutMentsu(i);
+                Forms.Pop();
 
                 Tehai[i]++;
                 Tehai[i + 1]++;
@@ -189,6 +316,31 @@ namespace TenhouViewer.Mahjong
                 int Temp = 8 - Mentsu * 2 - Kouho - Toitsu;
                 if (Temp <= TempShantenNormal)
                 {
+                    if (Temp == 0)
+                    {
+                        if ((Kouho == 0) && (Toitsu == 0))
+                        {
+                            // Ожидание танки!
+                            for (int j = 0; j < Tehai.Length; j++)
+                            {
+                                if (Tehai[j] > 0)
+                                {
+                                    if (Waitings[j] == 0) { Waitings[j] = 1; WaitingCount++; }
+                                }
+                            }
+                        }
+                        if ((Kouho == 0) && (Toitsu == 1))
+                        {
+                            // Agari! Hand completed
+                            CompletedHand = true;
+                        }
+                        else
+                        {
+                            // Tempai! Find all waitings in hand
+                            CalcWaitings();
+                        }
+                    }
+
                     TempShantenNormal = Temp;
                 }
                 return;
@@ -202,7 +354,10 @@ namespace TenhouViewer.Mahjong
                     Kouho++;
                     Tehai[i] -= 2;
 
+                    Forms.Push(EncodeForm(FormType.ToitsuWait, i, i, 0));
                     CutTaatsu(i);
+                    Forms.Pop();
+
 
                     Tehai[i] += 2;
                     Kouho--;
@@ -214,7 +369,9 @@ namespace TenhouViewer.Mahjong
                     Kouho++;
                     Tehai[i]--; Tehai[i + 1]--;
 
+                    Forms.Push(EncodeForm(FormType.Ryanmen, i, i + 1, 0));
                     CutTaatsu(i);
+                    Forms.Pop();
 
                     Tehai[i]++; Tehai[i + 1]++;
                     Kouho--;
@@ -226,7 +383,9 @@ namespace TenhouViewer.Mahjong
                     Kouho++;
                     Tehai[i]--; Tehai[i + 2]--;
 
+                    Forms.Push(EncodeForm(FormType.Kanchan, i, i + 2, 0));
                     CutTaatsu(i);
+                    Forms.Pop();
 
                     Tehai[i]++; Tehai[i + 2]++;
                     Kouho--;

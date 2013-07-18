@@ -139,19 +139,23 @@ namespace TenhouViewer.Mahjong
             switch (X.ElementName)
             {
                 case "drawtile":
+                    Type = StepType.STEP_DRAWTILE;
                     Player = X.GetIntAttribute("player");
                     Tile = X.GetIntAttribute("tile");
 
                     break;
                 case "discardtile":
+                    Type = StepType.STEP_DISCARDTILE;
                     Player = X.GetIntAttribute("player");
                     Tile = X.GetIntAttribute("tile");
                     break;
                 case "drawdeadtile":
+                    Type = StepType.STEP_DRAWDEADTILE;
                     Player = X.GetIntAttribute("player");
                     Tile = X.GetIntAttribute("tile");
                     break;
                 case "naki":
+                    Type = StepType.STEP_NAKI;
                     Player = X.GetIntAttribute("player");
                     {
                         XmlLoad Subtree = X.GetSubtree();
@@ -161,28 +165,36 @@ namespace TenhouViewer.Mahjong
                     }
                     break;
                 case "riichi1":
+                    Type = StepType.STEP_RIICHI;
                     Player = X.GetIntAttribute("player");
                     break;
                 case "riichi2":
+                    Type = StepType.STEP_RIICHI1000;
                     Player = X.GetIntAttribute("player");
                     break;
                 case "tsumo":
+                    Type = StepType.STEP_TSUMO;
                     Player = X.GetIntAttribute("player");
                     break;
                 case "ron":
+                    Type = StepType.STEP_RON;
                     Player = X.GetIntAttribute("player");
                     FromWho = X.GetIntAttribute("from");
                     break;
                 case "draw":
+                    Type = StepType.STEP_DRAW;
                     Reason = X.GetIntAttribute("reason");
                     break;
                 case "newdora":
+                    Type = StepType.STEP_NEWDORA;
                     Tile = X.GetIntAttribute("tile");
                     break;
                 case "disconnect":
+                    Type = StepType.STEP_DISCONNECT;
                     Player = X.GetIntAttribute("player");
                     break;
                 case "connect":
+                    Type = StepType.STEP_CONNECT;
                     Player = X.GetIntAttribute("player");
                     break;
             }
