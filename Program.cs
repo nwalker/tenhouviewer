@@ -28,10 +28,15 @@ namespace TenhouViewer
             Console.WriteLine("TenhouViewer -PHash - parse game;");
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
-            Console.WriteLine(" shanten=N - find all hands started with N shanten number;");
-            Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater than N;");
-            Console.WriteLine(" shantenmax=N - find all hands started with shanten number less than N;");
-            Console.WriteLine(" place=N - find all players, who took N place;");
+            Console.WriteLine(" shanten=N - find all hands started with N shanten number (0-6);");
+            Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater than N (0-6);");
+            Console.WriteLine(" shantenmax=N - find all hands started with shanten number less than N (0-6);");
+            Console.WriteLine(" ratingmin=N - find all players, who has rating greater than N (1000-3000);");
+            Console.WriteLine(" ratingmax=N - find all players, who has rating less than N (1000-3000);");
+            Console.WriteLine(" paymentmin=N - find all players, who receive or pay greater than N pt (-1000000-1000000);");
+            Console.WriteLine(" paymentmax=N - find all players, who receive or pay less than N pt (-1000000-1000000);");
+            Console.WriteLine(" place=N - find all players, who took N place (1-4);");
+            Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
         }
 
         static void ParseArgs(string[] args)
@@ -191,39 +196,49 @@ namespace TenhouViewer
                 string Param = a.Substring(0, Delimiter);
                 string Value = a.Substring(Delimiter + 1);
 
+                int TempValue;
+
                 switch (Param)
                 {
                     case "shanten":
+                        TempValue = ParseIntArg(Value, 0, 6, "shanten");
+                        if (TempValue != -1)
                         {
-                            int Shanten = ParseIntArg(Value, 0, 6, "shanten");
-
-                            if (Shanten != -1)
-                            {
-                                Finder.ShantenMax = Shanten;
-                                Finder.ShantenMin = Shanten;
-                            }
+                            Finder.ShantenMax = TempValue;
+                            Finder.ShantenMin = TempValue;
                         }
                         break;
                     case "shantenmin":
-                        {
-                            int Shanten = ParseIntArg(Value, 0, 6, "shantenmin");
-
-                            if (Shanten != -1) Finder.ShantenMin = Shanten;
-                        }
+                        TempValue = ParseIntArg(Value, 0, 6, "shantenmin");
+                        if (TempValue != -1) Finder.ShantenMin = TempValue;
                         break;
                     case "shantenmax":
-                        {
-                            int Shanten = ParseIntArg(Value, 0, 6, "shantenmax");
-
-                            if (Shanten != -1) Finder.ShantenMax = Shanten;
-                        }
+                        TempValue = ParseIntArg(Value, 0, 6, "shantenmax");
+                        if (TempValue != -1) Finder.ShantenMax = TempValue;
+                        break;
+                    case "ratingmin":
+                        TempValue = ParseIntArg(Value, 1000, 3000, "ratingmin");
+                        if (TempValue != -1) Finder.RatingMin = TempValue;
+                        break;
+                    case "ratingmax":
+                        TempValue = ParseIntArg(Value, 1000, 3000, "ratingmax");
+                        if (TempValue != -1) Finder.RatingMax = TempValue;
+                        break;
+                    case "paymentmin":
+                        TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmin");
+                        if (TempValue != -1) Finder.PaymentMin = TempValue;
+                        break;
+                    case "paymentmax":
+                        TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmax");
+                        if (TempValue != -1) Finder.PaymentMax = TempValue;
                         break;
                     case "place":
-                        {
-                            int Place = ParseIntArg(Value, 1, 4, "place");
-
-                            if (Place != -1) Finder.Place = Place;
-                        }
+                        TempValue = ParseIntArg(Value, 1, 4, "place");
+                        if (TempValue != -1) Finder.Place = TempValue;
+                        break;
+                    case "rank":
+                        TempValue = ParseIntArg(Value, 0, 20, "rank");
+                        if (TempValue != -1) Finder.Rank = TempValue;
                         break;
                 }
             }
