@@ -96,13 +96,16 @@ namespace TenhouViewer.Mahjong
             X.EndTag();
 
             // Opened part
-            X.StartTag("naki");
-            X.Attribute("count", Naki.Count);
-            for (int i = 0; i < Naki.Count; i++)
+            if (Naki.Count > 0)
             {
-                Naki[i].WriteXml(X);
+                X.StartTag("naki");
+                X.Attribute("count", Naki.Count);
+                for (int i = 0; i < Naki.Count; i++)
+                {
+                    Naki[i].WriteXml(X);
+                }
+                X.EndTag();
             }
-            X.EndTag();
         }
     }
 }

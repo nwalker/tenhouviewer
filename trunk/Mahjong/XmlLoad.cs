@@ -48,7 +48,12 @@ namespace TenhouViewer.Mahjong
 
         public XmlLoad GetSubtree()
         {
-            return new XmlLoad(F.ReadSubtree());
+            XmlReader R = F.ReadSubtree();
+
+            // Read extern element
+            R.Read();
+
+            return new XmlLoad(R);
         }
 
         public bool Read()
