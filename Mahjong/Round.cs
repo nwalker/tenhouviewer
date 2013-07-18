@@ -128,9 +128,9 @@ namespace TenhouViewer.Mahjong
                                 {
                                     case "hand":
                                         {
-                                            int Player = X.GetIntAttribute("player");
+                                            int Player = Subtree.GetIntAttribute("player");
 
-                                            XmlLoad HandData = X.GetSubtree();
+                                            XmlLoad HandData = Subtree.GetSubtree();
                                             Hands[Player] = new Hand();
 
                                             Hands[Player].ReadXml(HandData);

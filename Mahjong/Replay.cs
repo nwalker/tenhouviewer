@@ -43,7 +43,7 @@ namespace TenhouViewer.Mahjong
             {
                 switch (X.ElementName)
                 {
-                    case "hash": Hash = X.GetAttribute("value"); break;
+                    case "hash": this.Hash = X.GetAttribute("value"); break;
                     case "playerlist":
                         {
                             int Count = 4;
