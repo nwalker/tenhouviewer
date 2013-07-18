@@ -9,7 +9,6 @@ namespace TenhouViewer.Search
         public Mahjong.Replay Replay = null;
 
         // Is hand our result?
-
         public bool ReplayMark;
         public List<bool> RoundMark = new List<bool>();
         public bool[] PlayerMark = new bool[4];

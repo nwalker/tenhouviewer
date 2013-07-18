@@ -8,7 +8,7 @@ namespace TenhouViewer.Tenhou
     class LogParser
     {
         private string FileName;
-        private TenhouHashList HashList = new TenhouHashList();
+        public TenhouHashList HashList = new TenhouHashList();
 
         public LogParser(string FileName)
         {
@@ -36,10 +36,16 @@ namespace TenhouViewer.Tenhou
             }
         }
 
+        public string GetFileName(string Hash, string Dir)
+        {
+            return Dir + "/" + Hash + ".xml";
+        }
+
         public bool Download(string Hash, string Dir)
         {
+            if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
             Downloader D = new Downloader(Hash);
-            string FileName = Dir + Hash + ".xml";
+            string FileName = GetFileName(Hash, Dir);
 
             if (File.Exists(FileName))
             {
@@ -57,7 +63,6 @@ namespace TenhouViewer.Tenhou
             {
                 string Hash = HashList.Hashes[i];
 
-                
                 if (Download(Hash, Dir))
                 {
                     Console.WriteLine(Hash + ": ok");
