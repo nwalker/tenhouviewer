@@ -37,6 +37,12 @@ namespace TenhouViewer
             Console.WriteLine(" paymentmax=N - find all players, who receive or pay less than N pt (-1000000-1000000);");
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
+            Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
+            Console.WriteLine(" steps=N - find all hands, who exist less than N steps (0-60);");
+            Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
+            Console.WriteLine(" dealer - find all dealer's hands;");
+            Console.WriteLine(" winner - find all completed hands;");
+            Console.WriteLine(" loser - find all players (games), who dealt into ron;");
         }
 
         static void ParseArgs(string[] args)
@@ -189,12 +195,20 @@ namespace TenhouViewer
 
             for (int i = 1; i < args.Length; i++)
             {
+                string Param, Value;
+
                 string a = args[i];
                 int Delimiter = a.IndexOf('=');
-                if(Delimiter < 0) continue;
-
-                string Param = a.Substring(0, Delimiter);
-                string Value = a.Substring(Delimiter + 1);
+                if (Delimiter < 0)
+                {
+                    Param = a;
+                    Value = "";
+                }
+                else
+                {
+                    Param = a.Substring(0, Delimiter);
+                    Value = a.Substring(Delimiter + 1);
+                }
 
                 int TempValue;
 
@@ -207,38 +221,88 @@ namespace TenhouViewer
                             Finder.ShantenMax = TempValue;
                             Finder.ShantenMin = TempValue;
                         }
+
+                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten {0:d};", TempValue));
                         break;
                     case "shantenmin":
                         TempValue = ParseIntArg(Value, 0, 6, "shantenmin");
                         if (TempValue != -1) Finder.ShantenMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten greater than {0:d};", TempValue));
                         break;
                     case "shantenmax":
                         TempValue = ParseIntArg(Value, 0, 6, "shantenmax");
                         if (TempValue != -1) Finder.ShantenMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten less than {0:d};", TempValue));
                         break;
                     case "ratingmin":
                         TempValue = ParseIntArg(Value, 1000, 3000, "ratingmin");
                         if (TempValue != -1) Finder.RatingMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who has rating greater than {0:d};", TempValue));
                         break;
                     case "ratingmax":
                         TempValue = ParseIntArg(Value, 1000, 3000, "ratingmax");
                         if (TempValue != -1) Finder.RatingMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who has rating less than {0:d};", TempValue));
                         break;
                     case "paymentmin":
                         TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmin");
                         if (TempValue != -1) Finder.PaymentMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) greater than {0:d} points;", TempValue));
                         break;
                     case "paymentmax":
                         TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmax");
                         if (TempValue != -1) Finder.PaymentMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) less than {0:d} points;", TempValue));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");
                         if (TempValue != -1) Finder.Place = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who took {0:d} place;", TempValue));
                         break;
                     case "rank":
                         TempValue = ParseIntArg(Value, 0, 20, "rank");
                         if (TempValue != -1) Finder.Rank = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who has rank '{0:d}';", TempValue));
+                        break;
+                    case "steps":
+                        TempValue = ParseIntArg(Value, 0, 60, "steps");
+                        if (TempValue != -1) Finder.StepsMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which exists less than '{0:d}' steps;", TempValue));
+                        break;
+                    case "yaku":
+                        Finder.YakuList = DecompositeIntList(Value);
+
+                        if(Finder.YakuList != null)
+                        {
+                            for (int j = 0; j < Finder.YakuList.Length; j++)
+                            {
+                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName(Finder.YakuList[j])));
+                            }
+                        }
+                        break;
+                    case "nickname":
+                        Finder.NickName = Value;
+
+                        Console.WriteLine(String.Format("Filter: only player with nickname '{0:s}';", Value));
+                        break;
+                    case "dealer":
+                        Finder.Dealer = true;
+
+                        Console.WriteLine("Filter: only dealer hands;");
+                        break;
+                    case "loser":
+                        Finder.Loser = true;
+
+                        Console.WriteLine("Filter: only players, who dealt into ron;");
                         break;
                 }
             }
@@ -307,6 +371,29 @@ namespace TenhouViewer
             }
 
             return Temp;
+        }
+
+        static private int[] DecompositeIntList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+            string[] Temp;
+            int[] Result = null;
+
+            if (Text == null) return null;
+
+            Temp = Text.Split(delimiter, StringSplitOptions.None);
+            Result = new int[Temp.Length];
+
+            for (int i = 0; i < Temp.Length; i++)
+            {
+                // Отрежем текст до точки
+                int Index = Temp[i].IndexOf('.');
+                if (Index >= 0) Temp[i] = Temp[i].Substring(0, Index);
+
+                Result[i] = Convert.ToInt32(Temp[i]);
+            }
+
+            return Result;
         }
     }
 }
