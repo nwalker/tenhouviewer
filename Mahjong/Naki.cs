@@ -128,13 +128,13 @@ namespace TenhouViewer.Mahjong
                         Tiles = new List<int>();
 
                         XmlLoad Subtree = X.GetSubtree();
-                        for (int i = 0; i < Tiles.Count; i++)
+                        for (int i = 0; i < Count; i++)
                         {
-                            if (!X.Read()) break;
-                            switch (X.ElementName)
+                            if (!Subtree.Read()) break;
+                            switch (Subtree.ElementName)
                             {
                                 case "tile":
-                                    Tiles.Add(X.GetIntAttribute("value"));
+                                    Tiles.Add(Subtree.GetIntAttribute("value"));
                                     break;
                             }
                         }
