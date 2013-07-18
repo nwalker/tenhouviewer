@@ -59,6 +59,9 @@ namespace TenhouViewer.Search
                 {
                     Result Res = new Result();
                     Res.Replay = R;
+                    Res.ReplayMark = true;
+
+                    for (int i = 0; i < 4; i++) Res.PlayerMark[i] = true;
 
                     for (int i = 0; i < R.Rounds.Count; i++)
                     {
@@ -91,6 +94,8 @@ namespace TenhouViewer.Search
                     R.RoundMark[i] = true;
                     for (int j = 0; j < 4; j++) R.HandMark[i][j] = true;
                 }
+
+                for (int i = 0; i < 4; i++) R.PlayerMark[i] = true;
 
                 GameList.Add(R);
             }
@@ -207,7 +212,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; i++)
+                for (int j = 0; j < 4; j++)
                 {
                     if (Rnd.Shanten[j].Count > 0)
                     {

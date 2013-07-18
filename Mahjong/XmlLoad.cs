@@ -35,7 +35,7 @@ namespace TenhouViewer.Mahjong
             {
                 F.MoveToContent();
             }
-            catch (Exception E)
+            catch (Exception)
             {
                 F.Close();
 
