@@ -118,6 +118,28 @@ namespace TenhouViewer.Mahjong
                             }
                         }
                         break;
+                    case "hands":
+                        {
+                            XmlLoad Subtree = X.GetSubtree();
+
+                            while (Subtree.Read())
+                            {
+                                switch (Subtree.ElementName)
+                                {
+                                    case "hand":
+                                        {
+                                            int Player = X.GetIntAttribute("player");
+
+                                            XmlLoad HandData = X.GetSubtree();
+                                            Hands[Player] = new Hand();
+
+                                            Hands[Player].ReadXml(HandData);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        break;
                     case "agari":
                         {
                             int Player = X.GetIntAttribute("player");
@@ -289,6 +311,21 @@ namespace TenhouViewer.Mahjong
                 X.EndTag();
             }
 
+            // Start hands
+            {
+                X.StartTag("hands");
+                for (int i = 0; i < Hands.Length; i++)
+                {
+                    X.StartTag("hand");
+                    X.Attribute("player", i);
+
+                    Hands[i].WriteXml(X);
+
+                    X.EndTag();
+                }
+
+                X.EndTag();
+            }
 
             X.EndXML();
             X.Close();

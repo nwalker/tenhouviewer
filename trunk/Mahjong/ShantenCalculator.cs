@@ -65,7 +65,7 @@ namespace TenhouViewer.Mahjong
             int i;
 
             // In open hands chiitoi yaku not exist
-            if (Hand.NakiCount > 0) return 13;
+            if (Hand.Naki.Count > 0) return 13;
 
             // Pair counting
             int PairCount = 0;
@@ -89,7 +89,7 @@ namespace TenhouViewer.Mahjong
             int TempShanten = 13;
             int i;
 
-            if (Hand.NakiCount  > 0) return 13;
+            if (Hand.Naki.Count  > 0) return 13;
 
             for (i = 1; i < 30; i++)
             {
@@ -121,7 +121,7 @@ namespace TenhouViewer.Mahjong
             // Maximal shanten in normal hand
             TempShantenNormal = 8;
 
-            Mentsu = Hand.NakiCount;
+            Mentsu = Hand.Naki.Count;
             Toitsu = 0;
             Kouho = 0;
 
