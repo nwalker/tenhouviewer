@@ -35,6 +35,11 @@ namespace TenhouViewer.Mahjong
             }
         }
 
+        public void ReplayGame()
+        {
+            for (int i = 0; i < Rounds.Count; i++) Rounds[i].ReplayGame();
+        }
+
         public bool LoadXml(string Hash)
         {
             string FileName = "replay/" + Hash + ".xml";

@@ -125,23 +125,31 @@ namespace TenhouViewer.Tenhou
             string Rate = Reader.GetAttribute("rate");
             string Sex = Reader.GetAttribute("sx");
 
-            int[] DanList = DecompositeIntList(Dan);
-            int[] RateList = DecompositeIntList(Rate);
-            string[] SexList = DecompositeStringList(Sex);
-
-            Mahjong.Player[] Players = new Mahjong.Player[4];
-
-            for (int i = 0; i < 4; i++)
+            if (Dan == null)
             {
-                string NickName = Reader.GetAttribute("n" + i.ToString());
+                // player reconnect
+            }
+            else
+            {
+                // game start
+                int[] DanList = DecompositeIntList(Dan);
+                int[] RateList = DecompositeIntList(Rate);
+                string[] SexList = DecompositeStringList(Sex);
 
-                if (NickName != null) NickName = Uri.UnescapeDataString(NickName);
+                Mahjong.Player[] Players = new Mahjong.Player[4];
 
-                R.Players[i] = new Mahjong.Player();
-                R.Players[i].NickName = NickName;
-                R.Players[i].Rank = DanList[i];
-                R.Players[i].Rating = RateList[i];
-                R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Mahjong.Sex.Male : Mahjong.Sex.Female;
+                for (int i = 0; i < 4; i++)
+                {
+                    string NickName = Reader.GetAttribute("n" + i.ToString());
+
+                    if (NickName != null) NickName = Uri.UnescapeDataString(NickName);
+
+                    R.Players[i] = new Mahjong.Player();
+                    R.Players[i].NickName = NickName;
+                    R.Players[i].Rank = DanList[i];
+                    R.Players[i].Rating = RateList[i];
+                    R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Mahjong.Sex.Male : Mahjong.Sex.Female;
+                }
             }
         }
         
