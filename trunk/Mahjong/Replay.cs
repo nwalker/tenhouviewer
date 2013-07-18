@@ -14,6 +14,8 @@ namespace TenhouViewer.Mahjong
         public List<Round> Rounds = new List<Round>();
         public List<string> RoundFiles = new List<string>();
 
+        public int[] Result = new int[4];
+        public int[] Balance = new int[4];
         public int[] Place = new int[4];
 
         public Replay()
@@ -44,6 +46,9 @@ namespace TenhouViewer.Mahjong
                 switch (X.ElementName)
                 {
                     case "hash": this.Hash = X.GetAttribute("value"); break;
+                    case "balance": Balance = X.ReadIntArray(); break;
+                    case "result": Result = X.ReadIntArray(); break;
+                    case "place": Place = X.ReadIntArray(); break;
                     case "playerlist":
                         {
                             int Count = 4;
@@ -118,6 +123,10 @@ namespace TenhouViewer.Mahjong
 
             // replay ID
             X.WriteTag("hash", "value", Hash);
+
+            X.WriteTag("result", Result);
+            X.WriteTag("balance", Balance);
+            X.WriteTag("place", Place);
 
             {
                 X.StartTag("playerlist");

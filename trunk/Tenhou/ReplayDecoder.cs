@@ -340,6 +340,39 @@ namespace TenhouViewer.Tenhou
             }
 
             CheckScore(Reader);
+            CheckEnd(Reader);
+        }
+
+        private void CheckEnd(XmlReader Reader)
+        {
+            string owari = Reader.GetAttribute("owari");
+
+            if (owari == null) return;
+
+            // sample: -3,-50.0,183,-22.0,190,-1.0,630,73.0
+            int[] Temp = DecompositeIntList(owari);
+
+            for (int i = 0; i < 4; i++)
+            {
+                R.Balance[i] = Temp[i * 2 + 1];
+                R.Result[i] = Temp[i * 2] * 100;
+            }
+
+            // Calculate places
+            int[] ListOrder = new int[4];
+
+            for (int i = 0; i < 4; i++) ListOrder[i] = R.Balance[i];
+
+            Array.Sort(ListOrder);
+            Array.Reverse(ListOrder);
+
+            for (int i = 0; i < 4; i++)
+            {
+                int Index = 0;
+                for (int j = 0; j < 4; j++) if (ListOrder[i] == R.Balance[j]) Index = j;
+
+                R.Place[Index] = i + 1;
+            }
         }
 
         private void CheckScore(XmlReader Reader)
