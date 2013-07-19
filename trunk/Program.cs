@@ -48,6 +48,7 @@ namespace TenhouViewer
         {
             ArgumentParser Parser = new ArgumentParser(args);
             List<Argument> ArgList = Parser.Arguments;
+            List<Search.Result> ResultList = null;
 
             for (int i = 0; i < ArgList.Count; i++)
             {
@@ -74,11 +75,18 @@ namespace TenhouViewer
                         ParseLog(ArgList[i].Value);
                         break;
                     case "f":
-                        // Parse games by log
+                        // Parse games by log (can be iterative)
                         // -fLog.txt shanten=1
-                        Find(ArgList[i].Value, ArgList[i].Arguments);
+                        ResultList = Find(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                 }
+            }
+
+            if (ResultList != null)
+            {
+                // Search query
+                Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
+                PrintList(ResultList);
             }
         }
 
@@ -174,20 +182,31 @@ namespace TenhouViewer
             }
         }
 
-        static void Find(string FileName, List<Argument> ArgList)
+        static List<Search.Result> Find(string FileName, List<Argument> ArgList, List<Search.Result> Results)
         {
-            Console.WriteLine("Finding games from log: " + FileName);
+            Search.GameFinder Finder;
 
-            if (!File.Exists(FileName))
+            if (Results != null)
             {
-                Console.WriteLine("Error: Log file " + FileName + " not found!");
-                return;
+                Console.WriteLine("Finding games from previous search result.");
+
+                Finder = new Search.GameFinder(Results);
+            }
+            else
+            {
+                if (!File.Exists(FileName))
+                {
+                    Console.WriteLine("Error: Log file " + FileName + " not found!");
+                    return null;
+                }
+
+                Console.WriteLine("Finding games from log: " + FileName + ".");
+
+                Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
+                Finder = new Search.GameFinder(Log.HashList);
             }
 
-            Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
-            Search.GameFinder Finder = new Search.GameFinder(Log.HashList);
-
-            for (int i = 1; i < ArgList.Count; i++)
+            for (int i = 0; i < ArgList.Count; i++)
             {
                 string Param = ArgList[i].Name;
                 string Value = ArgList[i].Value;
@@ -288,10 +307,7 @@ namespace TenhouViewer
                 }
             }
 
-            List<Search.Result> ResultList = Finder.Find();
-
-            Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
-            PrintList(ResultList);
+            return Finder.Find();
         }
 
         static private string YakuList(List<Mahjong.Yaku> Yaku)
