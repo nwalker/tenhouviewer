@@ -41,6 +41,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
+            Console.WriteLine(" yaku=N,M,X - find all hands, which has at least one tile from list: N,M,X,... (0-36);");
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
@@ -144,7 +145,6 @@ namespace TenhouViewer
             Replay.Save();
 
             Console.WriteLine(" - ok!");
-
         }
 
         static void ParseLog(string FileName)
@@ -301,6 +301,14 @@ namespace TenhouViewer
                             {
                                 Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName(Finder.YakuList[j])));
                             }
+                        }
+                        break;
+                    case "wait":
+                        Finder.Waitings = DecompositeIntList(Value);
+
+                        if (Finder.Waitings != null)
+                        {
+                            Console.WriteLine(String.Format("Filter: only hands, which has at least one waiting from list: '{0:s}';", Value));
                         }
                         break;
                     case "nickname":
