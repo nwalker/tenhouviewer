@@ -36,6 +36,10 @@ namespace TenhouViewer.Search
         // Maximum steps (tile discard) in round
         public int StepsMax = 0;
 
+        // Amount of tiles to wait
+        public int WaitingCountMin = -1;
+        public int WaitingCountMax = -1;
+
         // Payment
         public int PaymentMin = -1;
         public int PaymentMax = -1;
@@ -120,6 +124,7 @@ namespace TenhouViewer.Search
                 CheckRating(R);
                 CheckShanten(R);
                 CheckSteps(R);
+                CheckWaitings(R);
 
                 // Check mark
                 if (!IsQueryOk(R)) continue;
@@ -138,8 +143,11 @@ namespace TenhouViewer.Search
 
             for (int i = 0; i < R.RoundMark.Count; i++)
             {
+                // Exclude rounds which has no suitable hands
+                R.RoundMark[i] = (R.RoundMark[i] && R.HandMark[i].Contains(true));
+
                 // If any round contain positive result...
-                if (R.RoundMark[i] && R.HandMark[i].Contains(true)) return true;
+                if (R.RoundMark[i]) return true;
             }
 
             return false;
@@ -286,6 +294,22 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < 4; j++)
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckWaitings(Result R)
+        {
+            if ((WaitingCountMin == -1) && (WaitingCountMax == -1)) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (Rnd.WinWaiting[j].Count > WaitingCountMax) R.HandMark[i][j] = false;
+                    if (Rnd.WinWaiting[j].Count < WaitingCountMin) R.HandMark[i][j] = false;
                 }
             }
         }
