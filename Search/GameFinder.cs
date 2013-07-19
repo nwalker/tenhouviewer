@@ -18,6 +18,9 @@ namespace TenhouViewer.Search
         // Yaku (hand contain all yaku from this array)
         public int[] YakuList = null;
 
+        // Waitings (hand has at least one tile in waiting from this array)
+        public int[] Waitings = null;
+
         // Player place
         public int Place = 0;
 
@@ -300,16 +303,41 @@ namespace TenhouViewer.Search
 
         private void CheckWaitings(Result R)
         {
-            if ((WaitingCountMin == -1) && (WaitingCountMax == -1)) return;
-
-            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            if (!((WaitingCountMin == -1) && (WaitingCountMax == -1)))
             {
-                Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
                 {
-                    if (Rnd.WinWaiting[j].Count > WaitingCountMax) R.HandMark[i][j] = false;
-                    if (Rnd.WinWaiting[j].Count < WaitingCountMin) R.HandMark[i][j] = false;
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < 4; j++)
+                    {
+                        if (Rnd.WinWaiting[j].Count > WaitingCountMax) R.HandMark[i][j] = false;
+                        if (Rnd.WinWaiting[j].Count < WaitingCountMin) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (Waitings != null)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < 4; j++)
+                    {
+                        bool HasWait = false;
+                        for (int k = 0; k < Rnd.WinWaiting[j].Count; k++)
+                        {
+                            if(Waitings.Contains(Rnd.WinWaiting[j][k]))
+                            {
+                                HasWait = true;
+                                break;
+                            }
+                        }
+
+                        if (!HasWait) R.HandMark[i][j] = false;
+                    }
                 }
             }
         }
