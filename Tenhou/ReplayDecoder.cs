@@ -161,7 +161,7 @@ namespace TenhouViewer.Tenhou
             Mahjong.Step Step = new Mahjong.Step(Who);
             Step.Disconnect();
 
-            CurrentRound.Steps.Add(Step);
+            if(CurrentRound != null) CurrentRound.Steps.Add(Step);
         }
 
         private void SHUFFLE(XmlReader Reader)

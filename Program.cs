@@ -13,7 +13,6 @@ namespace TenhouViewer
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-
             Console.WriteLine("TenhouViewer [dev.]");
 
             ParseArgs(args);
@@ -47,41 +46,37 @@ namespace TenhouViewer
 
         static void ParseArgs(string[] args)
         {
-            foreach (string a in args)
-            {
-                if (!((a[0] == '-') || (a[0] == '\\')))
-                {
-                    Console.WriteLine("Unknown argument: " + a);
-                    continue;
-                }
+            ArgumentParser Parser = new ArgumentParser(args);
+            List<Argument> ArgList = Parser.Arguments;
 
-                string Argument = a.Substring(2);
-                switch (a[1])
+            for (int i = 0; i < ArgList.Count; i++)
+            {
+                switch(ArgList[i].Name)
                 {
-                    case 'D':
+                    case "D":
                         // Download game by hash
                         // -D2013070808gm-0089-0000-2f83b7da
-                        DownloadHash(Argument);
+                        DownloadHash(ArgList[i].Value);
                         break;
-                    case 'd':
+                    case "d":
                         // Download games by log
                         // -dLog.txt
-                        DownloadLog(Argument);
+                        DownloadLog(ArgList[i].Value);
                         break;
-                    case 'P':
+                    case "P":
                         // Parse game by hash
                         // -P2013070808gm-0089-0000-2f83b7da
-                        ParseHash(Argument);
+                        ParseHash(ArgList[i].Value);
                         break;
-                    case 'p':
+                    case "p":
                         // Parse games by log
                         // -pLog.txt
-                        ParseLog(Argument);
+                        ParseLog(ArgList[i].Value);
                         break;
-                    case 'f':
+                    case "f":
                         // Parse games by log
                         // -fLog.txt shanten=1
-                        Find(Argument, args);
+                        Find(ArgList[i].Value, ArgList[i].Arguments);
                         break;
                 }
             }
@@ -179,7 +174,7 @@ namespace TenhouViewer
             }
         }
 
-        static void Find(string FileName, string[] args)
+        static void Find(string FileName, List<Argument> ArgList)
         {
             Console.WriteLine("Finding games from log: " + FileName);
 
@@ -190,28 +185,14 @@ namespace TenhouViewer
             }
 
             Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
-
             Search.GameFinder Finder = new Search.GameFinder(Log.HashList);
 
-            for (int i = 1; i < args.Length; i++)
+            for (int i = 1; i < ArgList.Count; i++)
             {
-                string Param, Value;
-
-                string a = args[i];
-                int Delimiter = a.IndexOf('=');
-                if (Delimiter < 0)
-                {
-                    Param = a;
-                    Value = "";
-                }
-                else
-                {
-                    Param = a.Substring(0, Delimiter);
-                    Value = a.Substring(Delimiter + 1);
-                }
+                string Param = ArgList[i].Name;
+                string Value = ArgList[i].Value;
 
                 int TempValue;
-
                 switch (Param)
                 {
                     case "shanten":
