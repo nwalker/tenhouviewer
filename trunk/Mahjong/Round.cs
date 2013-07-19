@@ -27,6 +27,8 @@ namespace TenhouViewer.Mahjong
         public List<Hand>[] Hands = new List<Hand>[4];
         public List<int>[] Shanten = new List<int>[4];
 
+        public List<int>[] WinWaiting = new List<int>[4];
+
         public List<Yaku>[] Yaku = new List<Yaku>[4];
 
         public int[] StepCount = new int[4];
@@ -64,6 +66,7 @@ namespace TenhouViewer.Mahjong
                 Yaku[i] = new List<Yaku>();
                 Hands[i] = new List<Hand>();
                 Shanten[i] = new List<int>();
+                WinWaiting[i] = new List<int>();
 
                 Pay[i] = 0;
                 HanCount[i] = 0;
@@ -194,8 +197,8 @@ namespace TenhouViewer.Mahjong
                                 switch (Subtree.ElementName)
                                 {
                                     case "yakulist":
-                                        int Count = Subtree.GetIntAttribute("count");
                                         {
+                                            int Count = Subtree.GetIntAttribute("count");
                                             XmlLoad YakuList = Subtree.GetSubtree();
 
                                             while (YakuList.Read())
@@ -208,6 +211,22 @@ namespace TenhouViewer.Mahjong
                                                         Y.Index = YakuList.GetIntAttribute("index");
 
                                                         Yaku[Player].Add(Y);
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case "waitings":
+                                        {
+                                            int Count = Subtree.GetIntAttribute("count");
+                                            XmlLoad WaitList = Subtree.GetSubtree();
+
+                                            while (WaitList.Read())
+                                            {
+                                                switch (WaitList.ElementName)
+                                                {
+                                                    case "waiting":
+                                                        WinWaiting[Player].Add(WaitList.GetIntAttribute("value"));
                                                         break;
                                                 }
                                             }
@@ -358,26 +377,19 @@ namespace TenhouViewer.Mahjong
                         X.EndTag();
                     }
 
-                    if (Hands[i].Count > 0)
+                    if (Winner[i])
                     {
-                        // Can find waitings?
-                        for (int j = Hands[i].Count - 1; j >= 0; j--)
-                        {
-                            if (Hands[i][j].Shanten == 0)
-                            {
-                                // Waiting hand
-                                List<int> WaitingList = Hands[i][j].WaitingList;
+                        // Waiting hand
+                        List<int> WaitingList = WinWaiting[i];
 
-                                X.StartTag("waitings");
-                                X.Attribute("count", WaitingList.Count);
-                                for (int k = 0; k < WaitingList.Count; k++)
-                                {
-                                    X.WriteTag("waiting", "value", WaitingList[k]);
-                                }
-                                X.EndTag();
-                                break;
-                            }
+                        X.StartTag("waitings");
+                        X.Attribute("count", WaitingList.Count);
+                        for (int k = 0; k < WaitingList.Count; k++)
+                        {
+                            X.WriteTag("waiting", "value", WaitingList[k]);
                         }
+                        X.EndTag();
+                        break;
                     }
                     X.EndTag();
                 }
@@ -489,12 +501,16 @@ namespace TenhouViewer.Mahjong
                         break;
                     case StepType.STEP_TSUMO:
                         {
+                            WinWaiting[S.Player] = Hands[S.Player][Hands[S.Player].Count - 1].WaitingList;
+
                             Hands[S.Player].Add(new Hand(TempHands[S.Player]));
                             Shanten[S.Player].Add(-1);
                         }
                         break;
                     case StepType.STEP_RON:
                         {
+                            WinWaiting[S.Player] = Hands[S.Player][Hands[S.Player].Count - 1].WaitingList;
+
                             TempHands[S.Player].Draw(LastTile);
 
                             Hands[S.Player].Add(new Hand(TempHands[S.Player]));

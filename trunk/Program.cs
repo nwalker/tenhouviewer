@@ -28,16 +28,18 @@ namespace TenhouViewer
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
             Console.WriteLine(" shanten=N - find all hands started with N shanten number (0-6);");
-            Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater than N (0-6);");
-            Console.WriteLine(" shantenmax=N - find all hands started with shanten number less than N (0-6);");
-            Console.WriteLine(" ratingmin=N - find all players, who has rating greater than N (1000-3000);");
-            Console.WriteLine(" ratingmax=N - find all players, who has rating less than N (1000-3000);");
-            Console.WriteLine(" paymentmin=N - find all players, who receive or pay greater than N pt (-1000000-1000000);");
-            Console.WriteLine(" paymentmax=N - find all players, who receive or pay less than N pt (-1000000-1000000);");
+            Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater (or equal) than N (0-6);");
+            Console.WriteLine(" shantenmax=N - find all hands started with shanten number less (or equal) than N (0-6);");
+            Console.WriteLine(" ratingmin=N - find all players, who has rating greater (or equal) than N (1000-3000);");
+            Console.WriteLine(" ratingmax=N - find all players, who has rating less (or equal) than N (1000-3000);");
+            Console.WriteLine(" paymentmin=N - find all players, who receive or pay greater (or equal) than N pt (-1000000-1000000);");
+            Console.WriteLine(" paymentmax=N - find all players, who receive or pay less (or equal) than N pt (-1000000-1000000);");
+            Console.WriteLine(" waitmin=N - find all hands which has N or greater sides of winning waiting (1-13);");
+            Console.WriteLine(" waitmax=N - find all hands which has N or less sides of winning waiting (1-13);");
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
-            Console.WriteLine(" steps=N - find all hands, who exist less than N steps (0-60);");
+            Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
@@ -84,7 +86,7 @@ namespace TenhouViewer
 
             if (ResultList != null)
             {
-                // Search query
+                // Search query result
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 PrintList(ResultList);
             }
@@ -228,37 +230,49 @@ namespace TenhouViewer
                         TempValue = ParseIntArg(Value, 0, 6, "shantenmin");
                         if (TempValue != -1) Finder.ShantenMin = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten greater than {0:d};", TempValue));
+                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten greater (or equal) than {0:d};", TempValue));
                         break;
                     case "shantenmax":
                         TempValue = ParseIntArg(Value, 0, 6, "shantenmax");
                         if (TempValue != -1) Finder.ShantenMax = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten less than {0:d};", TempValue));
+                        Console.WriteLine(String.Format("Filter: only hands, which started with shanten less (or equal) than {0:d};", TempValue));
                         break;
                     case "ratingmin":
                         TempValue = ParseIntArg(Value, 1000, 3000, "ratingmin");
                         if (TempValue != -1) Finder.RatingMin = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only players, who has rating greater than {0:d};", TempValue));
+                        Console.WriteLine(String.Format("Filter: only players, who has rating greater (or equal) than {0:d};", TempValue));
                         break;
                     case "ratingmax":
                         TempValue = ParseIntArg(Value, 1000, 3000, "ratingmax");
                         if (TempValue != -1) Finder.RatingMax = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only players, who has rating less than {0:d};", TempValue));
+                        Console.WriteLine(String.Format("Filter: only players, who has rating less (or equal) than {0:d};", TempValue));
                         break;
                     case "paymentmin":
                         TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmin");
                         if (TempValue != -1) Finder.PaymentMin = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) greater than {0:d} points;", TempValue));
+                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) greater (or equal) than {0:d} points;", TempValue));
                         break;
                     case "paymentmax":
                         TempValue = ParseIntArg(Value, -1000000, 1000000, "paymentmax");
                         if (TempValue != -1) Finder.PaymentMax = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) less than {0:d} points;", TempValue));
+                        Console.WriteLine(String.Format("Filter: only players, who pay(-) or receive(+) less (or equal) than {0:d} points;", TempValue));
+                        break;
+                    case "waitmin":
+                        TempValue = ParseIntArg(Value, 1, 13, "waitmin");
+                        if (TempValue != -1) Finder.WaitingCountMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has {0:d}-sided wait and greater;", TempValue));
+                        break;
+                    case "waitmax":
+                        TempValue = ParseIntArg(Value, 1, 13, "waitmax");
+                        if (TempValue != -1) Finder.WaitingCountMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has {0:d}-sided wait and less;", TempValue));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");
@@ -276,7 +290,7 @@ namespace TenhouViewer
                         TempValue = ParseIntArg(Value, 0, 60, "steps");
                         if (TempValue != -1) Finder.StepsMax = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only hands, which exists less than '{0:d}' steps;", TempValue));
+                        Console.WriteLine(String.Format("Filter: only hands, which exists less (or equal) than '{0:d}' steps;", TempValue));
                         break;
                     case "yaku":
                         Finder.YakuList = DecompositeIntList(Value);
