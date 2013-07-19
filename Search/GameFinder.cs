@@ -91,7 +91,7 @@ namespace TenhouViewer.Search
 
                 for (int i = 0; i < R.RoundMark.Count; i++)
                 {
-                    R.RoundMark[i] = true;
+                    //R.RoundMark[i] = true;
                     for (int j = 0; j < 4; j++) R.HandMark[i][j] = true;
                 }
 
@@ -237,11 +237,11 @@ namespace TenhouViewer.Search
                 {
                     if (PaymentMin != -1)
                     {
-                        if (Rnd.Pay[i] < PaymentMin) R.HandMark[i][j] = false;
+                        if (Rnd.Pay[j] < PaymentMin) R.HandMark[i][j] = false;
                     }
                     if (PaymentMax != -1)
                     {
-                        if (Rnd.Pay[i] > PaymentMax) R.HandMark[i][j] = false;
+                        if (Rnd.Pay[j] > PaymentMax) R.HandMark[i][j] = false;
                     }
                 }
             }
@@ -256,7 +256,7 @@ namespace TenhouViewer.Search
 
                 for (int j = 0; j < 4; j++)
                 {
-                    if (!Rnd.Winner[i]) R.HandMark[i][j] = false;
+                    if (!Rnd.Winner[j]) R.HandMark[i][j] = false;
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace TenhouViewer.Search
 
                 for (int j = 0; j < 4; j++)
                 {
-                    if (!Rnd.Loser[i]) R.HandMark[i][j] = false;
+                    if (!Rnd.Loser[j]) R.HandMark[i][j] = false;
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace TenhouViewer.Search
 
                 for (int j = 0; j < 4; j++)
                 {
-                    if (Rnd.StepCount[i] > StepsMax) R.HandMark[i][j] = false;
+                    if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
                 }
             }
         }
