@@ -52,6 +52,7 @@ namespace TenhouViewer
             ArgumentParser Parser = new ArgumentParser(args);
             List<Argument> ArgList = Parser.Arguments;
             List<Search.Result> ResultList = null;
+            List<string> GraphResult = null;
 
             for (int i = 0; i < ArgList.Count; i++)
             {
@@ -82,6 +83,23 @@ namespace TenhouViewer
                         // -fLog.txt shanten=1
                         ResultList = Find(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
+                    case "g":
+                        // Graph rounds (which found by -f flag)
+                        // -gtfizik index winner loser
+                        GraphResult = GraphRounds(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
+                    case "G":
+                        // Graph games (which found by -f flag)
+                        // -gtfizik index rating rank balance
+                        GraphResult = GraphGames(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
+                    case "s":
+                        // Save graph result
+                        // -sriichi.txt
+                        {
+                            Statistic.Saver Saver = new Statistic.Saver(ArgList[i].Value, GraphResult);
+                        }
+                        break;
                 }
             }
 
@@ -91,6 +109,38 @@ namespace TenhouViewer
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 PrintList(ResultList);
             }
+        }
+
+        static List<string> GraphRounds(string NickName, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            if (Results == null)
+            {
+                Console.Write("Error: no results to graph.");
+                return null;
+            }
+
+            Statistic.Graph G = new Statistic.Graph(NickName, Results);
+
+            // Fill fields info
+            for (int i = 0; i < ArgList.Count; i++) G.Fields.Add(ArgList[i].Name);
+
+            return G.RoundGraph();
+        }
+
+        static List<string> GraphGames(string NickName, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            if (Results == null)
+            {
+                Console.Write("Error: no results to graph.");
+                return null;
+            }
+
+            Statistic.Graph G = new Statistic.Graph(NickName, Results);
+
+            // Fill fields info
+            for (int i = 0; i < ArgList.Count; i++) G.Fields.Add(ArgList[i].Name);
+
+            return G.GamesGraph();
         }
 
         static void DownloadHash(string Hash)
