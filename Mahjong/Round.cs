@@ -504,7 +504,24 @@ namespace TenhouViewer.Mahjong
                         break;
                     case StepType.STEP_NAKI:
                         {
+                            Hand H = TempHands[S.Player];
+
+                            if (S.NakiData.Type == NakiType.CHAKAN)
+                            {
+                                Tile T = new Tile(S.NakiData.Tiles[0]);
+
+                                // Remove pon with this tiles
+                                for (int n = 0; n < H.Naki.Count; n++)
+                                {
+                                    if (new Tile(H.Naki[n].Tiles[0]).TileId == T.TileId)
+                                    {
+                                        H.Naki.RemoveAt(n);
+                                    }
+                                }
+                            }
+
                             TempHands[S.Player].Naki.Add(S.NakiData);
+                            TempHands[S.Player].OpenTiles(S.NakiData.Tiles);
                         }
                         break;
                     case StepType.STEP_TSUMO:

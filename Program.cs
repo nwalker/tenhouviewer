@@ -41,7 +41,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
-            Console.WriteLine(" yaku=N,M,X - find all hands, which has at least one tile from list: N,M,X,... (0-36);");
+            Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);");
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
