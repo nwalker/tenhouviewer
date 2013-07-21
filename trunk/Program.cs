@@ -230,7 +230,7 @@ namespace TenhouViewer
 
         static void DownloadLog(string FileName)
         {
-            Console.Write("Downloading games from log: " + FileName);
+            Console.WriteLine("Downloading games from log: " + FileName);
 
             if (!File.Exists(FileName))
             {
@@ -268,7 +268,7 @@ namespace TenhouViewer
 
         static void ParseLog(string FileName)
         {
-            Console.Write("Parsing games from log: " + FileName);
+            Console.WriteLine("Parsing games from log: " + FileName);
 
             if (!File.Exists(FileName))
             {
