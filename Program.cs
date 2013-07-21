@@ -52,7 +52,9 @@ namespace TenhouViewer
             ArgumentParser Parser = new ArgumentParser(args);
             List<Argument> ArgList = Parser.Arguments;
             List<Search.Result> ResultList = null;
+
             List<string> GraphResult = null;
+            List<string> FindResult = null;
 
             for (int i = 0; i < ArgList.Count; i++)
             {
@@ -82,33 +84,74 @@ namespace TenhouViewer
                         // Parse games by log (can be iterative)
                         // -fLog.txt shanten=1
                         ResultList = Find(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        FindResult = ConvertResultsToString(ResultList);
                         break;
                     case "g":
                         // Graph rounds (which found by -f flag)
                         // -gtfizik index winner loser
+                        FindResult = null;
                         GraphResult = GraphRounds(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                     case "G":
                         // Graph games (which found by -f flag)
                         // -gtfizik index rating rank balance
+                        FindResult = null;
                         GraphResult = GraphGames(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                     case "s":
                         // Save graph result
                         // -sriichi.txt
                         {
-                            Statistic.Saver Saver = new Statistic.Saver(ArgList[i].Value, GraphResult);
+                            if(GraphResult != null)
+                            {
+                                Statistic.Saver Saver = new Statistic.Saver(ArgList[i].Value, GraphResult);
+                                GraphResult = null;
+                            }
+                            else if(FindResult != null)
+                            {
+                                Statistic.Saver Saver = new Statistic.Saver(ArgList[i].Value, FindResult);
+                                FindResult = null;
+                            }
                         }
                         break;
                 }
             }
 
-            if (ResultList != null)
+            if (FindResult != null)
             {
                 // Search query result
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
-                PrintList(ResultList);
+                foreach(string Line in FindResult) Console.WriteLine(Line);
             }
+        }
+
+        static List<string> ConvertResultsToString(List<Search.Result> Results)
+        {
+            List<string> Output = new List<string>();
+
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+
+                for (int r = 0; r < R.Replay.Rounds.Count; r++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[r];
+
+                    for (int k = 0; k < 4; k++)
+                    {
+                        if (R.HandMark[r][k])
+                        {
+                            string Format = "http://tenhou.net/0/?log={0:s}&ts={1:d}&tw={2:d}\t{3:d}\t{4:d}\t{5:s}\t{6:s}";
+                            Output.Add(String.Format(Format,
+                                              R.Replay.Hash, r, k, R.Replay.Rounds[r].Pay[k],
+                                              Rnd.StepCount[k],
+                                              R.Replay.Players[k].NickName, YakuList(Rnd.Yaku[k])));
+                        }
+                    }
+                }
+            }
+
+            return Output;
         }
 
         static List<string> GraphRounds(string NickName, List<Argument> ArgList, List<Search.Result> Results)
@@ -392,30 +435,6 @@ namespace TenhouViewer
             }
 
             return Text;
-        }
-
-        static private void PrintList(List<Search.Result> ResultList)
-        {
-            for (int i = 0; i < ResultList.Count; i++)
-            {
-                Search.Result R = ResultList[i];
-
-                for (int r = 0; r < R.Replay.Rounds.Count; r++)
-                {
-                    Mahjong.Round Rnd = R.Replay.Rounds[r];
-
-                    for (int k = 0; k < 4; k++)
-                    {
-                        if (R.HandMark[r][k])
-                        {
-                            string Format = "http://tenhou.net/0/?log={0:s}&ts={1:d}&tw={2:d}\t{3:d}\t{4:d}\t{5:s}\t{6:s}";
-                            Console.WriteLine(String.Format(Format,
-                                              R.Replay.Hash, r, k, R.Replay.Rounds[r].Pay[k],
-                                              Rnd.StepCount[k],
-                                              R.Replay.Players[k].NickName, YakuList(Rnd.Yaku[k])));                        }
-                    }
-                }
-            }
         }
 
         private static int ParseIntArg(string Value, int Min, int Max, string ArgName)

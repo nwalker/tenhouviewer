@@ -21,9 +21,7 @@ namespace TenhouViewer.Statistic
             StreamWriter  Output = new StreamWriter(fileStream);
 
             foreach (string Line in Data)
-            {
                 Output.WriteLine(Line);
-            }
 
             Output.Close();
         }
