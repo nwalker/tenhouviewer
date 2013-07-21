@@ -43,6 +43,7 @@ namespace TenhouViewer.Mahjong
         public int[] OpenedSets = new int[4];
         public int[] Riichi = new int[4];
 
+        public bool[] Tempai = new bool[4];
         public bool[] Dealer = new bool[4];
         public bool[] Winner = new bool[4];
         public bool[] Loser = new bool[4];
@@ -76,6 +77,7 @@ namespace TenhouViewer.Mahjong
                 OpenedSets[i] = 0;
                 StepCount[i] = 0;
 
+                Tempai[i] = false;
                 Dealer[i] = false;
                 Loser[i] = false;
                 Winner[i] = false;
@@ -113,6 +115,7 @@ namespace TenhouViewer.Mahjong
                     case "openedsets": OpenedSets = X.ReadIntArray(); break;
                     case "riichi": Riichi = X.ReadIntArray(); break;
                     case "dealer": Dealer = X.ReadBoolArray(); break;
+                    case "tempai": Tempai = X.ReadBoolArray(); break;
                     case "stepcount": StepCount = X.ReadIntArray(); break;
                     case "steps":
                         {
@@ -301,6 +304,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("riichi", Riichi);
             X.WriteTag("dealer", Dealer);
             X.WriteTag("stepcount", StepCount);
+            X.WriteTag("tempai", Tempai);
 
             // Start hands
             {
@@ -491,7 +495,11 @@ namespace TenhouViewer.Mahjong
                             TempHands[S.Player].Discard(S.Tile);
 
                             Hands[S.Player].Add(new Hand(TempHands[S.Player]));
-                            Shanten[S.Player].Add(TempHands[S.Player].Shanten);
+
+                            int TShanten = TempHands[S.Player].Shanten;
+                            if(TShanten == 0) Tempai[S.Player] = true;
+
+                            Shanten[S.Player].Add(TShanten);
                         }
                         break;
                     case StepType.STEP_NAKI:
