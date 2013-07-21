@@ -12,7 +12,7 @@ namespace TenhouViewer.Statistic
 
         public string NickName;
 
-        public List<string> Fields;
+        public List<string> Fields = new List<string>();
 
         public Graph(string NickName, List<Search.Result> Games)
         {
