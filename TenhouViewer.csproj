@@ -62,6 +62,7 @@
     <Compile Include="Search\Result.cs" />
     <Compile Include="Argument.cs" />
     <Compile Include="Statistic\Graph.cs" />
+    <Compile Include="Statistic\Saver.cs" />
     <Compile Include="Tenhou\Downloader.cs" />
     <Compile Include="Tenhou\TenhouHash.cs" />
     <Compile Include="Tenhou\MT19937AR.cs" />
