@@ -216,6 +216,7 @@ namespace TenhouViewer.Tenhou
             CurrentRound.Result = Mahjong.RoundResult.Draw;
 
             CheckScore(Reader);
+            CheckEnd(Reader);
         }
 
         private void N(XmlReader Reader)

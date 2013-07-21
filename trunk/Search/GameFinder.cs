@@ -130,9 +130,9 @@ namespace TenhouViewer.Search
                 CheckWaitings(R);
 
                 // Check mark
+                EmbedMarksToHandMark(R);
                 if (!IsQueryOk(R)) continue;
 
-                EmbedMarksToHandMark(R);
                 ResultList.Add(R);
             }
 
@@ -146,9 +146,6 @@ namespace TenhouViewer.Search
 
             for (int i = 0; i < R.RoundMark.Count; i++)
             {
-                // Exclude rounds which has no suitable hands
-                R.RoundMark[i] = (R.RoundMark[i] && R.HandMark[i].Contains(true));
-
                 // If any round contain positive result...
                 if (R.RoundMark[i]) return true;
             }
@@ -165,6 +162,9 @@ namespace TenhouViewer.Search
                     if (!R.PlayerMark[j]) R.HandMark[i][j] = false;
                     if (!R.RoundMark[i]) R.HandMark[i][j] = false;
                 }
+
+                // Exclude rounds which has no suitable hands
+                R.RoundMark[i] = (R.RoundMark[i] && R.HandMark[i].Contains(true));
             }
         }
 

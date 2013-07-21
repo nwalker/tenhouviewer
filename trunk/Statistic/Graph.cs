@@ -34,6 +34,15 @@ namespace TenhouViewer.Statistic
         public List<string> GamesGraph()
         {
             List<string> Result = new List<string>();
+            int GameIndex = 0;
+
+            // Add fields name
+            {
+                string FieldNames = "";
+                for (int i = 0; i < Fields.Count; i++) FieldNames += String.Format("{0:s}\t", Fields[i]);
+
+                Result.Add(FieldNames);
+            }
 
             for (int i = 0; i < GameList.Count; i++)
             {
@@ -48,15 +57,17 @@ namespace TenhouViewer.Statistic
                 {
                     switch (Fields[j])
                     {
-                        case "index": Temp += String.Format("{0:d}\t", i); break;
+                        case "index": Temp += String.Format("{0:d}\t", GameIndex); break;
                         case "rating": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rating); break;
                         case "rank": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rank); break;
                         case "place": Temp += String.Format("{0:d}\t", R.Replay.Place[Index]); break;
                         case "result": Temp += String.Format("{0:d}\t", R.Replay.Result[Index]); break;
                         case "balance": Temp += String.Format("{0:d}\t", R.Replay.Balance[Index]); break;
+                        default: Temp += "\t"; break;
                     }
                 }
 
+                GameIndex++;
                 Result.Add(Temp);
             }
 
@@ -69,9 +80,15 @@ namespace TenhouViewer.Statistic
 
             int RoundIndex = 0;
 
+            // Add fields name
+            {
+                string FieldNames = "";
+                for (int i = 0; i < Fields.Count; i++) FieldNames += String.Format("{0:s}\t", Fields[i]);
+
+                Result.Add(FieldNames);
+            }
             for (int i = 0; i < GameList.Count; i++)
             {
-                string Temp = "";
                 Search.Result R = GameList[i];
 
                 int Index = GetPlayerIndex(R.Replay, NickName);
@@ -79,10 +96,10 @@ namespace TenhouViewer.Statistic
 
                 for (int r = 0; r < R.Replay.Rounds.Count; r++)
                 {
+                    string Temp = "";
+
                     if (!R.RoundMark[r]) continue;
                     Mahjong.Round Rnd = R.Replay.Rounds[r];
-
-                    RoundIndex++;
 
                     // Compose data
                     for (int j = 0; j < Fields.Count; j++)
@@ -106,10 +123,12 @@ namespace TenhouViewer.Statistic
                             case "balance": Temp += String.Format("{0:d}\t", Rnd.BalanceBefore[Index]); break;
                             case "waiting": Temp += String.Format("{0:d}\t", Rnd.WinWaiting[Index].Count); break;
                             case "round": Temp += String.Format("{0:d}\t", Rnd.CurrentRound); break;
+                            default: Temp += "\t"; break;
                         }
                     }
 
                     Result.Add(Temp);
+                    RoundIndex++;
                 }
             }
 

@@ -445,6 +445,11 @@ namespace TenhouViewer
 
                         Console.WriteLine("Filter: only players, who dealt into ron;");
                         break;
+                    case "winner":
+                        Finder.Winner = true;
+
+                        Console.WriteLine("Filter: only players, who completed hand;");
+                        break;
                 }
             }
 
