@@ -35,7 +35,11 @@ namespace TenhouViewer.Mahjong
         {
             for (int i = 0; i < Tiles.Length; i++)
             {
-                if (Tiles[i] == -1) Tiles[i] = Tile;
+                if (Tiles[i] == -1)
+                {
+                    Tiles[i] = Tile;
+                    break;
+                }
             }
 
             Array.Sort(Tiles);
@@ -49,6 +53,17 @@ namespace TenhouViewer.Mahjong
             }
 
             Array.Sort(Tiles);
+        }
+
+        public void OpenTiles(List<int> TileList)
+        {
+            foreach(int T in TileList)
+            {
+                for (int i = 0; i < Tiles.Length; i++)
+                {
+                    if (Tiles[i] == T) Tiles[i] = -1;
+                }
+            }
         }
 
         public int Shanten
