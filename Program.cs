@@ -45,6 +45,32 @@ namespace TenhouViewer
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
+            Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
+            Console.WriteLine(" index - round index in list;");
+            Console.WriteLine(" initshanten - shanten in start hand in round;");
+            Console.WriteLine(" pay - payment in round;");
+            Console.WriteLine(" tempai - is hand was tempai (1 or 0);");
+            Console.WriteLine(" dealer - is hand was dealer (1 or 0);");
+            Console.WriteLine(" loser - is player dealt in other hand (1 or 0);");
+            Console.WriteLine(" winner - is hand completed (1 or 0);");
+            Console.WriteLine(" riichi - is riichi declared (1 or 0);");
+            Console.WriteLine(" concealed - is hand was concealed (1 or 0);");
+            Console.WriteLine(" openedsets - amount of opened sets;");
+            Console.WriteLine(" cost - cost of hand;");
+            Console.WriteLine(" fu - count of minipoints in hand;");
+            Console.WriteLine(" han - count of game points in hand;");
+            Console.WriteLine(" step - count of steps to end in round;");
+            Console.WriteLine(" balance - balance in hand (pts);");
+            Console.WriteLine(" waiting - amount of tile types in waiting;");
+            Console.WriteLine(" round - index of round(0=1e,1=2e,2=3e...);");
+            Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
+            Console.WriteLine(" index - game index in list;");
+            Console.WriteLine(" rating - player rating before this game;");
+            Console.WriteLine(" rank - player rank before this game (1=1ku, 10=1dan,...);");
+            Console.WriteLine(" place - place in game;");
+            Console.WriteLine(" result - game result with uma;");
+            Console.WriteLine(" balance - balance in the end of game;");
+            Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
         }
 
         static void ParseArgs(string[] args)
@@ -94,7 +120,7 @@ namespace TenhouViewer
                         break;
                     case "G":
                         // Graph games (which found by -f flag)
-                        // -gtfizik index rating rank balance
+                        // -Gtfizik index rating rank balance
                         FindResult = null;
                         GraphResult = GraphGames(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
