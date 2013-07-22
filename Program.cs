@@ -70,6 +70,27 @@ namespace TenhouViewer
             Console.WriteLine(" place - place in game;");
             Console.WriteLine(" result - game result with uma;");
             Console.WriteLine(" balance - balance in the end of game;");
+            Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
+            Console.WriteLine(" link - link to the round;");
+            Console.WriteLine(" nickname - nickname of the player;");
+            Console.WriteLine(" rating - rating of the player;");
+            Console.WriteLine(" rank - rank of the player;");
+            Console.WriteLine(" place - place (result) in game;");
+            Console.WriteLine(" pay - player payment in round;");
+            Console.WriteLine(" dealer - is player dealer;");
+            Console.WriteLine(" winner - is player complete hand;");
+            Console.WriteLine(" loser - is player dealt in other player's hand;");
+            Console.WriteLine(" concealed - is hand concealed;");
+            Console.WriteLine(" cost - cost of hand;");
+            Console.WriteLine(" han - amount of game points in hand;");
+            Console.WriteLine(" waiting - amount of tile types in waiting;");
+            Console.WriteLine(" step - amount of player steps in round;");
+            Console.WriteLine(" yaku - list of yaku;");
+            Console.WriteLine(" round - current round (0-1e, 1-2e, ...);");
+            Console.WriteLine(" roundindex - index of round in game;");
+            Console.WriteLine(" place - player's place in game;");
+
+
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
         }
 
@@ -111,6 +132,7 @@ namespace TenhouViewer
                         // -fLog.txt shanten=1
                         ResultList = Find(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         FindResult = ConvertResultsToString(ResultList);
+                        GraphResult = null;
                         break;
                     case "g":
                         // Graph rounds (which found by -f flag)
@@ -140,6 +162,13 @@ namespace TenhouViewer
                             }
                         }
                         break;
+                    case "o":
+                        // Format find result
+                        {
+                            GraphResult = null;
+                            FindResult = ConvertResultsToString(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        }
+                        break;
                 }
             }
 
@@ -149,6 +178,93 @@ namespace TenhouViewer
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 foreach(string Line in FindResult) Console.WriteLine(Line);
             }
+        }
+
+        static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            List<string> Output = new List<string>();
+
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+
+                for (int r = 0; r < R.Replay.Rounds.Count; r++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[r];
+
+                    for (int k = 0; k < 4; k++)
+                    {
+                        if (R.HandMark[r][k])
+                        {
+                            // Format this result:
+                            string Temp = "";
+
+                            for(int o = 0; o < ArgList.Count; o++)
+                            {
+                                switch(ArgList[o].Name)
+                                {
+                                    case "link":
+                                        Temp += String.Format("http://tenhou.net/0/?log={0:s}&ts={1:d}&tw={2:d}\t",
+                                                              R.Replay.Hash, r, k);
+                                        break;
+                                    case "nickname":
+                                        Temp += String.Format("{0:s}\t", R.Replay.Players[k].NickName);
+                                        break;
+                                    case "rating":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Players[k].Rating);
+                                        break;
+                                    case "place":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Place[k]);
+                                        break;
+                                    case "rank":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Players[k].Rank);
+                                        break;
+                                    case "pay":
+                                        Temp += String.Format("{0:d}\t", Rnd.Pay[k]);
+                                        break;
+                                    case "dealer":
+                                        Temp += String.Format("{0:d}\t", Rnd.Dealer[k] ? 1 : 0);
+                                        break;
+                                    case "winner":
+                                        Temp += String.Format("{0:d}\t", Rnd.Winner[k] ? 1 : 0);
+                                        break;
+                                    case "loser":
+                                        Temp += String.Format("{0:d}\t", Rnd.Loser[k] ? 1 : 0);
+                                        break;
+                                    case "concealed":
+                                        Temp += String.Format("{0:d}\t", (Rnd.OpenedSets[k] == 0) ? 1 : 0);
+                                        break;
+                                    case "cost":
+                                        Temp += String.Format("{0:d}\t", Rnd.Cost[k]);
+                                        break;
+                                    case "han":
+                                        Temp += String.Format("{0:d}\t", Rnd.HanCount[k]);
+                                        break;
+                                    case "waiting":
+                                        Temp += String.Format("{0:d}\t", Rnd.WinWaiting[k].Count);
+                                        break;
+                                    case "step":
+                                        Temp += String.Format("{0:d}\t", Rnd.StepCount[k]);
+                                        break;
+                                    case "yaku":
+                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k]));
+                                        break;
+                                    case "round":
+                                        Temp += String.Format("{0:d}\t", Rnd.CurrentRound);
+                                        break;
+                                    case "roundindex":
+                                        Temp += String.Format("{0:d}\t", r);
+                                        break;
+                                }
+                            }
+
+                            Output.Add(Temp);
+                        }
+                    }
+                }
+            }
+
+            return Output;
         }
 
         static List<string> ConvertResultsToString(List<Search.Result> Results)
