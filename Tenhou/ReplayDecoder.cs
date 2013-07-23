@@ -184,6 +184,9 @@ namespace TenhouViewer.Tenhou
             // Generate wall
             Generator.Generate(GameIndex);
 
+            CurrentRound.Wall.Tiles = Generator.GetWall();
+            CurrentRound.Wall.Dice = Generator.GetDice();
+
             // Balance
             int[] Balance = DecompositeIntList(Reader.GetAttribute("ten"));
 

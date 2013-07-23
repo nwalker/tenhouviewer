@@ -117,6 +117,12 @@ namespace TenhouViewer.Mahjong
                     case "dealer": Dealer = X.ReadBoolArray(); break;
                     case "tempai": Tempai = X.ReadBoolArray(); break;
                     case "stepcount": StepCount = X.ReadIntArray(); break;
+                    case "wall":
+                    {
+                        Wall.Dice = DecompositeIntList(X.GetAttribute("dice"));
+                        Wall.Tiles = DecompositeIntList(X.GetAttribute("tiles"));
+                    }
+                    break;
                     case "steps":
                         {
                             int Count = X.GetIntAttribute("count");
@@ -415,7 +421,7 @@ namespace TenhouViewer.Mahjong
                 X.EndTag();
             }
 
-            if(UraDora.Count > 0)
+            if (UraDora.Count > 0)
             {
                 X.StartTag("uradora");
                 X.Attribute("count", UraDora.Count);
@@ -424,6 +430,18 @@ namespace TenhouViewer.Mahjong
                 {
                     X.WriteTag("dora", "value", UraDora[j]);
                 }
+
+                X.EndTag();
+            }
+
+            // Wall
+            {
+                string Tiles = String.Join(",", Wall.Tiles.Select(p => p.ToString()).ToArray());
+                string Dice = String.Join(",", Wall.Dice.Select(p => p.ToString()).ToArray());
+
+                X.StartTag("wall");
+                X.Attribute("tiles", Tiles);
+                X.Attribute("dice", Dice);
 
                 X.EndTag();
             }
@@ -547,6 +565,29 @@ namespace TenhouViewer.Mahjong
                         break;
                 }
             }
+        }
+
+        private int[] DecompositeIntList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+            string[] Temp;
+            int[] Result = null;
+
+            if (Text == null) return null;
+
+            Temp = Text.Split(delimiter, StringSplitOptions.None);
+            Result = new int[Temp.Length];
+
+            for (int i = 0; i < Temp.Length; i++)
+            {
+                // Отрежем текст до точки
+                int Index = Temp[i].IndexOf('.');
+                if (Index >= 0) Temp[i] = Temp[i].Substring(0, Index);
+
+                Result[i] = Convert.ToInt32(Temp[i]);
+            }
+
+            return Result;
         }
     }
 }
