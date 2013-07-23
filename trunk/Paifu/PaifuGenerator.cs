@@ -115,6 +115,10 @@ namespace TenhouViewer.Paifu
         private void DrawBorders()
         {
             Pen P = new Pen(Color.Black, 2.0f);
+            Brush Br = new SolidBrush(Color.White);
+
+            // fill background
+            G.FillRectangle(Br, new Rectangle(PaddingH, PaddingV, InternalWidth, InternalHeight));
 
             // Paifu border
             G.DrawRectangle(P, new Rectangle(PaddingH, PaddingV, InternalWidth, InternalHeight));
