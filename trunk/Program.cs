@@ -169,6 +169,10 @@ namespace TenhouViewer
                             FindResult = ConvertResultsToString(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         }
                         break;
+                    case "U":
+                        // Paifu by hash
+                        CreatePaifu(ArgList[i].Value);
+                        break;
                 }
             }
 
@@ -177,6 +181,18 @@ namespace TenhouViewer
                 // Search query result
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 foreach(string Line in FindResult) Console.WriteLine(Line);
+            }
+        }
+
+        static void CreatePaifu(string Hash)
+        {
+            Mahjong.Replay R = new Mahjong.Replay();
+
+            R.LoadXml(Hash);
+
+            for (int i = 0; i < R.Rounds.Count; i++)
+            {
+                Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R, i);
             }
         }
 
