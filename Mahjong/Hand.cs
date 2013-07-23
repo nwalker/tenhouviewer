@@ -13,7 +13,7 @@ namespace TenhouViewer.Mahjong
 
         public Hand()
         {
-
+            for (int i = 0; i < Tiles.Length; i++) Tiles[i] = -1;
         }
 
         public Hand(Hand H)
@@ -26,7 +26,6 @@ namespace TenhouViewer.Mahjong
         public void SetArray(int[] Tiles)
         {
             for (int i = 0; i < 13; i++) this.Tiles[i] = Tiles[i];
-            this.Tiles[13] = -1;
 
             Array.Sort(this.Tiles);
         }

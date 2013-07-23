@@ -31,8 +31,8 @@ namespace TenhouViewer.Paifu
             }
 
             string FileName = String.Format(".//tiles//{0:s}.gif", TileName);
-            Bmp = new Bitmap(FileName);
-            Bmp = new Bitmap(Bmp);
+            Bitmap B = new Bitmap(FileName);
+            Bmp = B;// new Bitmap(B);
         }
     }
 }
