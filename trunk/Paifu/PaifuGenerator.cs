@@ -19,8 +19,8 @@ namespace TenhouViewer.Paifu
 
         const int PaddingV = 10;
         const int PaddingH = 10;
-        const int PlayerColumnWidth = 100;
-        const int RoundColumnWidth = 100;
+        int PlayerColumnWidth = 100;
+        int RoundColumnWidth = 100;
 
         const int InternalPadding = 4;
 
@@ -89,6 +89,8 @@ namespace TenhouViewer.Paifu
             InternalWidth = Width - 2 * PaddingH;
             InternalHeight = Height - 2 * PaddingV;
 
+            RoundColumnWidth = TileWidth * 5;
+
             FieldHeight = InternalHeight / 4;
         }
 
@@ -147,6 +149,33 @@ namespace TenhouViewer.Paifu
             PointF Pointer = new PointF(X, Y);
 
             Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
+
+            Pointer.Y += PaddingH;
+            Pointer = DrawCenteredString(Fsmall, "ドラ", Pointer, RoundColumnWidth);
+            int DoraY = Convert.ToInt32(Pointer.Y);
+            Pointer.Y += TileHeight * 1.2f;
+
+            if (Rnd.UraDora.Count > 0)
+            {
+                Pointer = DrawCenteredString(Fsmall, "裏ドラ", Pointer, RoundColumnWidth);
+                int UraDoraY = Convert.ToInt32(Pointer.Y);
+
+                // Ura
+                for (int i = 0; i < Rnd.UraDora.Count; i++)
+                {
+                    int Tile = Rnd.UraDora[i];
+
+                    DrawDoraTile(i, UraDoraY, Tile);
+                }
+            }
+
+            // Dora
+            for (int i = 0; i < Rnd.Dora.Count; i++)
+            {
+                int Tile = Rnd.Dora[i];
+
+                DrawDoraTile(i, DoraY, Tile);
+            }
         }
 
         private void DrawHandInfo(int Index)
@@ -405,7 +434,7 @@ namespace TenhouViewer.Paifu
 
         private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri)
         {
-            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 2);
 
             if (Tsumogiri) Tile = -2;
@@ -419,7 +448,7 @@ namespace TenhouViewer.Paifu
 
         private void DrawDiscardTile(int Index, int Tile, string Comment)
         {
-            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
 
             Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
@@ -427,6 +456,15 @@ namespace TenhouViewer.Paifu
             G.DrawImage(TileBitmap, new Point(X, Y));
 
             DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
+        }
+
+        private void DrawDoraTile(int Index, int Y, int Tile)
+        {
+            int X = PaddingH + Index * TileWidth + TileWidth / 2;
+
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+
+            G.DrawImage(TileBitmap, new Point(X, Y));
         }
 
         private void DrawRon(int Index, string Comment, bool Winner)
