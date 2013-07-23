@@ -235,37 +235,40 @@ namespace TenhouViewer.Mahjong
                                             }
                                         }
                                         break;
-                                }
-                            }
-                        }
-                        break;
-                    case "dora":
-                        {
-                            int Count = X.GetIntAttribute("count");
-
-                            XmlLoad Subtree = X.GetSubtree();
-                            while (Subtree.Read())
-                            {
-                                switch (Subtree.ElementName)
-                                {
                                     case "dora":
-                                        Dora.Add(Subtree.GetIntAttribute("value"));
+                                        {
+                                            int Count = X.GetIntAttribute("count");
+                                            Dora.Clear();
+
+                                            XmlLoad Doras = X.GetSubtree();
+                                            while (Doras.Read())
+                                            {
+                                                switch (Doras.ElementName)
+                                                {
+                                                    case "dora":
+                                                        Dora.Add(Doras.GetIntAttribute("value"));
+                                                        break;
+                                                }
+                                            }
+                                        }
                                         break;
-                                }
-                            }
-                        }
-                        break;
-                    case "uradora":
-                        {
-                            int Count = X.GetIntAttribute("count");
+                                    case "uradora":
+                                        {
+                                            int Count = X.GetIntAttribute("count");
 
-                            XmlLoad Subtree = X.GetSubtree();
-                            while (Subtree.Read())
-                            {
-                                switch (Subtree.ElementName)
-                                {
-                                    case "dora":
-                                        UraDora.Add(Subtree.GetIntAttribute("value"));
+                                            UraDora.Clear();
+
+                                            XmlLoad Doras = X.GetSubtree();
+                                            while (Doras.Read())
+                                            {
+                                                switch (Doras.ElementName)
+                                                {
+                                                    case "dora":
+                                                        UraDora.Add(Doras.GetIntAttribute("value"));
+                                                        break;
+                                                }
+                                            }
+                                        }
                                         break;
                                 }
                             }
