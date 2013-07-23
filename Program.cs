@@ -171,6 +171,8 @@ namespace TenhouViewer
                         break;
                     case "u":
                         // Paifu by find results
+                        GraphResult = null;
+                        FindResult = null;
                         CreatePaifuList(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                     case "U":
@@ -196,12 +198,7 @@ namespace TenhouViewer
 
             foreach(Argument A in ArgList)
             {
-                if (A.Name.CompareTo("dir") == 0)
-                {
-                    Dir = A.Value;
-                    
-                    if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
-                }
+                if (A.Name.CompareTo("dir") == 0) Dir = A.Value;
                 if (A.Name.CompareTo("round") == 0) Round = Convert.ToInt32(A.Value);
 
                 if (A.Name.CompareTo("filename") == 0) FN = A.Value;
@@ -220,6 +217,7 @@ namespace TenhouViewer
 
                 if (FN.CompareTo("") == 0)
                 {
+                    if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
                     FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);
                 }
                 else
@@ -236,13 +234,10 @@ namespace TenhouViewer
 
             foreach (Argument A in ArgList)
             {
-                if (A.Name.CompareTo("dir") == 0)
-                {
-                    Dir = A.Value;
-                    if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
-                }
+                if (A.Name.CompareTo("dir") == 0) Dir = A.Value;
             }
 
+            if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
             for (int i = 0; i < Results.Count; i++)
             {
                 Search.Result R = Results[i];
@@ -254,6 +249,7 @@ namespace TenhouViewer
                     if (!R.RoundMark[r]) continue;
 
                     Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
+
 
                     string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
                     P.Save(FileName);
