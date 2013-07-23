@@ -9,10 +9,11 @@ namespace TenhouViewer.Paifu
     {
         readonly Font Fbig = new Font("Arial", 36.0f);
         readonly Font Fsmall = new Font("Arial", 12.0f);
+        readonly Font Fcomment = new Font("Arial", 10.0f);
 
         const float Scale = 0.7f;
 
-        const int Width = 1000;
+        const int Width = 700;
         int Height = 500;
 
         const int PaddingV = 10;
@@ -36,6 +37,7 @@ namespace TenhouViewer.Paifu
         int Dealer = 0;
 
         int Column = 0;
+        int LastTile = -1;
 
         int TileWidth = 0;
         int TileHeight = 0;
@@ -45,6 +47,8 @@ namespace TenhouViewer.Paifu
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
             R = Replay;
+            R.ReplayGame(); // Calculate result hands
+            
             Rnd = R.Rounds[Round];
 
             CalcPlayersPositions();
@@ -54,9 +58,14 @@ namespace TenhouViewer.Paifu
             G = Graphics.FromImage(B);
 
             DrawBorders();
-            for (int i = 0; i < 4; i++) DrawHandInfo(i);
             DrawSteps();
-
+            for (int i = 0; i < 4; i++)
+            {
+                DrawHandInfo(i);
+                DrawStartHand(i);
+                DrawLastHand(i);
+            }
+            
             B.Save(Replay.Hash + "_" + Round.ToString() + ".png");
         }
 
@@ -66,7 +75,6 @@ namespace TenhouViewer.Paifu
 
             TileWidth = Img.Bmp.Width;
             TileHeight = Img.Bmp.Height;
-
 
             Height = 2 * PaddingV + 4 * (2 * InternalPadding + 6 * TileHeight);
             InternalWidth = Width - 2 * PaddingH;
@@ -111,9 +119,48 @@ namespace TenhouViewer.Paifu
             }
         }
 
+        private void DrawStartHand(int Index)
+        {
+            int Player = Players[Index];
+            int Pos = 0;
+
+            for (int i = 0; i < Rnd.StartHands[Player].Tiles.Length; i++)
+            {
+                int Tile = Rnd.StartHands[Player].Tiles[i];
+                if(Tile == -1) continue;
+
+                Pos = DrawHandTile(Index, Tile, Pos, 0);
+            }
+        }
+
+        private void DrawLastHand(int Index)
+        {
+            int Player = Players[Index];
+            int Pos = 0;
+
+            // Last hand
+            Mahjong.Hand Hand = Rnd.Hands[Player][Rnd.Hands[Player].Count - 1];
+            int[] Tiles = Hand.Tiles;
+
+            for (int i = 0; i < Tiles.Length; i++)
+            {
+                int Tile = Tiles[i];
+                if (Tile == -1) continue;
+                if (Tile == LastTile) continue;
+
+                Pos = DrawHandTile(Index, Tile, Pos, 5);
+            }
+            Pos += TileWidth / 2;
+            if (Rnd.Winner[Player])
+            {
+                Pos = DrawHandTile(Index, LastTile, Pos, 5);
+                Pos += TileWidth / 2;
+            }
+
+        }
+
         private void DrawSteps()
         {
-            int LastTile = -1;
             int LastPlayer = -1;
 
             for (int i = 0; i < Rnd.Steps.Count; i++)
@@ -129,35 +176,83 @@ namespace TenhouViewer.Paifu
                             bool Tsumogiri = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_DISCARDTILE) &&
                                 (Rnd.Steps[i + 1].Tile == S.Tile));
 
+                            bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
+                                (Rnd.Steps[i + 1].Player == S.Player));
+
                             LastTile = S.Tile;
                             LastPlayer = PlayerIndex[S.Player];
 
-                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, "", Tsumogiri);
+                            string Comment = (Tsumo) ? "ツモ" : "";
+                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
+                        }
+                        break;
+                    case Mahjong.StepType.STEP_DRAWDEADTILE:
+                        {
+                            Column++;
+
+                            bool Tsumogiri = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_DISCARDTILE) &&
+                                (Rnd.Steps[i + 1].Tile == S.Tile));
+
+                            bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
+                                (Rnd.Steps[i + 1].Player == S.Player));
+
+                            LastTile = S.Tile;
+                            LastPlayer = PlayerIndex[S.Player];
+
+                            string Comment = (Tsumo) ? "ツモ" : "";
+                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
                         }
                         break;
                     case Mahjong.StepType.STEP_DISCARDTILE:
                         {
                             LastTile = S.Tile;
 
-                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, "");
+                            // Need to find nearest riichi declaration step
+                            bool Riichi = ((Rnd.Steps[i - 1].Type == Mahjong.StepType.STEP_RIICHI) &&
+                                           (Rnd.Steps[i - 1].Player == S.Player));
+
+                            bool Ron = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_RON) &&
+                                        (Rnd.Steps[i + 1].FromWho == S.Player));
+
+                            string Comment = "";
+
+                            if (Ron)
+                                Comment = "ロン";
+                            else if (Riichi)
+                                Comment = "リーチ";
+
+                            LastPlayer = PlayerIndex[S.Player];
+
+                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment);
                         }
                         break;
                     case Mahjong.StepType.STEP_NAKI:
                         {
-                            // Need find draw or discard tile step
+                            // Need to find nearest draw or discard tile step
                             string NakiType = "unk";
 
                             switch (S.NakiData.Type)
                             {
-                                case Mahjong.NakiType.CHI: NakiType = "chi"; break;
-                                case Mahjong.NakiType.PON: NakiType = "pon"; break;
-                                case Mahjong.NakiType.ANKAN: NakiType = "kan"; break;
-                                case Mahjong.NakiType.MINKAN: NakiType = "kan"; break;
-                                case Mahjong.NakiType.CHAKAN: NakiType = "kan"; break;
+                                case Mahjong.NakiType.CHI: NakiType = "チー"; break;
+                                case Mahjong.NakiType.PON: NakiType = "ポン"; break;
+                                case Mahjong.NakiType.ANKAN: NakiType = "カン"; break;
+                                case Mahjong.NakiType.MINKAN: NakiType = "カン"; break;
+                                case Mahjong.NakiType.CHAKAN: NakiType = "カン"; break;
                             }
 
                             if (LastPlayer > PlayerIndex[S.Player]) Column++;
+                            LastPlayer = PlayerIndex[S.Player];
+
                             DrawTsumoTile(PlayerIndex[S.Player], LastTile, NakiType, false);
+
+                            // Can be ron after chakan or ankan!
+                        }
+                        break;
+                    case Mahjong.StepType.STEP_RON:
+                        {
+                            if ((LastPlayer > PlayerIndex[S.Player]) || (S.Player == Dealer)) Column++;
+
+                            DrawRon(PlayerIndex[S.Player], "ロン", true);
                         }
                         break;
                 }
@@ -191,6 +286,17 @@ namespace TenhouViewer.Paifu
             Pointer = DrawCenteredString(Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
         }
 
+        private int DrawHandTile(int Index, int Tile, int Pos, int Line)
+        {
+            int X = PaddingH + PlayerColumnWidth + InternalPadding + Pos + TileWidth;
+            int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
+
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            G.DrawImage(TileBitmap, new Point(X, Y));
+
+            return Pos + TileWidth;
+        }
+
         private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri)
         {
             int X = PaddingH + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
@@ -202,7 +308,7 @@ namespace TenhouViewer.Paifu
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
-            DrawCenteredString(Fsmall, Comment, new PointF(X, Y - G.MeasureString(Comment, Fsmall).Height), TileWidth);
+            DrawCenteredString(Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
         }
 
         private void DrawDiscardTile(int Index, int Tile, string Comment)
@@ -214,7 +320,17 @@ namespace TenhouViewer.Paifu
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
-            DrawCenteredString(Fsmall, Comment, new PointF(X, Y + TileHeight), TileWidth);
+            DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
+        }
+
+        private void DrawRon(int Index, string Comment, bool Winner)
+        {
+            int Line = (Winner) ? 2 : 3; // draw tile line or discard tile line
+
+            int X = PaddingH + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : 0)) * TileWidth;
+            int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
+
+            DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);
         }
     }
 }
