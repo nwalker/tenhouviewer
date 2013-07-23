@@ -129,7 +129,7 @@ namespace TenhouViewer.Paifu
                 int Tile = Rnd.StartHands[Player].Tiles[i];
                 if(Tile == -1) continue;
 
-                Pos = DrawHandTile(Index, Tile, Pos, 0);
+                Pos = DrawHandTile(Index, Tile, Pos, 0, 0, RotateFlipType.RotateNoneFlipNone);
             }
         }
 
@@ -148,15 +148,84 @@ namespace TenhouViewer.Paifu
                 if (Tile == -1) continue;
                 if (Tile == LastTile) continue;
 
-                Pos = DrawHandTile(Index, Tile, Pos, 5);
+                Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
             }
             Pos += TileWidth / 2;
             if (Rnd.Winner[Player])
             {
-                Pos = DrawHandTile(Index, LastTile, Pos, 5);
+                Pos = DrawHandTile(Index, LastTile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
                 Pos += TileWidth / 2;
             }
 
+            for (int i = 0; i < Hand.Naki.Count; i++)
+            {
+                Mahjong.Naki N = Hand.Naki[i];
+
+                switch (N.Type)
+                {
+                    case Mahjong.NakiType.CHI:
+                        for (int j = 0; j < 3; j++)
+                        {
+                            RotateFlipType Rotate = (j == 0) ? RotateFlipType.Rotate90FlipNone : RotateFlipType.RotateNoneFlipNone;
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                        }
+                        break;
+                    case Mahjong.NakiType.PON:
+                        for (int j = 0; j < 3; j++)
+                        {
+                            RotateFlipType Rotate = (j == (3 - N.FromWho)) ? RotateFlipType.Rotate90FlipNone : RotateFlipType.RotateNoneFlipNone;
+
+                            // 1: AB[C] 2: A[B]C 3: [A]BC
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                        }
+                        break;
+                    case Mahjong.NakiType.ANKAN:
+                        for (int j = 0; j < 4; j++)
+                        {
+                            int Tile = N.Tiles[j];
+
+                            // Close first and last tiles
+                            if((Tile == 0)||(Tile == 3)) Tile = -1;
+                            Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                        }
+                        break;
+                    case Mahjong.NakiType.MINKAN:
+                        for (int j = 0; j < 4; j++)
+                        {
+                            RotateFlipType Rotate = RotateFlipType.RotateNoneFlipNone;
+
+                            if (((N.FromWho == 1) && (i == 3)) ||
+                                ((N.FromWho == 2) && (i == 1)) ||
+                                ((N.FromWho == 3) && (i == 0))) Rotate = RotateFlipType.Rotate90FlipNone;
+
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                        }
+                        break;
+                    case Mahjong.NakiType.CHAKAN:
+                        for (int j = 0; j < 4; j++)
+                        {
+                            RotateFlipType Rotate = RotateFlipType.RotateNoneFlipNone;
+                            int YOffset = 0;
+
+                            if (j == (3 - N.FromWho))
+                            {
+                                Rotate = RotateFlipType.Rotate90FlipNone;
+                            }
+                            // Added tile
+                            if (j == (4 - N.FromWho))
+                            {
+                                Rotate = RotateFlipType.Rotate90FlipNone;
+                                Pos -= TileHeight;
+                                YOffset = -TileWidth;
+                            }
+
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, YOffset, Rotate);
+                        }
+                        break;
+                }
+
+                Pos += TileWidth / 2;
+            }
         }
 
         private void DrawSteps()
@@ -286,15 +355,21 @@ namespace TenhouViewer.Paifu
             Pointer = DrawCenteredString(Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
         }
 
-        private int DrawHandTile(int Index, int Tile, int Pos, int Line)
+        private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate)
         {
-            int X = PaddingH + PlayerColumnWidth + InternalPadding + Pos + TileWidth;
-            int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
-
             Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            switch (Rotate)
+            {
+                case RotateFlipType.Rotate90FlipNone: TileBitmap.RotateFlip(Rotate); break;
+                case RotateFlipType.Rotate270FlipNone: TileBitmap.RotateFlip(Rotate); break;
+            }
+
+            int X = PaddingH + PlayerColumnWidth + InternalPadding + Pos + TileWidth;
+            int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line) + YOffset + TileHeight - TileBitmap.Height;
+
             G.DrawImage(TileBitmap, new Point(X, Y));
 
-            return Pos + TileWidth;
+            return Pos + TileBitmap.Width;
         }
 
         private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri)
