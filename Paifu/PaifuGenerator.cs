@@ -142,6 +142,9 @@ namespace TenhouViewer.Paifu
 
         private void DrawRoundInfo()
         {
+            List<int> DoraPointer = Rnd.GetDoraPointerList();
+            List<int> UraDoraPointer = Rnd.GetUraDoraPointerList();
+
             int Wind = Rnd.CurrentRound / 4;
             int Index = (Rnd.CurrentRound & 3) + 1;
 
@@ -154,28 +157,25 @@ namespace TenhouViewer.Paifu
             Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
 
             Pointer.Y += PaddingH;
-            Pointer = DrawCenteredString(Fsmall, "ドラ", Pointer, RoundColumnWidth);
+            //Pointer = DrawCenteredString(Fsmall, "ドラ", Pointer, RoundColumnWidth);
             int DoraY = Convert.ToInt32(Pointer.Y);
             Pointer.Y += TileHeight * 1.2f;
 
-            if (Rnd.UraDora.Count > 0)
+            //Pointer = DrawCenteredString(Fsmall, "裏ドラ", Pointer, RoundColumnWidth);
+            int UraDoraY = Convert.ToInt32(Pointer.Y);
+
+            // Ura
+            for (int i = 0; i < 4; i++)
             {
-                Pointer = DrawCenteredString(Fsmall, "裏ドラ", Pointer, RoundColumnWidth);
-                int UraDoraY = Convert.ToInt32(Pointer.Y);
+                int Tile = (i < UraDoraPointer.Count) ? UraDoraPointer[i] : -1;
 
-                // Ura
-                for (int i = 0; i < Rnd.UraDora.Count; i++)
-                {
-                    int Tile = Rnd.UraDora[i];
-
-                    DrawDoraTile(i, UraDoraY, Tile);
-                }
+                DrawDoraTile(i, UraDoraY, Tile);
             }
-
+            
             // Dora
-            for (int i = 0; i < Rnd.Dora.Count; i++)
+            for (int i = 0; i < 4; i++)
             {
-                int Tile = Rnd.Dora[i];
+                int Tile = (i < DoraPointer.Count) ? DoraPointer[i] : -1;
 
                 DrawDoraTile(i, DoraY, Tile);
             }

@@ -14,7 +14,6 @@ namespace TenhouViewer.Tenhou
 
         public Mahjong.Replay R = new Mahjong.Replay();
         private WallGenerator Generator;
-        private int GameIndex = 0;
         private bool FirstStep;
         private int LastDealer = -1;
         private int Round = -1;
@@ -49,8 +48,6 @@ namespace TenhouViewer.Tenhou
 
         private void Parse(XmlReader Reader)
         {
-            GameIndex = 0;
-
             Reader.MoveToContent();
             while (Reader.Read())
             {
@@ -182,7 +179,7 @@ namespace TenhouViewer.Tenhou
             R.Rounds.Add(CurrentRound);
 
             // Generate wall
-            Generator.Generate(GameIndex);
+            Generator.Generate(CurrentRound.Index);
 
             CurrentRound.Wall.Tiles = Generator.GetWall();
             CurrentRound.Wall.Dice = Generator.GetDice();

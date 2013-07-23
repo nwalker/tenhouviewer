@@ -14,6 +14,8 @@ namespace TenhouViewer.Mahjong
         public bool Red;
         public string TileType;
 
+        public int DoraType;
+
         //1  - 1 ман
         //↓
         //9  - 9 ман
@@ -39,6 +41,7 @@ namespace TenhouViewer.Mahjong
             this.Index = Index;
 
             TileId = CalcTileId(Index);
+            DoraType = CalcDoraType(TileId);
 
             Value = (TileId % 10); // Позиция в масти
             Red = ((Value == 5) && ((Index & 0x03) == 0) && (Index < 36 * 3));
@@ -80,6 +83,21 @@ namespace TenhouViewer.Mahjong
             if (Id > 29) Id++;
 
             return Id;
+        }
+
+        // If it is a dora pointer...
+        private int CalcDoraType(int Id)
+        {
+            int Dora = Id + 1;
+
+            // pin, sou, man
+            if (Dora % 10 == 0) Dora = Dora - 9;
+            // winds
+            if (Dora == 35) Dora = 31;
+            // dracones
+            if (Dora == 38) Dora = 35;
+
+            return Dora;
         }
     }
 }
