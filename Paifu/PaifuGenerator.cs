@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 
 namespace TenhouViewer.Paifu
@@ -13,12 +14,13 @@ namespace TenhouViewer.Paifu
 
         const float Scale = 0.7f;
 
-        const int Width = 700;
+        const int Width = 880;
         int Height = 500;
 
         const int PaddingV = 10;
         const int PaddingH = 10;
         const int PlayerColumnWidth = 100;
+        const int RoundColumnWidth = 100;
 
         const int InternalPadding = 4;
 
@@ -41,23 +43,25 @@ namespace TenhouViewer.Paifu
 
         int TileWidth = 0;
         int TileHeight = 0;
-        
+
+        Bitmap B;
         Graphics G;
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
             R = Replay;
-            R.ReplayGame(); // Calculate result hands
-            
             Rnd = R.Rounds[Round];
+            // Replay only one game, if it need
+            if (Rnd.Hands[0].Count == 0) Rnd.ReplayGame();
 
             CalcPlayersPositions();
             CalcTileDimensions();
 
-            Bitmap B = new Bitmap(Width, Height);
+            B = new Bitmap(Width, Height);
             G = Graphics.FromImage(B);
 
             DrawBorders();
+            DrawRoundInfo();
             DrawSteps();
             for (int i = 0; i < 4; i++)
             {
@@ -65,9 +69,14 @@ namespace TenhouViewer.Paifu
                 DrawStartHand(i);
                 DrawLastHand(i);
             }
-            
-            B.Save(Replay.Hash + "_" + Round.ToString() + ".png");
         }
+
+        public void Save(string FileName)
+        {
+            
+            B.Save(FileName);
+        }
+
 
         private void CalcTileDimensions()
         {
@@ -110,12 +119,15 @@ namespace TenhouViewer.Paifu
             // Paifu border
             G.DrawRectangle(P, new Rectangle(PaddingH, PaddingV, InternalWidth, InternalHeight));
 
+            // Round border
+            G.DrawRectangle(P, new Rectangle(PaddingH, PaddingV, RoundColumnWidth, InternalHeight));
+
             // Players border
-            G.DrawRectangle(P, new Rectangle(PaddingH, PaddingV, PlayerColumnWidth, InternalHeight));
+            G.DrawRectangle(P, new Rectangle(PaddingH + RoundColumnWidth, PaddingV, PlayerColumnWidth, InternalHeight));
 
             // Draw horisontal lines
             {
-                for (int i = 0; i < 4; i++) G.DrawLine(P, PaddingH, PaddingH + FieldHeight * i, PaddingH + InternalWidth, PaddingH + FieldHeight * i);
+                for (int i = 0; i < 4; i++) G.DrawLine(P, PaddingH + RoundColumnWidth, PaddingV + FieldHeight * i, PaddingH + InternalWidth, PaddingV + FieldHeight * i);
             }
         }
 
@@ -342,11 +354,25 @@ namespace TenhouViewer.Paifu
             return new PointF(Pointer.X, fY + Size.Height);
         }
 
+        private void DrawRoundInfo()
+        {
+            int Wind = Rnd.CurrentRound / 4;
+            int Index = (Rnd.CurrentRound & 3) + 1;
+
+            string Round = String.Format("{0:s}{1:d}", Winds[Wind], Index);
+
+            float X = PaddingH;
+            float Y = PaddingV * 2;
+            PointF Pointer = new PointF(X, Y);
+
+            Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
+        }
+
         private void DrawHandInfo(int Index)
         {
             int Player = Players[Index];
 
-            float X = PaddingH;
+            float X = PaddingH + RoundColumnWidth;
             float Y = Index * FieldHeight + PaddingV;
             PointF Pointer = new PointF(X, Y);
 
@@ -364,7 +390,7 @@ namespace TenhouViewer.Paifu
                 case RotateFlipType.Rotate270FlipNone: TileBitmap.RotateFlip(Rotate); break;
             }
 
-            int X = PaddingH + PlayerColumnWidth + InternalPadding + Pos + TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + Pos + TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line) + YOffset + TileHeight - TileBitmap.Height;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
@@ -374,7 +400,7 @@ namespace TenhouViewer.Paifu
 
         private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri)
         {
-            int X = PaddingH + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 2);
 
             if (Tsumogiri) Tile = -2;
@@ -388,7 +414,7 @@ namespace TenhouViewer.Paifu
 
         private void DrawDiscardTile(int Index, int Tile, string Comment)
         {
-            int X = PaddingH + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
 
             Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
@@ -402,7 +428,7 @@ namespace TenhouViewer.Paifu
         {
             int Line = (Winner) ? 2 : 3; // draw tile line or discard tile line
 
-            int X = PaddingH + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : 0)) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : 0)) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
 
             DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);

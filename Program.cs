@@ -169,9 +169,13 @@ namespace TenhouViewer
                             FindResult = ConvertResultsToString(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         }
                         break;
+                    case "u":
+                        // Paifu by find results
+                        CreatePaifuList(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
                     case "U":
                         // Paifu by hash
-                        CreatePaifu(ArgList[i].Value);
+                        CreatePaifu(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                 }
             }
@@ -184,15 +188,71 @@ namespace TenhouViewer
             }
         }
 
-        static void CreatePaifu(string Hash)
+        static void CreatePaifu(string Hash, List<Argument> ArgList, List<Search.Result> Results)
         {
-            Mahjong.Replay R = new Mahjong.Replay();
+            string Dir = "paifu";
+            string FN = "";
+            int Round = -1;
 
+            foreach(Argument A in ArgList)
+            {
+                if (A.Name.CompareTo("dir") == 0)
+                {
+                    Dir = A.Value;
+                    
+                    if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
+                }
+                if (A.Name.CompareTo("round") == 0) Round = Convert.ToInt32(A.Value);
+
+                if (A.Name.CompareTo("filename") == 0) FN = A.Value;
+            }
+
+            Mahjong.Replay R = new Mahjong.Replay();
             R.LoadXml(Hash);
 
             for (int i = 0; i < R.Rounds.Count; i++)
             {
+                if ((Round != -1) && (Round != i)) continue;
+
                 Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R, i);
+
+                string FileName;
+
+                if (FN.CompareTo("") == 0)
+                {
+                    FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);
+                }
+                else
+                {
+                    FileName = (Round == -1) ? String.Format("{0:s}_{1:d}.png", FN, i) : String.Format("{0:s}.png", FN);
+                }
+                P.Save(FileName);
+            }
+        }
+
+        static void CreatePaifuList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            string Dir = "paifu";
+
+            foreach (Argument A in ArgList)
+            {
+                if (A.Name.CompareTo("dir") == 0) Dir = A.Value;
+            }
+
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+
+                for (int r = 0; r < R.Replay.Rounds.Count; r++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[r];
+
+                    if (!R.RoundMark[r]) continue;
+
+                    Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
+
+                    P.Save(Dir);
+                }
             }
         }
 
