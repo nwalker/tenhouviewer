@@ -89,9 +89,13 @@ namespace TenhouViewer
             Console.WriteLine(" round - current round (0-1e, 1-2e, ...);");
             Console.WriteLine(" roundindex - index of round in game;");
             Console.WriteLine(" place - player's place in game;");
-
-
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
+            Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
+            Console.WriteLine(" dir - directory to save result (for all rounds);");
+            Console.WriteLine(" filename - filename to save result (for specified round, without extension);");
+            Console.WriteLine(" round - round index (from 0);");
+            Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
+            Console.WriteLine(" dir - directory to save result (for all rounds);");
         }
 
         static void ParseArgs(string[] args)
@@ -195,6 +199,8 @@ namespace TenhouViewer
             string Dir = "paifu";
             string FN = "";
             int Round = -1;
+
+            Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
             foreach(Argument A in ArgList)
             {
