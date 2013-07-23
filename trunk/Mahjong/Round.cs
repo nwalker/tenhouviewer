@@ -54,6 +54,7 @@ namespace TenhouViewer.Mahjong
         public RoundResult Result;
 
         public int CurrentRound = -1; // 0: e1, 1: e2, 2: e3, 3: e4, 4: s1, ...
+        public int DoraCount = 1;
 
         public int RenchanStick = 0;
         public int RiichiStick = 0;
@@ -85,6 +86,46 @@ namespace TenhouViewer.Mahjong
                 BalanceBefore[i] = 0;
                 BalanceAfter[i] = 0;
             }
+        }
+
+        public List<int> GetDoraPointerList()
+        {
+            List<int> DoraList = new List<int>();
+            // Tiles in wall:
+            // 4,6,8,10 - dora pointer
+
+            for (int i = 0; i < DoraCount; i++)
+            {
+                int DoraPointer = new Tile(Wall.Tiles[5 + i * 2]).TileId;
+
+                DoraList.Add(DoraPointer);
+            }
+
+            return DoraList;
+        }
+
+        public List<int> GetUraDoraPointerList()
+        {
+            List<int> DoraList = new List<int>();
+            // Tiles in wall:
+            // 5,7,9,11 - ura pointer
+
+            for (int i = 0; i < DoraCount; i++)
+            {
+                int DoraPointer = new Tile(Wall.Tiles[4 + i * 2]).TileId;
+                int DoraType = DoraPointer + 1;
+
+                // pin, sou, man
+                if (DoraType % 10 == 0) DoraType = DoraType - 9;
+                // winds
+                if (DoraType == 35) DoraType = 31;
+                // dracones
+                if (DoraType == 38) DoraType = 35;
+
+                DoraList.Add(DoraType);
+            }
+
+            return DoraList;
         }
 
         public void Load(string FileName)
@@ -241,40 +282,41 @@ namespace TenhouViewer.Mahjong
                                             }
                                         }
                                         break;
+                                }
+                            }
+                        }
+                        break;
+
+                    case "dora":
+                        {
+                            int Count = X.GetIntAttribute("count");
+                            Dora.Clear();
+
+                            XmlLoad Doras = X.GetSubtree();
+                            while (Doras.Read())
+                            {
+                                switch (Doras.ElementName)
+                                {
                                     case "dora":
-                                        {
-                                            int Count = X.GetIntAttribute("count");
-                                            Dora.Clear();
-
-                                            XmlLoad Doras = X.GetSubtree();
-                                            while (Doras.Read())
-                                            {
-                                                switch (Doras.ElementName)
-                                                {
-                                                    case "dora":
-                                                        Dora.Add(Doras.GetIntAttribute("value"));
-                                                        break;
-                                                }
-                                            }
-                                        }
+                                        Dora.Add(Doras.GetIntAttribute("value"));
                                         break;
-                                    case "uradora":
-                                        {
-                                            int Count = X.GetIntAttribute("count");
+                                }
+                            }
+                        }
+                        break;
+                    case "uradora":
+                        {
+                            int Count = X.GetIntAttribute("count");
 
-                                            UraDora.Clear();
+                            UraDora.Clear();
 
-                                            XmlLoad Doras = X.GetSubtree();
-                                            while (Doras.Read())
-                                            {
-                                                switch (Doras.ElementName)
-                                                {
-                                                    case "dora":
-                                                        UraDora.Add(Doras.GetIntAttribute("value"));
-                                                        break;
-                                                }
-                                            }
-                                        }
+                            XmlLoad Doras = X.GetSubtree();
+                            while (Doras.Read())
+                            {
+                                switch (Doras.ElementName)
+                                {
+                                    case "dora":
+                                        UraDora.Add(Doras.GetIntAttribute("value"));
                                         break;
                                 }
                             }
@@ -314,6 +356,44 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("dealer", Dealer);
             X.WriteTag("stepcount", StepCount);
             X.WriteTag("tempai", Tempai);
+
+            // Wall
+            {
+                string Tiles = String.Join(",", Wall.Tiles.Select(p => p.ToString()).ToArray());
+                string Dice = String.Join(",", Wall.Dice.Select(p => p.ToString()).ToArray());
+
+                X.StartTag("wall");
+                X.Attribute("tiles", Tiles);
+                X.Attribute("dice", Dice);
+
+                X.EndTag();
+            }
+
+            // Dora
+            {
+                X.StartTag("dora");
+                X.Attribute("count", Dora.Count);
+
+                for (int j = 0; j < Dora.Count; j++)
+                {
+                    X.WriteTag("dora", "value", Dora[j]);
+                }
+
+                X.EndTag();
+            }
+
+            if (UraDora.Count > 0)
+            {
+                X.StartTag("uradora");
+                X.Attribute("count", UraDora.Count);
+
+                for (int j = 0; j < UraDora.Count; j++)
+                {
+                    X.WriteTag("dora", "value", UraDora[j]);
+                }
+
+                X.EndTag();
+            }
 
             // Start hands
             {
@@ -365,7 +445,6 @@ namespace TenhouViewer.Mahjong
 
             // Yaku list
             {
-
                 for (int i = 0; i < 4; i++)
                 {
                     if (Yaku[i].Count == 0) continue;
@@ -406,44 +485,6 @@ namespace TenhouViewer.Mahjong
                     }
                     X.EndTag();
                 }
-            }
-
-            // Dora
-            {
-                X.StartTag("dora");
-                X.Attribute("count", Dora.Count);
-
-                for (int j = 0; j < Dora.Count; j++)
-                {
-                    X.WriteTag("dora", "value", Dora[j]);
-                }
-
-                X.EndTag();
-            }
-
-            if (UraDora.Count > 0)
-            {
-                X.StartTag("uradora");
-                X.Attribute("count", UraDora.Count);
-
-                for (int j = 0; j < UraDora.Count; j++)
-                {
-                    X.WriteTag("dora", "value", UraDora[j]);
-                }
-
-                X.EndTag();
-            }
-
-            // Wall
-            {
-                string Tiles = String.Join(",", Wall.Tiles.Select(p => p.ToString()).ToArray());
-                string Dice = String.Join(",", Wall.Dice.Select(p => p.ToString()).ToArray());
-
-                X.StartTag("wall");
-                X.Attribute("tiles", Tiles);
-                X.Attribute("dice", Dice);
-
-                X.EndTag();
             }
 
             X.EndXML();
@@ -499,6 +540,11 @@ namespace TenhouViewer.Mahjong
 
                 switch (Steps[i].Type)
                 {
+                    case StepType.STEP_NEWDORA:
+                        {
+                            DoraCount++;
+                        }
+                        break;
                     case StepType.STEP_DRAWTILE:
                         {
                             TempHands[S.Player].Draw(S.Tile);
