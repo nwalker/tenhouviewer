@@ -131,6 +131,34 @@ namespace TenhouViewer.Paifu
             }
         }
 
+        private void DrawRoundInfo()
+        {
+            int Wind = Rnd.CurrentRound / 4;
+            int Index = (Rnd.CurrentRound & 3) + 1;
+
+            string Round = String.Format("{0:s}{1:d}", Winds[Wind], Index);
+
+            float X = PaddingH;
+            float Y = PaddingV * 2;
+            PointF Pointer = new PointF(X, Y);
+
+            Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
+        }
+
+        private void DrawHandInfo(int Index)
+        {
+            int Player = Players[Index];
+
+            float X = PaddingH + RoundColumnWidth;
+            float Y = Index * FieldHeight + PaddingV;
+            PointF Pointer = new PointF(X, Y);
+
+            Pointer = DrawCenteredString(Fbig, Winds[Index], Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Fsmall, R.Players[Player].NickName, Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Fsmall, Rnd.Pay[Player].ToString(), Pointer, PlayerColumnWidth);
+        }
+
         private void DrawStartHand(int Index)
         {
             int Player = Players[Index];
@@ -352,33 +380,6 @@ namespace TenhouViewer.Paifu
             G.DrawString(S, F, Br, fX, fY);
 
             return new PointF(Pointer.X, fY + Size.Height);
-        }
-
-        private void DrawRoundInfo()
-        {
-            int Wind = Rnd.CurrentRound / 4;
-            int Index = (Rnd.CurrentRound & 3) + 1;
-
-            string Round = String.Format("{0:s}{1:d}", Winds[Wind], Index);
-
-            float X = PaddingH;
-            float Y = PaddingV * 2;
-            PointF Pointer = new PointF(X, Y);
-
-            Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
-        }
-
-        private void DrawHandInfo(int Index)
-        {
-            int Player = Players[Index];
-
-            float X = PaddingH + RoundColumnWidth;
-            float Y = Index * FieldHeight + PaddingV;
-            PointF Pointer = new PointF(X, Y);
-
-            Pointer = DrawCenteredString(Fbig, Winds[Index], Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Fsmall, R.Players[Player].NickName, Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
         }
 
         private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate)
