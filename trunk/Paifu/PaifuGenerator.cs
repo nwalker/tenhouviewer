@@ -14,13 +14,14 @@ namespace TenhouViewer.Paifu
 
         const float Scale = 0.7f;
 
-        const int Width = 880;
+        int Width = 950;
         int Height = 500;
 
         const int PaddingV = 10;
         const int PaddingH = 10;
         int PlayerColumnWidth = 100;
         int RoundColumnWidth = 100;
+        int TilesColumnWidth = 750;
 
         const int InternalPadding = 4;
 
@@ -85,7 +86,9 @@ namespace TenhouViewer.Paifu
             TileWidth = Img.Bmp.Width;
             TileHeight = Img.Bmp.Height;
 
+            Width = RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth + PaddingH * 2;
             Height = 2 * PaddingV + 4 * (2 * InternalPadding + 6 * TileHeight);
+
             InternalWidth = Width - 2 * PaddingH;
             InternalHeight = Height - 2 * PaddingV;
 
