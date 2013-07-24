@@ -144,7 +144,7 @@ namespace TenhouViewer.Mahjong
                 switch (X.ElementName)
                 {
                     case "hash": Hash = X.GetAttribute("value"); break;
-                    case "playercount": Index = X.GetIntAttribute("value"); break;
+                    case "playercount": PlayerCount = X.GetIntAttribute("value"); break;
                     case "game": Index = X.GetIntAttribute("index"); break;
                     case "round": CurrentRound = X.GetIntAttribute("index"); break;
                     case "result": StringResult = X.GetAttribute("value"); break;

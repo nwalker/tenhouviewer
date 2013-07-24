@@ -52,6 +52,7 @@ namespace TenhouViewer.Mahjong
                 switch (X.ElementName)
                 {
                     case "hash": this.Hash = X.GetAttribute("value"); break;
+                    case "playercount": PlayerCount = X.GetIntAttribute("value"); break;
                     case "balance": Balance = X.ReadIntArray(); break;
                     case "result": Result = X.ReadIntArray(); break;
                     case "place": Place = X.ReadIntArray(); break;
@@ -129,7 +130,7 @@ namespace TenhouViewer.Mahjong
 
             // replay ID
             X.WriteTag("hash", "value", Hash);
-
+            X.WriteTag("playercount", "value", PlayerCount);
             X.WriteTag("result", Result);
             X.WriteTag("balance", Balance);
             X.WriteTag("place", Place);
