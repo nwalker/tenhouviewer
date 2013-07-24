@@ -15,6 +15,8 @@ namespace TenhouViewer.Mahjong
         public List<Round> Rounds = new List<Round>();
         public List<string> RoundFiles = new List<string>();
 
+        public DateTime Date;
+
         public int[] Result = new int[4];
         public int[] Balance = new int[4];
         public int[] Place = new int[4];
@@ -119,7 +121,22 @@ namespace TenhouViewer.Mahjong
                 }
             }
 
+            Date = GetDateTimeFromHash(Hash);
+
             return true;
+        }
+
+        private DateTime GetDateTimeFromHash(string Hash)
+        {
+            // yyyymmdd
+            int Year = Convert.ToInt16(Hash.Substring(0, 4));
+            int Month = Convert.ToInt16(Hash.Substring(4, 2));
+            int Day = Convert.ToInt16(Hash.Substring(6, 2));
+            int Hour = Convert.ToInt16(Hash.Substring(8, 2));
+
+            DateTime Result = new DateTime(Year, Month, Day, Hour, 0, 0);
+
+            return Result;
         }
 
         public void SaveXml(string FileName)

@@ -64,6 +64,7 @@ namespace TenhouViewer.Statistic
                         case "result": Temp += String.Format("{0:d}\t", R.Replay.Result[Index]); break;
                         case "balance": Temp += String.Format("{0:d}\t", R.Replay.Balance[Index]); break;
                         case "players": Temp += String.Format("{0:d}\t", R.Replay.PlayerCount); break;
+                        case "datetime": Temp += String.Format("{0:s}\t", R.Replay.Date.ToString()); break;
                         default: Temp += "\t"; break;
                     }
                 }

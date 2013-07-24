@@ -31,6 +31,10 @@ namespace TenhouViewer.Paifu
             }
 
             string FileName = String.Format(".//tiles//{0:s}.gif", TileName);
+
+            // Add png option
+            if (!File.Exists(FileName)) FileName = String.Format(".//tiles//{0:s}.png", TileName);
+
             Bitmap B = new Bitmap(FileName);
             Bmp = B;// new Bitmap(B);
         }
