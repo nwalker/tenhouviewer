@@ -31,6 +31,7 @@ namespace TenhouViewer.Paifu
         int FieldHeight;
 
         readonly string[] Winds = { "東", "南", "西", "北" };
+        readonly string[] Ranks = { "新人", "9級", "8級", "7級", "6級", "5級", "4級", "3級", "2級", "1級", "初段", "二段", "三段", "四段", "五段", "六段", "七段", "八段", "九段", "十段" };
 
         Mahjong.Replay R;
         Mahjong.Round Rnd;
@@ -154,14 +155,12 @@ namespace TenhouViewer.Paifu
             float Y = PaddingV * 2;
             PointF Pointer = new PointF(X, Y);
 
-            Pointer = DrawCenteredString(Fbig, Round, Pointer, RoundColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fbig, Round, Pointer, RoundColumnWidth);
 
-            Pointer.Y += PaddingH;
-            //Pointer = DrawCenteredString(Fsmall, "ドラ", Pointer, RoundColumnWidth);
+            Pointer.Y += PaddingV;
             int DoraY = Convert.ToInt32(Pointer.Y);
             Pointer.Y += TileHeight * 1.2f;
 
-            //Pointer = DrawCenteredString(Fsmall, "裏ドラ", Pointer, RoundColumnWidth);
             int UraDoraY = Convert.ToInt32(Pointer.Y);
 
             // Ura
@@ -189,10 +188,15 @@ namespace TenhouViewer.Paifu
             float Y = Index * FieldHeight + PaddingV;
             PointF Pointer = new PointF(X, Y);
 
-            Pointer = DrawCenteredString(Fbig, Winds[Index], Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Fsmall, R.Players[Player].NickName, Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Fsmall, Rnd.Pay[Player].ToString(), Pointer, PlayerColumnWidth);
+            string PlayerRank = String.Format("{0:s} {1:d}R", Ranks[R.Players[Player].Rank], R.Players[Player].Rating);
+
+            Pointer = DrawCenteredString(Color.Black, Fbig, Winds[Index], Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fsmall, R.Players[Player].NickName, Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fsmall, PlayerRank, Pointer, PlayerColumnWidth);
+            Pointer.Y += PaddingV;
+
+            Pointer = DrawCenteredString(Color.Black, Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(((Rnd.Pay[Player] >= 0) ? Color.Green : Color.Red), Fsmall, Rnd.Pay[Player].ToString(), Pointer, PlayerColumnWidth);
         }
 
         private void DrawStartHand(int Index)
@@ -239,6 +243,10 @@ namespace TenhouViewer.Paifu
 
                 switch (N.Type)
                 {
+                    case Mahjong.NakiType.NUKI:
+                        Pos = DrawHandTile(Index, N.Tiles[0], Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                        break;
+
                     case Mahjong.NakiType.CHI:
                         for (int j = 0; j < 3; j++)
                         {
@@ -378,6 +386,7 @@ namespace TenhouViewer.Paifu
 
                             switch (S.NakiData.Type)
                             {
+                                case Mahjong.NakiType.NUKI: NakiType = "抜き"; break;
                                 case Mahjong.NakiType.CHI: NakiType = "チー"; break;
                                 case Mahjong.NakiType.PON: NakiType = "ポン"; break;
                                 case Mahjong.NakiType.ANKAN: NakiType = "カン"; break;
@@ -404,9 +413,9 @@ namespace TenhouViewer.Paifu
             }
         }
 
-        private PointF DrawCenteredString(Font F, string S, PointF Pointer, int Width)
+        private PointF DrawCenteredString(Color C, Font F, string S, PointF Pointer, int Width)
         {
-            Brush Br = new SolidBrush(Color.Black);
+            Brush Br = new SolidBrush(C);
 
             SizeF Size = G.MeasureString(S, F);
             float fX = Pointer.X + (Width - Size.Width) / 2;
@@ -446,7 +455,7 @@ namespace TenhouViewer.Paifu
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
-            DrawCenteredString(Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
+            DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
         }
 
         private void DrawDiscardTile(int Index, int Tile, string Comment)
@@ -458,7 +467,7 @@ namespace TenhouViewer.Paifu
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
-            DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
+            DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
         }
 
         private void DrawDoraTile(int Index, int Y, int Tile)
@@ -477,7 +486,7 @@ namespace TenhouViewer.Paifu
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : 0)) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
 
-            DrawCenteredString(Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);
+            DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);
         }
     }
 }

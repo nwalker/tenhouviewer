@@ -145,7 +145,7 @@ namespace TenhouViewer.Tenhou
                     R.Players[i].NickName = NickName;
                     R.Players[i].Rank = DanList[i];
                     R.Players[i].Rating = RateList[i];
-                    R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Mahjong.Sex.Male : Mahjong.Sex.Female;
+                    R.Players[i].Sex = (SexList[i].CompareTo("M") == 0) ? Mahjong.Sex.Male : ((SexList[i].CompareTo("C") == 0) ? Mahjong.Sex.Computer : Mahjong.Sex.Female);
                 }
             }
         }
@@ -170,6 +170,8 @@ namespace TenhouViewer.Tenhou
 
         private void INIT(XmlReader Reader)
         {
+            R.PlayerCount = 4;
+
             // Start new round!
             CurrentRound = new Mahjong.Round();
             CurrentRound.Wall = new Mahjong.Wall();
@@ -189,14 +191,25 @@ namespace TenhouViewer.Tenhou
 
             for (int i = 0; i < 4; i++)
             {
+                string Hai = Reader.GetAttribute("hai" + i.ToString());
+
+                if ((Hai.CompareTo("") == 0) && (i == 3))
+                {
+                    R.PlayerCount = 3;
+
+                    break;
+                }
+
                 // Tile list, 13 tiles
-                int[] TileList = DecompositeIntList(Reader.GetAttribute("hai" + i.ToString()));
+                int[] TileList = DecompositeIntList(Hai);
 
                 CurrentRound.StartHands[i] = new Mahjong.Hand();
                 CurrentRound.StartHands[i].SetArray(TileList);
 
                 CurrentRound.BalanceBefore[i] = Balance[i] * 100;
             }
+
+            CurrentRound.PlayerCount = R.PlayerCount;
 
             FirstStep = true;
         }
@@ -361,24 +374,24 @@ namespace TenhouViewer.Tenhou
             // sample: -3,-50.0,183,-22.0,190,-1.0,630,73.0
             int[] Temp = DecompositeIntList(owari);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
                 R.Balance[i] = Temp[i * 2 + 1];
                 R.Result[i] = Temp[i * 2] * 100;
             }
 
             // Calculate places
-            int[] ListOrder = new int[4];
+            int[] ListOrder = new int[R.PlayerCount];
 
-            for (int i = 0; i < 4; i++) ListOrder[i] = R.Balance[i];
+            for (int i = 0; i < R.PlayerCount; i++) ListOrder[i] = R.Balance[i];
 
             Array.Sort(ListOrder);
             Array.Reverse(ListOrder);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
                 int Index = 0;
-                for (int j = 0; j < 4; j++) if (ListOrder[i] == R.Balance[j]) Index = j;
+                for (int j = 0; j < R.PlayerCount; j++) if (ListOrder[i] == R.Balance[j]) Index = j;
 
                 R.Place[Index] = i + 1;
             }
@@ -391,7 +404,7 @@ namespace TenhouViewer.Tenhou
             if (score == null) return;
             string[] Temp = score.Split(delimiter, StringSplitOptions.None);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
                 int Balance = Convert.ToInt16(Temp[i * 2 + 0]) * 100;
                 int Pay = Convert.ToInt16(Temp[i * 2 + 1]) * 100;
