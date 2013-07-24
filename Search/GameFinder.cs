@@ -21,6 +21,9 @@ namespace TenhouViewer.Search
         // Waitings (hand has at least one tile in waiting from this array)
         public int[] Waitings = null;
 
+        // Player count
+        public int PlayerCount = 0;
+
         // Player place
         public int Place = 0;
 
@@ -117,6 +120,7 @@ namespace TenhouViewer.Search
                 Result R = GameList[i];
 
                 // filters
+                CheckPlayerCount(R);
                 CheckNickName(R);
                 CheckYaku(R);
                 CheckPlace(R);
@@ -169,6 +173,19 @@ namespace TenhouViewer.Search
         }
 
         // filters
+
+        private void CheckPlayerCount(Result R)
+        {
+            if (PlayerCount == 0) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                if (Rnd.PlayerCount != PlayerCount) R.RoundMark[i] = false;
+            }
+        }
+
         private void CheckNickName(Result R)
         {
             if (NickName == null) return;

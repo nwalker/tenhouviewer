@@ -45,6 +45,7 @@ namespace TenhouViewer
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
+            Console.WriteLine(" players - count of players in game (3-4);");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" index - round index in list;");
             Console.WriteLine(" initshanten - shanten in start hand in round;");
@@ -63,6 +64,7 @@ namespace TenhouViewer
             Console.WriteLine(" balance - balance in hand (pts);");
             Console.WriteLine(" waiting - amount of tile types in waiting;");
             Console.WriteLine(" round - index of round(0=1e,1=2e,2=3e...);");
+            Console.WriteLine(" players - count of players in round;");
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
             Console.WriteLine(" index - game index in list;");
             Console.WriteLine(" rating - player rating before this game;");
@@ -70,6 +72,7 @@ namespace TenhouViewer
             Console.WriteLine(" place - place in game;");
             Console.WriteLine(" result - game result with uma;");
             Console.WriteLine(" balance - balance in the end of game;");
+            Console.WriteLine(" players - count of players in game;");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" nickname - nickname of the player;");
@@ -648,6 +651,12 @@ namespace TenhouViewer
                         Finder.Winner = true;
 
                         Console.WriteLine("Filter: only players, who completed hand;");
+                        break;
+                    case "players":
+                        TempValue = ParseIntArg(Value, 3, 4, "players");
+                        if (TempValue != -1) Finder.PlayerCount = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only games with {0:d} players;", TempValue));
                         break;
                 }
             }
