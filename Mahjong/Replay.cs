@@ -9,6 +9,7 @@ namespace TenhouViewer.Mahjong
 {
     class Replay
     {
+        public int PlayerCount = 4;
         public string Hash = "";
         public Player[] Players = new Player[4];
         public List<Round> Rounds = new List<Round>();

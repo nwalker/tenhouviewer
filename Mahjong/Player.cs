@@ -9,7 +9,8 @@ namespace TenhouViewer.Mahjong
     {
         Unknown,
         Male,
-        Female
+        Female,
+        Computer
     }
 
     class Player
@@ -41,6 +42,7 @@ namespace TenhouViewer.Mahjong
                     {
                         case "M": Sex = Sex.Male; break;
                         case "F": Sex = Sex.Female; break;
+                        case "C": Sex = Sex.Computer; break;
 
                         default: Sex = Sex.Unknown; break;
                     }
@@ -61,6 +63,7 @@ namespace TenhouViewer.Mahjong
                 case Sex.Unknown: SexString = "U"; break;
                 case Sex.Female: SexString = "F"; break;
                 case Sex.Male: SexString = "M"; break;
+                case Sex.Computer: SexString = "C"; break;
             }
 
             X.Attribute("sex", SexString);

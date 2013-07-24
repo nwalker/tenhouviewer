@@ -20,6 +20,7 @@ namespace TenhouViewer.Mahjong
         public string FileName = "";
         public string Hash = "";
         public int Index = 0;
+        public int PlayerCount = 4;
 
         public Wall Wall = new Wall();
         public List<Step> Steps = new List<Step>();
@@ -143,6 +144,7 @@ namespace TenhouViewer.Mahjong
                 switch (X.ElementName)
                 {
                     case "hash": Hash = X.GetAttribute("value"); break;
+                    case "playercount": Index = X.GetIntAttribute("value"); break;
                     case "game": Index = X.GetIntAttribute("index"); break;
                     case "round": CurrentRound = X.GetIntAttribute("index"); break;
                     case "result": StringResult = X.GetAttribute("value"); break;
@@ -341,6 +343,7 @@ namespace TenhouViewer.Mahjong
             // Что это за раздача?
             X.WriteTag("hash", "value", Hash);
             X.WriteTag("game", "index", Index);
+            X.WriteTag("playercount", "value", PlayerCount);
             X.WriteTag("round", "index", CurrentRound);
             X.WriteTag("result", "value", StringResult);
             X.WriteTag("riichistick", "value", RenchanStick);
@@ -398,7 +401,7 @@ namespace TenhouViewer.Mahjong
             // Start hands
             {
                 X.StartTag("hands");
-                for (int i = 0; i < StartHands.Length; i++)
+                for (int i = 0; i < PlayerCount; i++)
                 {
                     X.StartTag("hand");
                     X.Attribute("player", i);
@@ -427,7 +430,7 @@ namespace TenhouViewer.Mahjong
             // Shanten dynamic
             {
                 X.StartTag("shantenlist");
-                for (int i = 0; i < Shanten.Length; i++)
+                for (int i = 0; i < PlayerCount; i++)
                 {
                     if (Shanten[i].Count == 0) continue;
 
@@ -445,7 +448,7 @@ namespace TenhouViewer.Mahjong
 
             // Yaku list
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < PlayerCount; i++)
                 {
                     if (Yaku[i].Count == 0) continue;
 
@@ -521,11 +524,11 @@ namespace TenhouViewer.Mahjong
         // Get all hands in round
         public void ReplayGame()
         {
-            Hand[] TempHands = new Hand[4];
+            Hand[] TempHands = new Hand[PlayerCount];
             int LastTile = -1;
 
             // Init hands
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < PlayerCount; i++)
             {
                 Hands[i].Clear();
                 Hands[i].Add(StartHands[i]);
