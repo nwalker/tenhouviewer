@@ -24,6 +24,7 @@ namespace TenhouViewer.Tenhou
                 int Pos = line.IndexOf(url);
                 int PosEnd = line.IndexOf("&tw=");
 
+                if (PosEnd == -1) PosEnd = line.IndexOf("\">");
                 if (Pos >= 0)
                 {
                     Pos += url.Length;
