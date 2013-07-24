@@ -73,6 +73,7 @@ namespace TenhouViewer
             Console.WriteLine(" result - game result with uma;");
             Console.WriteLine(" balance - balance in the end of game;");
             Console.WriteLine(" players - count of players in game;");
+            Console.WriteLine(" datetime - date of game;");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" nickname - nickname of the player;");
