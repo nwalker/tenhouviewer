@@ -87,6 +87,8 @@ namespace TenhouViewer.Paifu
             TileWidth = Img.Bmp.Width;
             TileHeight = Img.Bmp.Height;
 
+            TilesColumnWidth = TileWidth * 23;
+
             Width = RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth + PaddingH * 2;
             Height = 2 * PaddingV + R.PlayerCount * (2 * InternalPadding + 6 * TileHeight);
 
