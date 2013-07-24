@@ -45,6 +45,7 @@ namespace TenhouViewer.Tenhou
 
                 Tiles.Add(tile);
                 Type = Mahjong.NakiType.NUKI;
+                return;
             }
 
             // Open or concealed kan
