@@ -63,6 +63,7 @@ namespace TenhouViewer.Statistic
                         case "place": Temp += String.Format("{0:d}\t", R.Replay.Place[Index]); break;
                         case "result": Temp += String.Format("{0:d}\t", R.Replay.Result[Index]); break;
                         case "balance": Temp += String.Format("{0:d}\t", R.Replay.Balance[Index]); break;
+                        case "players": Temp += String.Format("{0:d}\t", R.Replay.PlayerCount); break;
                         default: Temp += "\t"; break;
                     }
                 }
@@ -123,6 +124,7 @@ namespace TenhouViewer.Statistic
                             case "balance": Temp += String.Format("{0:d}\t", Rnd.BalanceBefore[Index]); break;
                             case "waiting": Temp += String.Format("{0:d}\t", Rnd.WinWaiting[Index].Count); break;
                             case "round": Temp += String.Format("{0:d}\t", Rnd.CurrentRound); break;
+                            case "players": Temp += String.Format("{0:d}\t", Rnd.PlayerCount); break;
                             default: Temp += "\t"; break;
                         }
                     }
