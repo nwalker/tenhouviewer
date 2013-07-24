@@ -126,6 +126,7 @@ namespace TenhouViewer.Search
                 CheckPlace(R);
                 CheckRank(R);
                 CheckPayment(R);
+                CheckDealer(R);
                 CheckWinner(R);
                 CheckLoser(R);
                 CheckRating(R);
@@ -285,6 +286,20 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < 4; j++)
                 {
                     if (!Rnd.Winner[j]) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckDealer(Result R)
+        {
+            if (!Dealer) return;
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (!Rnd.Dealer[j]) R.HandMark[i][j] = false;
                 }
             }
         }
