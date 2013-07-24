@@ -211,6 +211,9 @@ namespace TenhouViewer.Paifu
 
                 Pos = DrawHandTile(Index, Tile, Pos, 0, 0, RotateFlipType.RotateNoneFlipNone);
             }
+
+            if(Rnd.Shanten[Player].Count > 0)
+                DrawShanten(Index, 0, Convert.ToString(Rnd.Shanten[Player][0]));
         }
 
         private void DrawLastHand(int Index)
@@ -235,6 +238,12 @@ namespace TenhouViewer.Paifu
             {
                 Pos = DrawHandTile(Index, LastTile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
                 Pos += TileWidth / 2;
+            }
+
+            if (Rnd.Shanten[Player].Count > 0)
+            {
+                int Shanten = Rnd.Shanten[Player][Rnd.Shanten[Player].Count - 1];
+                DrawShanten(Index, 5, (Shanten >= 0) ? Shanten.ToString() : "アガリ");
             }
 
             for (int i = 0; i < Hand.Naki.Count; i++)
@@ -487,6 +496,14 @@ namespace TenhouViewer.Paifu
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
 
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);
+        }
+
+        private void DrawShanten(int Index, int Line, string Text)
+        {
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding;
+            int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
+
+            DrawCenteredString(Color.Gray, Fcomment, Text, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Text, Fcomment).Height / 2), TileWidth);
         }
     }
 }
