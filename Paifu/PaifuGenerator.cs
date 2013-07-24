@@ -65,7 +65,7 @@ namespace TenhouViewer.Paifu
             DrawBorders();
             DrawRoundInfo();
             DrawSteps();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
                 DrawHandInfo(i);
                 DrawStartHand(i);
@@ -88,20 +88,20 @@ namespace TenhouViewer.Paifu
             TileHeight = Img.Bmp.Height;
 
             Width = RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth + PaddingH * 2;
-            Height = 2 * PaddingV + 4 * (2 * InternalPadding + 6 * TileHeight);
+            Height = 2 * PaddingV + R.PlayerCount * (2 * InternalPadding + 6 * TileHeight);
 
             InternalWidth = Width - 2 * PaddingH;
             InternalHeight = Height - 2 * PaddingV;
 
             RoundColumnWidth = TileWidth * 5;
 
-            FieldHeight = InternalHeight / 4;
+            FieldHeight = InternalHeight / R.PlayerCount;
         }
 
         private void CalcPlayersPositions()
         {
             // find dealer
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
                 if (Rnd.Dealer[i])
                 {
@@ -111,10 +111,10 @@ namespace TenhouViewer.Paifu
             }
 
             // fill Players array:
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.PlayerCount; i++)
             {
-                Players[i] = (i + Dealer) & 0x03;
-                PlayerIndex[i] = (4 - Dealer + i) & 0x03;
+                Players[i] = (i + Dealer) % R.PlayerCount;
+                PlayerIndex[i] = (R.PlayerCount - Dealer + i) % R.PlayerCount;
             }
         }
 
