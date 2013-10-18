@@ -36,6 +36,10 @@ namespace TenhouViewer
             Console.WriteLine(" paymentmax=N - find all players, who receive or pay less (or equal) than N pt (-1000000-1000000);");
             Console.WriteLine(" waitmin=N - find all hands which has N or greater sides of winning waiting (1-13);");
             Console.WriteLine(" waitmax=N - find all hands which has N or less sides of winning waiting (1-13);");
+            Console.WriteLine(" hanmin=N - find all hands which has han count greater (or equal) than N (1-13);");
+            Console.WriteLine(" hanmax=N - find all hands which has han count less (or equal) than N (1-13);");
+            Console.WriteLine(" fumin=N - find all hands which has fu count greater (or equal) than N (1-120);");
+            Console.WriteLine(" fumax=N - find all hands which has fu count less (or equal) than N (1-120);");
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
@@ -595,6 +599,30 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.WaitingCountMax = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands, which has {0:d}-sided wait and less;", TempValue));
+                        break;
+                    case "hanmin":
+                        TempValue = ParseIntArg(Value, 0, 13, "hanmin");
+                        if (TempValue != -1) Finder.HanMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has han count greater (or equal) than {0:d};", TempValue));
+                        break;
+                    case "hanmax":
+                        TempValue = ParseIntArg(Value, 0, 13, "hanmax");
+                        if (TempValue != -1) Finder.HanMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has han count less (or equal) than {0:d};", TempValue));
+                        break;
+                    case "fumin":
+                        TempValue = ParseIntArg(Value, 0, 120, "fumin");
+                        if (TempValue != -1) Finder.FuMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has fu count greater (or equal) than {0:d};", TempValue));
+                        break;
+                    case "fumax":
+                        TempValue = ParseIntArg(Value, 0, 120, "fumax");
+                        if (TempValue != -1) Finder.FuMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has fu count less (or equal) than {0:d};", TempValue));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");

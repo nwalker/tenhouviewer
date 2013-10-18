@@ -58,6 +58,14 @@ namespace TenhouViewer.Search
         public int ShantenMax = -1;
         public int ShantenMin = -1;
 
+        // Han count of winned hand
+        public int HanMax = -1;
+        public int HanMin = -1;
+
+        // Fu count of winned hand
+        public int FuMax = -1;
+        public int FuMin = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -123,6 +131,8 @@ namespace TenhouViewer.Search
                 CheckPlayerCount(R);
                 CheckNickName(R);
                 CheckYaku(R);
+                CheckHan(R);
+                CheckFu(R);
                 CheckPlace(R);
                 CheckRank(R);
                 CheckPayment(R);
@@ -206,6 +216,34 @@ namespace TenhouViewer.Search
             {
                 if (R.Replay.Place[i] == Place)
                     R.PlayerMark[i] = false;
+            }
+        }
+
+        private void CheckHan(Result R)
+        {
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (HanMin != -1) if (Rnd.HanCount[j] < HanMin) R.HandMark[i][j] = false;
+                    if (HanMax != -1) if (Rnd.HanCount[j] > HanMax) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckFu(Result R)
+        {
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < 4; j++)
+                {
+                    if (FuMin != -1) if (Rnd.FuCount[j] < FuMin) R.HandMark[i][j] = false;
+                    if (FuMax != -1) if (Rnd.FuCount[j] > FuMax) R.HandMark[i][j] = false;
+                }
             }
         }
 
