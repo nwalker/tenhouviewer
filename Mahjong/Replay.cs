@@ -30,12 +30,22 @@ namespace TenhouViewer.Mahjong
         {
             if (!Directory.Exists("replay")) Directory.CreateDirectory("replay");
 
-            SaveXml("replay/" + Hash + ".xml");
+            SaveXml(GetFileName(Hash));
             // Save round info in files
             for (int i = 0; i < Rounds.Count; i++)
             {
                 Rounds[i].Save(Hash + "_" + i.ToString() + ".xml");
             }
+        }
+
+        static public bool IsReplayExist(string Hash)
+        {
+            return File.Exists(GetFileName(Hash));
+        }
+
+        static private string GetFileName(string Hash)
+        {
+            return "replay/" + Hash + ".xml";
         }
 
         public void ReplayGame()

@@ -498,6 +498,12 @@ namespace TenhouViewer
                     continue;
                 }
 
+                if (Mahjong.Replay.IsReplayExist(Hash))
+                {
+                    Console.WriteLine(" - exists, skip!");
+                    continue;
+                }
+
                 Tenhou.ReplayDecoder R = new Tenhou.ReplayDecoder();
                 R.OpenPlainText(ReplayFileName, Hash);
 
