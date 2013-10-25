@@ -278,8 +278,12 @@ namespace TenhouViewer.Tenhou
             // Open dora indicator
             Mahjong.Step Step = new Mahjong.Step(-1);
 
-            //Step.NewDora(???);
-            //CurrentRound.Steps.Add(Step);
+            int Hai = Convert.ToInt32(Reader.GetAttribute("hai"));
+
+            Step.NewDora(Hai);
+            CurrentRound.Steps.Add(Step);
+
+            CurrentRound.DoraCount++;
         }
 
         private void AGARI(XmlReader Reader)
