@@ -39,6 +39,10 @@ namespace TenhouViewer.Search
         // Is player loser (discard to ron)
         public bool Loser = false;
 
+        // Is round end in draw
+        public bool Draw = false;
+        public int DrawReason = -1;
+
         // Maximum steps (tile discard) in round
         public int StepsMax = 0;
 
@@ -143,6 +147,7 @@ namespace TenhouViewer.Search
                 CheckShanten(R);
                 CheckSteps(R);
                 CheckWaitings(R);
+                CheckDraw(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -368,6 +373,55 @@ namespace TenhouViewer.Search
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
                 }
+            }
+        }
+
+        private void CheckDraw(Result R)
+        {
+            if (!Draw) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+                if (Rnd.Result == Mahjong.RoundResult.Draw)
+                {
+                    if (DrawReason == Rnd.DrawReason)
+                    {
+                        switch (DrawReason)
+                        {
+                            case -1: continue; // normal;
+                            case 0:            // 9 hai
+                                int LastTsumoIndex = -1;
+                                for (int j = 0; j < Rnd.Steps.Count; j++)
+                                {
+                                    if (Rnd.Steps[j].Type == Mahjong.StepType.STEP_DRAWTILE) LastTsumoIndex = j;
+                                }
+
+                                if (LastTsumoIndex >= 0)
+                                {
+                                    int Player = Rnd.Steps[LastTsumoIndex].Player;
+
+                                    for (int j = 0; j < 4; j++)
+                                    {
+                                        if (j != Player) R.HandMark[i][j] = false;
+                                    }
+                                }
+                                continue;
+                            case 1: continue;  // reach 4
+                            case 2: continue;  // ron 3
+                            case 3: continue;  // kan 4
+                            case 4: continue;  // kaze 4
+                            case 5:            // nm
+                                for (int j = 0; j < 4; j++)
+                                {
+                                    if (Rnd.Pay[j] < 0) R.HandMark[i][j] = false;
+                                }
+                                continue;
+                        }
+                    }
+                }
+
+                R.RoundMark[i] = false;
             }
         }
 

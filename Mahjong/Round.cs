@@ -53,6 +53,7 @@ namespace TenhouViewer.Mahjong
         public List<int> UraDora = new List<int>();
 
         public RoundResult Result;
+        public int DrawReason = -1;
 
         public int CurrentRound = -1; // 0: e1, 1: e2, 2: e3, 3: e4, 4: s1, ...
         public int DoraCount = 1;
@@ -148,6 +149,7 @@ namespace TenhouViewer.Mahjong
                     case "game": Index = X.GetIntAttribute("index"); break;
                     case "round": CurrentRound = X.GetIntAttribute("index"); break;
                     case "result": StringResult = X.GetAttribute("value"); break;
+                    case "drawreason": DrawReason = X.GetIntAttribute("value"); break;
                     case "riichistick": RiichiStick = X.GetIntAttribute("value"); break;
                     case "renchanstick": RenchanStick = X.GetIntAttribute("value"); break;
                     case "balancebefore": BalanceBefore = X.ReadIntArray(); break;
@@ -346,9 +348,9 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("playercount", "value", PlayerCount);
             X.WriteTag("round", "index", CurrentRound);
             X.WriteTag("result", "value", StringResult);
+            X.WriteTag("drawreason", "value", DrawReason);
             X.WriteTag("riichistick", "value", RenchanStick);
             X.WriteTag("renchanstick", "value", RiichiStick);
-
             X.WriteTag("balancebefore", BalanceBefore);
             X.WriteTag("balanceafter", BalanceAfter);
             X.WriteTag("pay", Pay);
