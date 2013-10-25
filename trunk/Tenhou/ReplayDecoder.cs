@@ -224,7 +224,32 @@ namespace TenhouViewer.Tenhou
             // Draw
             Mahjong.Step Step = new Mahjong.Step(-1);
 
-            Step.Draw(0);
+            string RyuuType = Reader.GetAttribute("type");
+            int Reason = -1;
+
+            switch (RyuuType)
+            {
+                case "yao9": // 9 terminals/honors
+                    Reason = 0;
+                    break;
+                case "reach4": // 4 consecutive riichi calls
+                    Reason = 1;
+                    break;
+                case "ron3": // three simultaneous ron calls (triple ron)
+                    Reason = 2;
+                    break;
+                case "kan4": // four declared kans
+                    Reason = 3;
+                    break;
+                case "kaze4": // same wind discard on first round
+                    Reason = 4;
+                    break;
+                case "nm": // nagashi mangan (all terminal/honor discards)
+                    Reason = 5;
+                    break;
+            }
+
+            Step.Draw(Reason);
             CurrentRound.Steps.Add(Step);
             CurrentRound.Result = Mahjong.RoundResult.Draw;
 
