@@ -252,6 +252,7 @@ namespace TenhouViewer.Tenhou
             Step.Draw(Reason);
             CurrentRound.Steps.Add(Step);
             CurrentRound.Result = Mahjong.RoundResult.Draw;
+            CurrentRound.DrawReason = Reason;
 
             CheckScore(Reader);
             CheckEnd(Reader);

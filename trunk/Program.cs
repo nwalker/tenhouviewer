@@ -69,6 +69,8 @@ namespace TenhouViewer
             Console.WriteLine(" waiting - amount of tile types in waiting;");
             Console.WriteLine(" round - index of round(0=1e,1=2e,2=3e...);");
             Console.WriteLine(" players - count of players in round;");
+            Console.WriteLine(" draw - round ended in draw;");
+            Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
             Console.WriteLine(" index - game index in list;");
             Console.WriteLine(" rating - player rating before this game;");
@@ -692,6 +694,22 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.PlayerCount = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only games with {0:d} players;", TempValue));
+                        break;
+                    case "draw":
+                        string Comment;
+                        Finder.Draw = true;
+                        switch (Value)
+                        {
+                            case "yao9": Finder.DrawReason = 0; Comment = "only games which ended in a draw because of kyushu kyuhai"; break;
+                            case "reach4": Finder.DrawReason = 1; Comment = "only games which ended in a draw because of 4 reach"; break;
+                            case "ron3": Finder.DrawReason = 2; Comment = "only games which ended in a draw because of triple ron"; break; 
+                            case "kan4": Finder.DrawReason = 3; Comment = "only games which ended in a draw because of 4 kans"; break;
+                            case "kaze4": Finder.DrawReason = 4; Comment = "only games which ended in a draw because of 4 winds"; break;
+                            case "nm": Finder.DrawReason = 5; Comment = "only games which ended in a draw with nagashi mangan"; break;
+                            default: Finder.DrawReason = -1; Comment = "only games which ended in a draw (no agari)"; break;
+                        }
+
+                        Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
                         break;
                 }
             }
