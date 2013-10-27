@@ -47,7 +47,7 @@ namespace TenhouViewer.Mahjong
 
             //  三飜
             YakuList[32] = "Ryanpeikou";
-            YakuList[33] = "Ryan Peikou";
+            YakuList[33] = "Jun Chan";
             YakuList[34] = "Honitsu";
 
             //  六飜
