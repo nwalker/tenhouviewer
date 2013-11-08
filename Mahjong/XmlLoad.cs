@@ -87,7 +87,7 @@ namespace TenhouViewer.Mahjong
             Array[0] = Convert.ToInt32(F.GetAttribute("A"));
             Array[1] = Convert.ToInt32(F.GetAttribute("B"));
             Array[2] = Convert.ToInt32(F.GetAttribute("C"));
-            Array[3] = Convert.ToInt32(F.GetAttribute("D"));
+            if(F.GetAttribute("D") != null) Array[3] = Convert.ToInt32(F.GetAttribute("D"));
             return Array;
         }
 
@@ -97,7 +97,7 @@ namespace TenhouViewer.Mahjong
             Array[0] = F.GetAttribute("A");
             Array[1] = F.GetAttribute("B");
             Array[2] = F.GetAttribute("C");
-            Array[3] = F.GetAttribute("D");
+            if (F.GetAttribute("D") != null) Array[3] = F.GetAttribute("D");
             return Array;
         }
 
@@ -107,7 +107,7 @@ namespace TenhouViewer.Mahjong
             Array[0] = (Convert.ToUInt32(F.GetAttribute("A")) != 0);
             Array[1] = (Convert.ToUInt32(F.GetAttribute("B")) != 0);
             Array[2] = (Convert.ToUInt32(F.GetAttribute("C")) != 0);
-            Array[3] = (Convert.ToUInt32(F.GetAttribute("D")) != 0);
+            if (F.GetAttribute("D") != null) Array[3] = (Convert.ToUInt32(F.GetAttribute("D")) != 0);
             return Array;
         }
     }

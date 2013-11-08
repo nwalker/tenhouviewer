@@ -158,6 +158,8 @@ namespace TenhouViewer.Mahjong
         {
             XmlSave X = new XmlSave(FileName);
 
+            if (PlayerCount == 3) X.Xml3Man();
+
             X.StartXML("mjreplay");
 
             // replay ID
@@ -172,7 +174,7 @@ namespace TenhouViewer.Mahjong
             {
                 X.StartTag("playerlist");
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < PlayerCount; j++)
                 {
                     Players[j].WriteXml(X);
                 }

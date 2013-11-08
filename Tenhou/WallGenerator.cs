@@ -24,7 +24,7 @@ namespace TenhouViewer.Tenhou
             // mt19937ar-sha512-n288-base64,*data*
             byte[] SeedBytes;
 
-            if (SeedText.IndexOf("mt19937ar-sha512-n288-base64") == 0)
+            if (Seed.IndexOf("mt19937ar-sha512-n288-base64") == 0)
             {
                 SeedBytes = Convert.FromBase64String(SeedText);
 
