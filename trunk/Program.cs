@@ -27,6 +27,7 @@ namespace TenhouViewer
             Console.WriteLine("TenhouViewer -PHash - parse game;");
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
+            Console.WriteLine(" lobby=N - find all games from specified lobby (0-6);");
             Console.WriteLine(" shanten=N - find all hands started with N shanten number (0-6);");
             Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater (or equal) than N (0-6);");
             Console.WriteLine(" shantenmax=N - find all hands started with shanten number less (or equal) than N (0-6);");
@@ -82,6 +83,7 @@ namespace TenhouViewer
             Console.WriteLine(" datetime - date of game;");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
+            Console.WriteLine(" lobby - lobby;");
             Console.WriteLine(" nickname - nickname of the player;");
             Console.WriteLine(" rating - rating of the player;");
             Console.WriteLine(" rank - rank of the player;");
@@ -344,6 +346,9 @@ namespace TenhouViewer
                                         break;
                                     case "round":
                                         Temp += String.Format("{0:d}\t", Rnd.CurrentRound);
+                                        break;
+                                    case "lobby":
+                                        Temp += String.Format("{0:d}\t", Rnd.Lobby);
                                         break;
                                     case "roundindex":
                                         Temp += String.Format("{0:d}\t", r);
@@ -631,6 +636,12 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.FuMax = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands, which has fu count less (or equal) than {0:d};", TempValue));
+                        break;
+                    case "lobby":
+                        TempValue = ParseIntArg(Value, 0, 9999, "lobby");
+                        if (TempValue != -1) Finder.Lobby = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only games from {0:d} lobby;", TempValue));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");
