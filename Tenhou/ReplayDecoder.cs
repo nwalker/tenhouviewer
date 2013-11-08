@@ -113,6 +113,7 @@ namespace TenhouViewer.Tenhou
         private void GO(XmlReader Reader)
         {
             R.Lobby = Convert.ToInt32(Reader.GetAttribute("lobby"));
+            R.LobbyType = Convert.ToInt32(Reader.GetAttribute("type"));
         }
 
         // Player info
@@ -178,6 +179,7 @@ namespace TenhouViewer.Tenhou
             CurrentRound.Hash = R.Hash;
             CurrentRound.Index = R.Rounds.Count;
             CurrentRound.Lobby = R.Lobby;
+            CurrentRound.LobbyType = R.LobbyType;
 
             R.Rounds.Add(CurrentRound);
 

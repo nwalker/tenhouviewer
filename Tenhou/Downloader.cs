@@ -22,6 +22,13 @@ namespace TenhouViewer.Tenhou
             return DownloadFile(Url, FileName);
         }
 
+        private bool TryEEServer(string FileName)
+        {
+            string Url = "http://ee.mjv.jp/0/log_/?" + Hash;
+
+            return DownloadFile(Url, FileName);
+        }
+
         private bool TryEServer(string FileName)
         {
             string Url = "http://e.mjv.jp/0/log/?" + Hash;
@@ -62,15 +69,16 @@ namespace TenhouViewer.Tenhou
 
         public bool Download(string FileName)
         {
-            // Если на ee.
+            // Try servers with log
             if (!TryEServer(FileName))
             {
-                return TryFFServer(FileName);
+                if (!TryEEServer(FileName))
+                {
+                    return TryFFServer(FileName);
+                }
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
     }
 }
