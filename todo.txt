@@ -1,0 +1,7 @@
+﻿1. Report yaku, han/fu information in paifu;
+2. Mark dangerous tiles in paifu (calc waitings, furiten, option);
+3. Write shanten couint in paifu (option);
+4. Find query: waiting on tile;
+5. Find query: out count in tempai;
+6. Luck calculating;
+7. 

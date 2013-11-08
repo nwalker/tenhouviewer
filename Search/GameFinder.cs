@@ -70,6 +70,9 @@ namespace TenhouViewer.Search
         public int FuMax = -1;
         public int FuMin = -1;
 
+        // Lobby
+        public int Lobby = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -148,6 +151,7 @@ namespace TenhouViewer.Search
                 CheckSteps(R);
                 CheckWaitings(R);
                 CheckDraw(R);
+                CheckLobby(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -261,6 +265,13 @@ namespace TenhouViewer.Search
                 if (R.Replay.Players[i].Rank != Rank)
                     R.PlayerMark[i] = false;
             }
+        }
+
+        private void CheckLobby(Result R)
+        {
+            if (Rank == 0) return;
+
+            if (R.Replay.Lobby != Lobby) R.ReplayMark = false;
         }
 
         private void CheckRating(Result R)

@@ -21,6 +21,8 @@ namespace TenhouViewer.Mahjong
         public int[] Balance = new int[4];
         public int[] Place = new int[4];
 
+        public int Lobby = -1;
+
         public Replay()
         {
 
@@ -65,6 +67,7 @@ namespace TenhouViewer.Mahjong
                 {
                     case "hash": this.Hash = X.GetAttribute("value"); break;
                     case "playercount": PlayerCount = X.GetIntAttribute("value"); break;
+                    case "lobby": PlayerCount = X.GetIntAttribute("lobby"); break;
                     case "balance": Balance = X.ReadIntArray(); break;
                     case "result": Result = X.ReadIntArray(); break;
                     case "place": Place = X.ReadIntArray(); break;
@@ -158,6 +161,7 @@ namespace TenhouViewer.Mahjong
             // replay ID
             X.WriteTag("hash", "value", Hash);
             X.WriteTag("playercount", "value", PlayerCount);
+            X.WriteTag("lobby", "value", Lobby);
             X.WriteTag("result", Result);
             X.WriteTag("balance", Balance);
             X.WriteTag("place", Place);

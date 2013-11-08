@@ -112,7 +112,7 @@ namespace TenhouViewer.Tenhou
 
         private void GO(XmlReader Reader)
         {
-            int Lobby = Convert.ToInt32(Reader.GetAttribute("lobby"));
+            R.Lobby = Convert.ToInt32(Reader.GetAttribute("lobby"));
         }
 
         // Player info
@@ -177,6 +177,7 @@ namespace TenhouViewer.Tenhou
             CurrentRound.Wall = new Mahjong.Wall();
             CurrentRound.Hash = R.Hash;
             CurrentRound.Index = R.Rounds.Count;
+            CurrentRound.Lobby = R.Lobby;
 
             R.Rounds.Add(CurrentRound);
 
