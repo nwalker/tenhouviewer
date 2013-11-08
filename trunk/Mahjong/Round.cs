@@ -169,6 +169,8 @@ namespace TenhouViewer.Mahjong
                     case "stepcount": StepCount = X.ReadIntArray(); break;
                     case "wall":
                     {
+                        if (Wall == null) Wall = new Mahjong.Wall();
+
                         Wall.Dice = DecompositeIntList(X.GetAttribute("dice"));
                         Wall.Tiles = DecompositeIntList(X.GetAttribute("tiles"));
                     }
