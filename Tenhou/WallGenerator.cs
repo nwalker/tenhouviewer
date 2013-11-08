@@ -19,16 +19,49 @@ namespace TenhouViewer.Tenhou
         {
             int DelimiterPos = Seed.IndexOf(",");
 
-            string SeedBase64 = Seed.Substring(DelimiterPos + 1);
+            string SeedText = Seed.Substring(DelimiterPos + 1);
 
             // mt19937ar-sha512-n288-base64,*data*
-            byte[] SeedBytes = Convert.FromBase64String(SeedBase64);
+            byte[] SeedBytes;
 
-            // Convert to UInt32 array
-            for (int i = 0; i < SeedValues.Length; i++) SeedValues[i] = (uint)(SeedBytes[i * 4 + 0] << 0) |
-                                                                        (uint)(SeedBytes[i * 4 + 1] << 8) |
-                                                                        (uint)(SeedBytes[i * 4 + 2] << 16) |
-                                                                        (uint)(SeedBytes[i * 4 + 3] << 24);
+            if (SeedText.IndexOf("mt19937ar-sha512-n288-base64") == 0)
+            {
+                SeedBytes = Convert.FromBase64String(SeedText);
+
+                // Convert to UInt32 array
+                for (int i = 0; i < SeedValues.Length; i++) SeedValues[i] = (uint)(SeedBytes[i * 4 + 0] << 0) |
+                                                                            (uint)(SeedBytes[i * 4 + 1] << 8) |
+                                                                            (uint)(SeedBytes[i * 4 + 2] << 16) |
+                                                                            (uint)(SeedBytes[i * 4 + 3] << 24);
+            }
+            else
+            {
+                // Old style seed value
+                SeedValues = DecompositeHexList(SeedText);
+            }
+        }
+
+        private uint[] DecompositeHexList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+            string[] Temp;
+            uint[] Result = null;
+
+            if (Text == null) return null;
+
+            Temp = Text.Split(delimiter, StringSplitOptions.None);
+            Result = new uint[Temp.Length];
+
+            for (int i = 0; i < Temp.Length; i++)
+            {
+                // Отрежем текст до точки
+                int Index = Temp[i].IndexOf('.');
+                if (Index >= 0) Temp[i] = Temp[i].Substring(0, Index);
+
+                Result[i] = Convert.ToUInt32(Temp[i], 16);
+            }
+
+            return Result;
         }
 
         // Generate Wall by Index

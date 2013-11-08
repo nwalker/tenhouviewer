@@ -97,7 +97,7 @@ namespace TenhouViewer.Mahjong
         {
             List<int> DoraList = new List<int>();
             // Tiles in wall:
-            // 4,6,8,10 - dora pointer
+            // 5,7,9,11 - dora pointer
 
             for (int i = 0; i < DoraCount; i++)
             {
@@ -113,7 +113,7 @@ namespace TenhouViewer.Mahjong
         {
             List<int> DoraList = new List<int>();
             // Tiles in wall:
-            // 5,7,9,11 - ura pointer
+            // 4,6,8,10 - ura pointer
 
             for (int i = 0; i < DoraCount; i++)
             {
