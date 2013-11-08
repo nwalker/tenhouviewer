@@ -58,6 +58,7 @@ namespace TenhouViewer.Statistic
                     switch (Fields[j])
                     {
                         case "index": Temp += String.Format("{0:d}\t", GameIndex); break;
+                        case "lobby": Temp += String.Format("{0:d}\t", R.Replay.Lobby); break;
                         case "rating": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rating); break;
                         case "rank": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rank); break;
                         case "place": Temp += String.Format("{0:d}\t", R.Replay.Place[Index]); break;
@@ -126,6 +127,7 @@ namespace TenhouViewer.Statistic
                             case "waiting": Temp += String.Format("{0:d}\t", Rnd.WinWaiting[Index].Count); break;
                             case "round": Temp += String.Format("{0:d}\t", Rnd.CurrentRound); break;
                             case "players": Temp += String.Format("{0:d}\t", Rnd.PlayerCount); break;
+                            case "lobby": Temp += String.Format("{0:d}\t", Rnd.Lobby); break;
                             default: Temp += "\t"; break;
                         }
                     }
