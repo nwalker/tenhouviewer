@@ -72,6 +72,7 @@ namespace TenhouViewer.Search
 
         // Lobby
         public int Lobby = -1;
+        public int LobbyType = -1; // for 0000 lobby
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -269,9 +270,8 @@ namespace TenhouViewer.Search
 
         private void CheckLobby(Result R)
         {
-            if (Rank == 0) return;
-
-            if (R.Replay.Lobby != Lobby) R.ReplayMark = false;
+            if (Lobby != -1) { if (R.Replay.Lobby != Lobby) R.ReplayMark = false; }
+            if (LobbyType != -1) { if (R.Replay.LobbyType != LobbyType) R.ReplayMark = false; }
         }
 
         private void CheckRating(Result R)

@@ -84,6 +84,7 @@ namespace TenhouViewer
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" lobby - lobby;");
+            Console.WriteLine(" lobbytype - lobby 0000 type: 0 - common, 1 - dan, 2 - higher dan, 3 - phoenix;");
             Console.WriteLine(" nickname - nickname of the player;");
             Console.WriteLine(" rating - rating of the player;");
             Console.WriteLine(" rank - rank of the player;");
@@ -642,6 +643,20 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.Lobby = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only games from {0:d} lobby;", TempValue));
+                        break;
+                    case "lobbytype":
+                        TempValue = ParseIntArg(Value, 0, 10, "lobbytype");
+                        if (TempValue != -1) Finder.LobbyType = TempValue;
+
+                        string LobbyTypeName = "";
+                        switch (TempValue)
+                        {
+                            case 0: LobbyTypeName = "common"; break;
+                            case 1: LobbyTypeName = "dan"; break;
+                            case 2: LobbyTypeName = "higher dan"; break;
+                            case 3: LobbyTypeName = "phoenix"; break;
+                        }
+                        Console.WriteLine(String.Format("Filter: only games from 0000 {0:s} lobby;", LobbyTypeName));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");
