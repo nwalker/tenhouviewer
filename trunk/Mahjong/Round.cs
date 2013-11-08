@@ -342,8 +342,9 @@ namespace TenhouViewer.Mahjong
             FileName = "round/" + FileName;
 
             XmlSave X = new XmlSave(FileName);
-
             this.FileName = FileName;
+
+            if (PlayerCount == 3) X.Xml3Man();
 
             X.StartXML("mjround");
 

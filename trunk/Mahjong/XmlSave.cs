@@ -8,6 +8,7 @@ namespace TenhouViewer.Mahjong
     class XmlSave
     {
         private XmlWriter F;
+        private bool Is4man = true;
 
         public XmlSave(string FileName)
         {
@@ -23,6 +24,11 @@ namespace TenhouViewer.Mahjong
             }
 
             F = XmlWriter.Create(FileName, settings);
+        }
+
+        public void Xml3Man()
+        {
+            Is4man = false;
         }
 
         public void Close()
@@ -60,7 +66,7 @@ namespace TenhouViewer.Mahjong
             Attribute("A", Values[0]);
             Attribute("B", Values[1]);
             Attribute("C", Values[2]);
-            Attribute("D", Values[3]);
+            if(Is4man) Attribute("D", Values[3]);
 
             EndTag();
         }
@@ -71,7 +77,7 @@ namespace TenhouViewer.Mahjong
             Attribute("A", Values[0] ? 1 : 0);
             Attribute("B", Values[1] ? 1 : 0);
             Attribute("C", Values[2] ? 1 : 0);
-            Attribute("D", Values[3] ? 1 : 0);
+            if(Is4man) Attribute("D", Values[3] ? 1 : 0);
 
             EndTag();
         }

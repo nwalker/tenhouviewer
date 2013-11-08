@@ -645,7 +645,7 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only games from {0:d} lobby;", TempValue));
                         break;
                     case "lobbytype":
-                        TempValue = ParseIntArg(Value, 0, 10, "lobbytype");
+                        TempValue = ParseIntArg(Value, 0, 100, "lobbytype");
                         if (TempValue != -1) Finder.LobbyType = TempValue;
 
                         string LobbyTypeName = "";
