@@ -175,7 +175,6 @@ namespace TenhouViewer.Tenhou
 
             // Start new round!
             CurrentRound = new Mahjong.Round();
-            CurrentRound.Wall = new Mahjong.Wall();
             CurrentRound.Hash = R.Hash;
             CurrentRound.Index = R.Rounds.Count;
             CurrentRound.Lobby = R.Lobby;
@@ -184,10 +183,14 @@ namespace TenhouViewer.Tenhou
             R.Rounds.Add(CurrentRound);
 
             // Generate wall
-            Generator.Generate(CurrentRound.Index);
+            if (Generator != null)
+            {
+                Generator.Generate(CurrentRound.Index);
 
-            CurrentRound.Wall.Tiles = Generator.GetWall();
-            CurrentRound.Wall.Dice = Generator.GetDice();
+                CurrentRound.Wall = new Mahjong.Wall();
+                CurrentRound.Wall.Tiles = Generator.GetWall();
+                CurrentRound.Wall.Dice = Generator.GetDice();
+            }
 
             // Balance
             int[] Balance = DecompositeIntList(Reader.GetAttribute("ten"));

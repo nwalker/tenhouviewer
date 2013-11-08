@@ -22,7 +22,7 @@ namespace TenhouViewer.Mahjong
         public int Index = 0;
         public int PlayerCount = 4;
 
-        public Wall Wall = new Wall();
+        public Wall Wall = null;
         public List<Step> Steps = new List<Step>();
         public Hand[] StartHands = new Hand[4]; // Start hands
         public List<Hand>[] Hands = new List<Hand>[4];
@@ -370,6 +370,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("tempai", Tempai);
 
             // Wall
+            if(Wall != null)
             {
                 string Tiles = String.Join(",", Wall.Tiles.Select(p => p.ToString()).ToArray());
                 string Dice = String.Join(",", Wall.Dice.Select(p => p.ToString()).ToArray());
