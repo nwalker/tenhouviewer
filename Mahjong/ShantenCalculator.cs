@@ -242,9 +242,15 @@ namespace TenhouViewer.Mahjong
             // Clear forms list
             Forms.Clear();
 
-            Mentsu = Hand.Naki.Count;
+            Mentsu = 0;
             Toitsu = 0;
             Kouho = 0;
+
+            // Count valuable naki
+            for (i = 0; i < Hand.Naki.Count; i++)
+            {
+                if (Hand.Naki[i].Type != NakiType.NUKI) Mentsu++;
+            }
 
             for (i = 1; i < 38; i++)
             {
