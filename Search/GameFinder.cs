@@ -88,11 +88,13 @@ namespace TenhouViewer.Search
                     Res.ReplayMark = true;
 
                     for (int i = 0; i < 4; i++) Res.PlayerMark[i] = true;
+                    // Exclude 4th player in 3man game
+                    if (R.PlayerCount == 3) Res.PlayerMark[3] = false;
 
                     for (int i = 0; i < R.Rounds.Count; i++)
                     {
                         bool[] Marks = new bool[4];
-                        for(int j = 0; j < 4; j++) Marks[j] = true;
+                        for (int j = 0; j < Res.Replay.PlayerCount; j++) Marks[j] = true;
 
                         Res.RoundMark.Add(true);
                         Res.HandMark.Add(Marks);
@@ -118,10 +120,10 @@ namespace TenhouViewer.Search
                 for (int i = 0; i < R.RoundMark.Count; i++)
                 {
                     //R.RoundMark[i] = true;
-                    for (int j = 0; j < 4; j++) R.HandMark[i][j] = true;
+                    for (int j = 0; j < R.Replay.PlayerCount; j++) R.HandMark[i][j] = true;
                 }
 
-                for (int i = 0; i < 4; i++) R.PlayerMark[i] = true;
+                for (int i = 0; i < R.Replay.PlayerCount; i++) R.PlayerMark[i] = true;
 
                 GameList.Add(R);
             }
@@ -182,7 +184,7 @@ namespace TenhouViewer.Search
         {
             for (int i = 0; i < R.RoundMark.Count; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (!R.PlayerMark[j]) R.HandMark[i][j] = false;
                     if (!R.RoundMark[i]) R.HandMark[i][j] = false;
@@ -211,7 +213,7 @@ namespace TenhouViewer.Search
         {
             if (NickName == null) return;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
                 if (R.Replay.Players[i].NickName.CompareTo(NickName) != 0)
                     R.PlayerMark[i] = false;
@@ -222,7 +224,7 @@ namespace TenhouViewer.Search
         {
             if (Place == 0) return;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
                 if (R.Replay.Place[i] == Place)
                     R.PlayerMark[i] = false;
@@ -235,7 +237,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (HanMin != -1) if (Rnd.HanCount[j] < HanMin) R.HandMark[i][j] = false;
                     if (HanMax != -1) if (Rnd.HanCount[j] > HanMax) R.HandMark[i][j] = false;
@@ -249,7 +251,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (FuMin != -1) if (Rnd.FuCount[j] < FuMin) R.HandMark[i][j] = false;
                     if (FuMax != -1) if (Rnd.FuCount[j] > FuMax) R.HandMark[i][j] = false;
@@ -261,7 +263,7 @@ namespace TenhouViewer.Search
         {
             if (Rank == 0) return;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
                 if (R.Replay.Players[i].Rank != Rank)
                     R.PlayerMark[i] = false;
@@ -276,7 +278,7 @@ namespace TenhouViewer.Search
 
         private void CheckRating(Result R)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
                 if (RatingMin != -1)
                 {
@@ -295,7 +297,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (Rnd.Shanten[j].Count > 0)
                     {
@@ -316,7 +318,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (PaymentMin != -1)
                     {
@@ -337,7 +339,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (!Rnd.Winner[j]) R.HandMark[i][j] = false;
                 }
@@ -351,7 +353,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (!Rnd.Dealer[j]) R.HandMark[i][j] = false;
                 }
@@ -365,7 +367,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (!Rnd.Loser[j]) R.HandMark[i][j] = false;
                 }
@@ -380,7 +382,7 @@ namespace TenhouViewer.Search
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
                 }
@@ -412,7 +414,7 @@ namespace TenhouViewer.Search
                                 {
                                     int Player = Rnd.Steps[LastTsumoIndex].Player;
 
-                                    for (int j = 0; j < 4; j++)
+                                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                                     {
                                         if (j != Player) R.HandMark[i][j] = false;
                                     }
@@ -423,7 +425,7 @@ namespace TenhouViewer.Search
                             case 3: continue;  // kan 4
                             case 4: continue;  // kaze 4
                             case 5:            // nm
-                                for (int j = 0; j < 4; j++)
+                                for (int j = 0; j < R.Replay.PlayerCount; j++)
                                 {
                                     if (Rnd.Pay[j] < 0) R.HandMark[i][j] = false;
                                 }
@@ -445,7 +447,7 @@ namespace TenhouViewer.Search
                 {
                     Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
                         if (Rnd.WinWaiting[j].Count > WaitingCountMax) R.HandMark[i][j] = false;
                         if (Rnd.WinWaiting[j].Count < WaitingCountMin) R.HandMark[i][j] = false;
@@ -459,7 +461,7 @@ namespace TenhouViewer.Search
                 {
                     Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
                         bool HasWait = false;
                         for (int k = 0; k < Rnd.WinWaiting[j].Count; k++)
@@ -494,7 +496,7 @@ namespace TenhouViewer.Search
             for (int RoundIndex = 0; RoundIndex < R.Replay.Rounds.Count; RoundIndex++ )
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[RoundIndex];
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < R.Replay.PlayerCount; i++)
                 {
                     for (int j = 0; j < YakuList.Length; j++)
                     {
