@@ -28,6 +28,12 @@ namespace TenhouViewer
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
             Console.WriteLine(" lobby=N - find all games from specified lobby (0-6);");
+            Console.WriteLine(" aka=N - only games with aka-dora nashi/ari (0-1);");
+            Console.WriteLine(" kuitan=N - only games with aka-dora nashi/ari (0-1);");
+            Console.WriteLine(" south=N - only games without/with south round (0-1);");
+            Console.WriteLine(" speedy=N - only normal/high speed games (0-1);");
+            Console.WriteLine(" dan -  only games from 1+dan lobby;");
+            Console.WriteLine(" upperdan -  only games from upper dan lobby;");
             Console.WriteLine(" shanten=N - find all hands started with N shanten number (0-6);");
             Console.WriteLine(" shantenmin=N - find all hands started with shanten number greater (or equal) than N (0-6);");
             Console.WriteLine(" shantenmax=N - find all hands started with shanten number less (or equal) than N (0-6);");
@@ -52,6 +58,7 @@ namespace TenhouViewer
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
             Console.WriteLine(" players - count of players in game (3-4);");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
+            Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" index - round index in list;");
             Console.WriteLine(" initshanten - shanten in start hand in round;");
             Console.WriteLine(" pay - payment in round;");
@@ -74,6 +81,7 @@ namespace TenhouViewer
             Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
             Console.WriteLine(" index - game index in list;");
+            Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" rating - player rating before this game;");
             Console.WriteLine(" rank - player rank before this game (1=1ku, 10=1dan,...);");
             Console.WriteLine(" place - place in game;");
@@ -83,8 +91,8 @@ namespace TenhouViewer
             Console.WriteLine(" datetime - date of game;");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
-            Console.WriteLine(" lobby - lobby;");
-            Console.WriteLine(" lobbytype - game/lobby type;");
+            Console.WriteLine(" lobby - lobby index;");
+            Console.WriteLine(" type - lobby type (aka,kui,nan,dan,...);");
             Console.WriteLine(" nickname - nickname of the player;");
             Console.WriteLine(" rating - rating of the player;");
             Console.WriteLine(" rank - rank of the player;");
@@ -350,6 +358,9 @@ namespace TenhouViewer
                                         break;
                                     case "lobby":
                                         Temp += String.Format("{0:d}\t", Rnd.Lobby);
+                                        break;
+                                    case "type":
+                                        Temp += String.Format("{0:s}\t", Tenhou.LobbyType.GetText(Rnd.LobbyType));
                                         break;
                                     case "roundindex":
                                         Temp += String.Format("{0:d}\t", r);
@@ -644,19 +655,39 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only games from {0:d} lobby;", TempValue));
                         break;
-                    case "lobbytype":
-                        TempValue = ParseIntArg(Value, 0, 1000, "lobbytype");
-                        if (TempValue != -1) Finder.LobbyType = TempValue;
+                    case "aka":
+                        TempValue = ParseIntArg(Value, 0, 1, "aka");
+                        if (TempValue != -1) Finder.Aka = TempValue;
 
-                        string LobbyTypeName = "";
-                        switch (TempValue)
-                        {
-                            case 0: LobbyTypeName = "common"; break;
-                            case 1: LobbyTypeName = "dan"; break;
-                            case 2: LobbyTypeName = "higher dan"; break;
-                            case 3: LobbyTypeName = "phoenix"; break;
-                        }
-                        Console.WriteLine(String.Format("Filter: only games from 0000 {0:s} lobby;", LobbyTypeName));
+                        Console.WriteLine(String.Format("Filter: only games with aka-dora {0:s};", (TempValue == 0) ? "nashi" : "ari"));
+                        break;
+                    case "kuitan":
+                        TempValue = ParseIntArg(Value, 0, 1, "kuitan");
+                        if (TempValue != -1) Finder.Kuitan = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only games with kuitan {0:s};", (TempValue == 0) ? "nashi" : "ari"));
+                        break;
+                    case "south":
+                        TempValue = ParseIntArg(Value, 0, 1, "south");
+                        if (TempValue != -1) Finder.Kuitan = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only {0:s} games;", (TempValue == 0) ? "tonpuusen" : "hanchan"));
+                        break;
+                    case "speedy":
+                        TempValue = ParseIntArg(Value, 0, 1, "speedy");
+                        if (TempValue != -1) Finder.Saku = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only {0:s} speed games;", (TempValue == 0) ? "normal" : "high"));
+                        break;
+                    case "dan":
+                        Finder.High = 1;
+
+                        Console.WriteLine(String.Format("Filter: only games from 1+dan lobby;"));
+                        break;
+                    case "upperdan":
+                        Finder.Toku = 1;
+
+                        Console.WriteLine(String.Format("Filter: only games from upper dan lobby;"));
                         break;
                     case "place":
                         TempValue = ParseIntArg(Value, 1, 4, "place");
