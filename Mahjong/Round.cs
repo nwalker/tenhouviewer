@@ -48,6 +48,7 @@ namespace TenhouViewer.Mahjong
         public bool[] Dealer = new bool[4];
         public bool[] Winner = new bool[4];
         public bool[] Loser = new bool[4];
+        public int[] Wind = new int[4];
 
         public List<int> Dora = new List<int>();
         public List<int> UraDora = new List<int>();
@@ -82,6 +83,7 @@ namespace TenhouViewer.Mahjong
                 Riichi[i] = -1;
                 OpenedSets[i] = 0;
                 StepCount[i] = 0;
+                Wind[i] = -1;
 
                 Tempai[i] = false;
                 Dealer[i] = false;
@@ -166,6 +168,7 @@ namespace TenhouViewer.Mahjong
                     case "riichi": Riichi = X.ReadIntArray(); break;
                     case "dealer": Dealer = X.ReadBoolArray(); break;
                     case "tempai": Tempai = X.ReadBoolArray(); break;
+                    case "wind": Wind = X.ReadIntArray(); break;
                     case "stepcount": StepCount = X.ReadIntArray(); break;
                     case "wall":
                     {
@@ -368,6 +371,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("loser", Loser);
             X.WriteTag("openedsets", OpenedSets);
             X.WriteTag("riichi", Riichi);
+            X.WriteTag("wind", Wind);
             X.WriteTag("dealer", Dealer);
             X.WriteTag("stepcount", StepCount);
             X.WriteTag("tempai", Tempai);

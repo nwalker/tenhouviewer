@@ -130,6 +130,8 @@ namespace TenhouViewer.Statistic
                             case "players": Temp += String.Format("{0:d}\t", Rnd.PlayerCount); break;
                             case "lobby": Temp += String.Format("{0:d}\t", Rnd.Lobby); break;
                             case "type": Temp += String.Format("{0:s}\t", Tenhou.LobbyType.GetText(Rnd.LobbyType)); break;
+                            case "roundwind": Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.CurrentRound / 4)); break;
+                            case "playerwind": Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.Wind[Index])); break;
                             default: Temp += "\t"; break;
                         }
                     }
