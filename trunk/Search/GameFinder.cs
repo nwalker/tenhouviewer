@@ -81,6 +81,10 @@ namespace TenhouViewer.Search
         public int Saku = -1; // 速, Speedy game
         public int High = -1; // 上級, Advanced class lobby type
 
+        // Winds
+        public int PlayerWind = -1;
+        public int RoundWind = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -162,6 +166,7 @@ namespace TenhouViewer.Search
                 CheckWaitings(R);
                 CheckDraw(R);
                 CheckLobby(R);
+                CheckWind(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -369,6 +374,32 @@ namespace TenhouViewer.Search
                     if (PaymentMax != -1)
                     {
                         if (Rnd.Pay[j] > PaymentMax) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+        }
+
+        private void CheckWind(Result R)
+        {
+            if (RoundWind != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    if((Rnd.CurrentRound & 3) != RoundWind) R.RoundMark[i] = false;
+                }
+            }
+
+            if (PlayerWind != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.Wind[j] != PlayerWind) R.PlayerMark[i] = false;
                     }
                 }
             }

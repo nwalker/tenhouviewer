@@ -56,7 +56,9 @@ namespace TenhouViewer
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
-            Console.WriteLine(" players - count of players in game (3-4);");
+            Console.WriteLine(" players=N - count of players in game (3-4);");
+            Console.WriteLine(" roundwind=N - wind of current round (0-3);");
+            Console.WriteLine(" playerwind=N - player's wind (0-3);");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" index - round index in list;");
@@ -76,6 +78,8 @@ namespace TenhouViewer
             Console.WriteLine(" balance - balance in hand (pts);");
             Console.WriteLine(" waiting - amount of tile types in waiting;");
             Console.WriteLine(" round - index of round(0=1e,1=2e,2=3e...);");
+            Console.WriteLine(" roundwind - wind of current round;");
+            Console.WriteLine(" playerwind - player's wind;");
             Console.WriteLine(" players - count of players in round;");
             Console.WriteLine(" draw - round ended in draw;");
             Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
@@ -110,6 +114,8 @@ namespace TenhouViewer
             Console.WriteLine(" round - current round (0-1e, 1-2e, ...);");
             Console.WriteLine(" roundindex - index of round in game;");
             Console.WriteLine(" place - player's place in game;");
+            Console.WriteLine(" roundwind - wind of current round;");
+            Console.WriteLine(" playerwind - player's wind;");
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
@@ -364,6 +370,12 @@ namespace TenhouViewer
                                         break;
                                     case "roundindex":
                                         Temp += String.Format("{0:d}\t", r);
+                                        break;
+                                    case "roundwind":
+                                        Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.CurrentRound / 4));
+                                        break;
+                                    case "playerwind":
+                                        Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.Wind[k]));
                                         break;
                                 }
                             }
@@ -751,6 +763,18 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.PlayerCount = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only games with {0:d} players;", TempValue));
+                        break;
+                    case "roundwind":
+                        TempValue = ParseIntArg(Value, 0, 3, "roundwind");
+                        if (TempValue != -1) Finder.RoundWind = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only games with round wind {0:d};", Tenhou.Wind.GetText(TempValue)));
+                        break;
+                    case "playerwind":
+                        TempValue = ParseIntArg(Value, 0, 3, "playerwind");
+                        if (TempValue != -1) Finder.PlayerWind = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands with player wind {0:d};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "draw":
                         string Comment;

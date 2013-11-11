@@ -79,6 +79,7 @@
     <Compile Include="Tenhou\TenhouHashList.cs" />
     <Compile Include="Tenhou\LogParser.cs" />
     <Compile Include="Tenhou\WallGenerator.cs" />
+    <Compile Include="Tenhou\Wind.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="todo.txt" />

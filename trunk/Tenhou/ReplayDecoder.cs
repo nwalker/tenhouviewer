@@ -540,13 +540,26 @@ namespace TenhouViewer.Tenhou
         {
             if (FirstStep)
             {
+                int Index, i;
+
+                // Select dealer
                 FirstStep = false;
                 CurrentRound.Dealer[Player] = true;
                 if (Player != LastDealer) Round++;
 
                 CurrentRound.CurrentRound = Round;
 
+                // Set winds to players
                 LastDealer = Player;
+                Index = 0;
+                for (i = 0; i < CurrentRound.PlayerCount; i++)
+                {
+                    CurrentRound.Wind[Player] = Index;
+
+                    Player++;
+                    Index++;
+                    if (Player >= CurrentRound.PlayerCount) Player = 0;
+                }
             }
         }
 
