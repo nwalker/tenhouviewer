@@ -72,7 +72,14 @@ namespace TenhouViewer.Search
 
         // Lobby
         public int Lobby = -1;
-        public int LobbyType = -1; // for 0000 lobby
+
+        // Lobby type (decoded)
+        public int Aka = -1; // 赤, aka-dora
+        public int Kuitan = -1; // 喰, open tanyao
+        public int Nan = -1; // 東南, hanchan or tonpuusen
+        public int Toku = -1; // 特上, expert class lobby type
+        public int Saku = -1; // 速, Speedy game
+        public int High = -1; // 上級, Advanced class lobby type
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -273,7 +280,42 @@ namespace TenhouViewer.Search
         private void CheckLobby(Result R)
         {
             if (Lobby != -1) { if (R.Replay.Lobby != Lobby) R.ReplayMark = false; }
-            if (LobbyType != -1) { if (R.Replay.LobbyType != LobbyType) R.ReplayMark = false; }
+
+            if(Aka != -1)
+            {
+                // Check aka-dora setting
+                if (!((Aka == 0) && ((R.Replay.LobbyType & 0x0002) == 0x0002))) R.ReplayMark = false;
+            }
+
+            if (Kuitan != -1)
+            {
+                // Check open tanyao setting
+                if (!((Kuitan == 0) && ((R.Replay.LobbyType & 0x0004) == 0x0004))) R.ReplayMark = false;
+            }
+
+            if (Nan != -1)
+            {
+                // Check game length setting (
+                if (!((Nan != 0) && ((R.Replay.LobbyType & 0x0008) == 0x0008))) R.ReplayMark = false;
+            }
+
+            if (Toku != -1)
+            {
+                // Check lobby level
+                if (!((Toku != 0) && ((R.Replay.LobbyType & 0x0020) == 0x0020))) R.ReplayMark = false;
+            }
+
+            if (Saku != -1)
+            {
+                // Check game speed
+                if (!((Saku != 0) && ((R.Replay.LobbyType & 0x0040) == 0x0040))) R.ReplayMark = false;
+            }
+
+            if (High != -1)
+            {
+                // Check lobby level
+                if (!((High != 0) && ((R.Replay.LobbyType & 0x0080) == 0x0080))) R.ReplayMark = false;
+            }
         }
 
         private void CheckRating(Result R)

@@ -69,7 +69,7 @@ namespace TenhouViewer.Mahjong
                     case "hash": this.Hash = X.GetAttribute("value"); break;
                     case "playercount": PlayerCount = X.GetIntAttribute("value"); break;
                     case "lobby": Lobby = X.GetIntAttribute("value"); break;
-                    case "lobbytype": LobbyType = X.GetIntAttribute("lobbytype"); break;
+                    case "lobbytype": LobbyType = X.GetIntAttribute("value"); break;
                     case "balance": Balance = X.ReadIntArray(); break;
                     case "result": Result = X.ReadIntArray(); break;
                     case "place": Place = X.ReadIntArray(); break;

@@ -66,6 +66,7 @@ namespace TenhouViewer.Statistic
                         case "balance": Temp += String.Format("{0:d}\t", R.Replay.Balance[Index]); break;
                         case "players": Temp += String.Format("{0:d}\t", R.Replay.PlayerCount); break;
                         case "datetime": Temp += String.Format("{0:s}\t", R.Replay.Date.ToString()); break;
+                        case "type": Temp += String.Format("{0:s}\t", Tenhou.LobbyType.GetText(R.Replay.LobbyType)); break;
                         default: Temp += "\t"; break;
                     }
                 }
@@ -128,6 +129,7 @@ namespace TenhouViewer.Statistic
                             case "round": Temp += String.Format("{0:d}\t", Rnd.CurrentRound); break;
                             case "players": Temp += String.Format("{0:d}\t", Rnd.PlayerCount); break;
                             case "lobby": Temp += String.Format("{0:d}\t", Rnd.Lobby); break;
+                            case "type": Temp += String.Format("{0:s}\t", Tenhou.LobbyType.GetText(Rnd.LobbyType)); break;
                             default: Temp += "\t"; break;
                         }
                     }
