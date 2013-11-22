@@ -171,6 +171,8 @@ namespace TenhouViewer.Paifu
 
             Pointer = DrawCenteredString(Color.Black, Fbig, Round, Pointer, RoundColumnWidth);
             Pointer = DrawCenteredString(Color.Black, Fcomment, R.Date.ToString("dd.MM.yyyy"), Pointer, RoundColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fcomment, String.Format("Renchan stick: {0:d}", Rnd.RenchanStick), Pointer, RoundColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fcomment, String.Format("Riichi stick: {0:d}", Rnd.RiichiStick), Pointer, RoundColumnWidth);
 
             Pointer.Y += PaddingV;
             int DoraY = Convert.ToInt32(Pointer.Y);

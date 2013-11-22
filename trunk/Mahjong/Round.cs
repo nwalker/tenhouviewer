@@ -362,8 +362,8 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("round", "index", CurrentRound);
             X.WriteTag("result", "value", StringResult);
             X.WriteTag("drawreason", "value", DrawReason);
-            X.WriteTag("riichistick", "value", RenchanStick);
-            X.WriteTag("renchanstick", "value", RiichiStick);
+            X.WriteTag("riichistick", "value", RiichiStick);
+            X.WriteTag("renchanstick", "value", RenchanStick);
             X.WriteTag("balancebefore", BalanceBefore);
             X.WriteTag("balanceafter", BalanceAfter);
             X.WriteTag("pay", Pay);
