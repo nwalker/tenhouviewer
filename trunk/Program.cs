@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace TenhouViewer
     class Program
     {
         static string LogDir = "logs";
+        static string MjlogDir = "mjlog";
 
         static void Main(string[] args)
         {
@@ -52,6 +54,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
+            Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54);");
             Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);");
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
@@ -138,6 +141,16 @@ namespace TenhouViewer
             {
                 switch(ArgList[i].Name)
                 {
+                    case "c":
+                        // Convert to mjlog from log
+                        // -cLog.txt
+                        //ConvertLogToMJLog(ArgList[i].Value);
+                        break;
+                    case "C":
+                        // Convert to mjlog by hash
+                        // -C2013070808gm-0089-0000-2f83b7da
+                        ConvertHashToMJLog(ArgList[i].Value);
+                        break;
                     case "D":
                         // Download game by hash
                         // -D2013070808gm-0089-0000-2f83b7da
@@ -258,6 +271,33 @@ namespace TenhouViewer
                     FileName = (Round == -1) ? String.Format("{0:s}_{1:d}.png", FN, i) : String.Format("{0:s}.png", FN);
                 }
                 P.Save(FileName);
+            }
+        }
+
+        static void ConvertHashToMJLog(string Hash)
+        {
+            string FileName = LogDir + "/" + Hash + ".xml";
+
+            if (!Directory.Exists("mjlog")) Directory.CreateDirectory("mjlog");
+
+            if (File.Exists(FileName))
+            {
+                string ResultFN = MjlogDir + "/" + Hash + ".mjlog";
+                byte[] bytes = System.IO.File.ReadAllBytes(FileName);
+
+                using (FileStream MjLog = File.Create(ResultFN))
+                {
+                    using (GZipStream compressionStream = new GZipStream(MjLog, CompressionMode.Compress))
+                    {
+                        compressionStream.Write(bytes, 0, bytes.Length);
+
+                        Console.WriteLine(" - ok!");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine(" - not found!");
             }
         }
 
@@ -730,6 +770,19 @@ namespace TenhouViewer
                             }
                         }
                         break;
+                    case "anyyaku":
+                        string[] TempYakuList = DecompositeStringList(Value);
+                        Finder.AnyYakuList = Tenhou.YakuNameParser.Parse(TempYakuList);
+
+                        if (Finder.AnyYakuList != null)
+                        {
+                            for (int j = 0; j < Finder.AnyYakuList.Length; j++)
+                            {
+                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName(Finder.AnyYakuList[j])));
+                            }
+                        }
+                        break;
+
                     case "wait":
                         Finder.Waitings = DecompositeIntList(Value);
 
@@ -855,6 +908,13 @@ namespace TenhouViewer
             }
 
             return Result;
+        }
+
+        static private string[] DecompositeStringList(string Text)
+        {
+            string[] delimiter = new string[] { "," };
+
+            return Text.Split(delimiter, StringSplitOptions.None);
         }
     }
 }

@@ -12,6 +12,9 @@ namespace TenhouViewer.Tenhou
             string Temp = "";
             int LobbyLevel = ((Flags & 0x0020) >> 4) | ((Flags & 0x0080) >> 7);
 
+            // Sanma
+            if ((Flags & 0x0010) != 0) Temp += "三";
+
             // Lobby level
             switch (LobbyLevel)
             {
@@ -28,6 +31,15 @@ namespace TenhouViewer.Tenhou
 
             // Aka-dora
             Temp += ((Flags & 0x0002) == 0) ? "赤" : "";
+
+            // Saku
+            Temp += ((Flags & 0x0040) == 0) ? "速" : "";
+
+            // Gray (wtf?)
+            Temp += ((Flags & 0x0100) == 0) ? "速" : "";
+
+            // Chip (wtf?)
+            Temp += ((Flags & 0x0200) == 0) ? "祝" : "";
 
             return Temp;
         }

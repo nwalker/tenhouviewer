@@ -80,6 +80,7 @@
     <Compile Include="Tenhou\LogParser.cs" />
     <Compile Include="Tenhou\WallGenerator.cs" />
     <Compile Include="Tenhou\Wind.cs" />
+    <Compile Include="Tenhou\YakuNameParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="todo.txt" />
