@@ -170,6 +170,7 @@ namespace TenhouViewer.Paifu
             PointF Pointer = new PointF(X, Y);
 
             Pointer = DrawCenteredString(Color.Black, Fbig, Round, Pointer, RoundColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fcomment, R.Date.ToString("dd.MM.yyyy"), Pointer, RoundColumnWidth);
 
             Pointer.Y += PaddingV;
             int DoraY = Convert.ToInt32(Pointer.Y);
@@ -192,6 +193,8 @@ namespace TenhouViewer.Paifu
 
                 DrawDoraTile(i, DoraY, Tile);
             }
+
+
         }
 
         private void DrawHandInfo(int Index)
