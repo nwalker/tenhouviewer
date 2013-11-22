@@ -591,6 +591,13 @@ namespace TenhouViewer
                     continue;
                 }
 
+                if (new FileInfo(ReplayFileName).Length == 0)
+                {
+                    File.Delete(ReplayFileName);
+                    Console.WriteLine(" - zero size, removed!");
+                    continue;
+                }
+
                 Tenhou.ReplayDecoder R = new Tenhou.ReplayDecoder();
                 R.OpenPlainText(ReplayFileName, Hash);
 
