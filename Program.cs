@@ -430,6 +430,9 @@ namespace TenhouViewer
                                     case "playerwind":
                                         Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.Wind[k]));
                                         break;
+                                    case "players":
+                                        Temp += String.Format("{0:d}\t", Rnd.PlayerCount);
+                                        break;
                                 }
                             }
 

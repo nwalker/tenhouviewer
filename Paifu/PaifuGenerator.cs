@@ -23,7 +23,7 @@ namespace TenhouViewer.Paifu
         int RoundColumnWidth = 100;
         int TilesColumnWidth = 1050;
         int YakuWidth = 180;
-        int CostOffset = 75;
+        int CostOffset = 95;
         int YakuOffset = 5;
 
         const int InternalPadding = 4;
