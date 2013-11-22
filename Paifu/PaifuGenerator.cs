@@ -292,7 +292,7 @@ namespace TenhouViewer.Paifu
                             int Tile = N.Tiles[j];
 
                             // Close first and last tiles
-                            if((Tile == 0)||(Tile == 3)) Tile = -1;
+                            if((j == 0)||(j == 3)) Tile = -1;
                             Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
                         }
                         break;
