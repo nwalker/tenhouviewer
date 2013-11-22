@@ -54,7 +54,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
-            Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54);");
+            Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54 or name);");
             Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);");
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
@@ -109,6 +109,8 @@ namespace TenhouViewer
             Console.WriteLine(" winner - is player complete hand;");
             Console.WriteLine(" loser - is player dealt in other player's hand;");
             Console.WriteLine(" concealed - is hand concealed;");
+            Console.WriteLine(" tsumo - is tsumo-agari;");
+            Console.WriteLine(" ron - is ron-agari ;");
             Console.WriteLine(" cost - cost of hand;");
             Console.WriteLine(" han - amount of game points in hand;");
             Console.WriteLine(" waiting - amount of tile types in waiting;");
@@ -119,6 +121,8 @@ namespace TenhouViewer
             Console.WriteLine(" place - player's place in game;");
             Console.WriteLine(" roundwind - wind of current round;");
             Console.WriteLine(" playerwind - player's wind;");
+            Console.WriteLine(" from - nickname of player who p[layed into ron;");
+
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
@@ -374,6 +378,15 @@ namespace TenhouViewer
                                         break;
                                     case "dealer":
                                         Temp += String.Format("{0:d}\t", Rnd.Dealer[k] ? 1 : 0);
+                                        break;
+                                    case "tsumo":
+                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) == -1)) ? 1 : 0);
+                                        break;
+                                    case "ron":
+                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? 1 : 0);
+                                        break;
+                                    case "from":
+                                        Temp += String.Format("{0:s}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? R.Replay.Players[GetFirstNotNullIndex(Rnd.Loser)].NickName : "");
                                         break;
                                     case "winner":
                                         Temp += String.Format("{0:d}\t", Rnd.Winner[k] ? 1 : 0);
@@ -915,6 +928,16 @@ namespace TenhouViewer
             string[] delimiter = new string[] { "," };
 
             return Text.Split(delimiter, StringSplitOptions.None);
+        }
+
+        static int GetFirstNotNullIndex(bool[] BoolArray)
+        {
+            for (int i = 0; i < BoolArray.Length; i++)
+            {
+                if (BoolArray[i]) return i;
+            }
+
+            return -1;
         }
     }
 }
