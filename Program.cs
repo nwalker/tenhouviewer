@@ -779,7 +779,7 @@ namespace TenhouViewer
                         {
                             for (int j = 0; j < Finder.YakuList.Length; j++)
                             {
-                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName(Finder.YakuList[j])));
+                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName("en", Finder.YakuList[j])));
                             }
                         }
                         break;
@@ -791,7 +791,7 @@ namespace TenhouViewer
                         {
                             for (int j = 0; j < Finder.AnyYakuList.Length; j++)
                             {
-                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName(Finder.AnyYakuList[j])));
+                                Console.WriteLine(String.Format("Filter: only hands with yaku '{0:s}';", Mahjong.YakuName.GetYakuName("en", Finder.AnyYakuList[j])));
                             }
                         }
                         break;
@@ -870,7 +870,7 @@ namespace TenhouViewer
 
             for (int i = 0; i < Yaku.Count; i++)
             {
-                Text += Mahjong.YakuName.GetYakuName(Yaku[i].Index) + " ";
+                Text += Mahjong.YakuName.GetYakuName("en", Yaku[i].Index) + " ";
             }
 
             return Text;
