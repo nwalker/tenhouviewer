@@ -18,6 +18,9 @@ namespace TenhouViewer.Search
         // Yaku (hand contain all yaku from this array)
         public int[] YakuList = null;
 
+        // Yaku (hand contain any yaku from this array)
+        public int[] AnyYakuList = null;
+
         // Waitings (hand has at least one tile in waiting from this array)
         public int[] Waitings = null;
 
@@ -564,20 +567,44 @@ namespace TenhouViewer.Search
 
         private void CheckYaku(Result R)
         {
-            if (YakuList == null) return;
-
-            for (int RoundIndex = 0; RoundIndex < R.Replay.Rounds.Count; RoundIndex++ )
+            if (YakuList != null)
             {
-                Mahjong.Round Rnd = R.Replay.Rounds[RoundIndex];
-                for (int i = 0; i < R.Replay.PlayerCount; i++)
+                for (int RoundIndex = 0; RoundIndex < R.Replay.Rounds.Count; RoundIndex++ )
                 {
-                    for (int j = 0; j < YakuList.Length; j++)
+                    Mahjong.Round Rnd = R.Replay.Rounds[RoundIndex];
+                    for (int i = 0; i < R.Replay.PlayerCount; i++)
                     {
-                        if (!IsYakuInYakuList(Rnd.Yaku[i], YakuList[j]))
+                        for (int j = 0; j < YakuList.Length; j++)
                         {
-                            R.HandMark[RoundIndex][i] = false;
-                            break;
+                            if (!IsYakuInYakuList(Rnd.Yaku[i], YakuList[j]))
+                            {
+                                R.HandMark[RoundIndex][i] = false;
+                                break;
+                            }
                         }
+                    }
+                }
+            }
+
+            if (AnyYakuList != null)
+            {
+                for (int RoundIndex = 0; RoundIndex < R.Replay.Rounds.Count; RoundIndex++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[RoundIndex];
+                    for (int i = 0; i < R.Replay.PlayerCount; i++)
+                    {
+                        bool HasYaku = false;
+
+                        for (int j = 0; j < AnyYakuList.Length; j++)
+                        {
+                            if (IsYakuInYakuList(Rnd.Yaku[i], AnyYakuList[j]))
+                            {
+                                HasYaku = true;
+                                break;
+                            }
+                        }
+
+                        if (!HasYaku) R.HandMark[RoundIndex][i] = false;
                     }
                 }
             }
