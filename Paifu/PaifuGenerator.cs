@@ -14,14 +14,17 @@ namespace TenhouViewer.Paifu
 
         const float Scale = 0.7f;
 
-        int Width = 950;
+        int Width = 1100;
         int Height = 500;
 
         const int PaddingV = 10;
         const int PaddingH = 10;
         int PlayerColumnWidth = 100;
         int RoundColumnWidth = 100;
-        int TilesColumnWidth = 750;
+        int TilesColumnWidth = 1050;
+        int YakuWidth = 180;
+        int CostOffset = 75;
+        int YakuOffset = 5;
 
         const int InternalPadding = 4;
 
@@ -87,7 +90,16 @@ namespace TenhouViewer.Paifu
             TileWidth = Img.Bmp.Width;
             TileHeight = Img.Bmp.Height;
 
-            TilesColumnWidth = TileWidth * 23;
+            int CircleCount = 23;
+            {
+                int StepCount = 12;
+
+                for (int i = 0; i < Rnd.PlayerCount; i++) if (Rnd.StepCount[i] > StepCount) StepCount = Rnd.StepCount[i];
+
+                CircleCount = StepCount + 4;
+            }
+
+            TilesColumnWidth = TileWidth * CircleCount + YakuWidth;
 
             Width = RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth + PaddingH * 2;
             Height = 2 * PaddingV + R.PlayerCount * (2 * InternalPadding + 6 * TileHeight);
@@ -197,8 +209,8 @@ namespace TenhouViewer.Paifu
             Pointer = DrawCenteredString(Color.Black, Fsmall, PlayerRank, Pointer, PlayerColumnWidth);
             Pointer.Y += PaddingV;
 
-            Pointer = DrawCenteredString(Color.Black, Fsmall, Rnd.BalanceBefore[Player].ToString(), Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(((Rnd.Pay[Player] >= 0) ? Color.Green : Color.Red), Fsmall, Rnd.Pay[Player].ToString(), Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fsmall, String.Format("{0:d}", Rnd.BalanceBefore[Player]), Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(((Rnd.Pay[Player] >= 0) ? Color.Green : Color.Red), Fsmall, String.Format("{0:d}", Rnd.Pay[Player]), Pointer, PlayerColumnWidth);
         }
 
         private void DrawStartHand(int Index)
@@ -348,6 +360,8 @@ namespace TenhouViewer.Paifu
 
                             string Comment = (Tsumo) ? "ツモ" : "";
                             DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
+
+                            if (Tsumo) DrawYaku(PlayerIndex[S.Player], S.Player);
                         }
                         break;
                     case Mahjong.StepType.STEP_DRAWDEADTILE:
@@ -365,6 +379,8 @@ namespace TenhouViewer.Paifu
 
                             string Comment = (Tsumo) ? "ツモ" : "";
                             DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
+
+                            if (Tsumo) DrawYaku(PlayerIndex[S.Player], S.Player);
                         }
                         break;
                     case Mahjong.StepType.STEP_DISCARDTILE:
@@ -394,15 +410,16 @@ namespace TenhouViewer.Paifu
                         {
                             // Need to find nearest draw or discard tile step
                             string NakiType = "unk";
+                            bool Kan = false;
 
                             switch (S.NakiData.Type)
                             {
                                 case Mahjong.NakiType.NUKI: NakiType = "抜き"; break;
                                 case Mahjong.NakiType.CHI: NakiType = "チー"; break;
                                 case Mahjong.NakiType.PON: NakiType = "ポン"; break;
-                                case Mahjong.NakiType.ANKAN: NakiType = "カン"; break;
-                                case Mahjong.NakiType.MINKAN: NakiType = "カン"; break;
-                                case Mahjong.NakiType.CHAKAN: NakiType = "カン"; break;
+                                case Mahjong.NakiType.ANKAN: NakiType = "カン"; Kan = true; break;
+                                case Mahjong.NakiType.MINKAN: NakiType = "カン"; Kan = true; break;
+                                case Mahjong.NakiType.CHAKAN: NakiType = "カン"; Kan = true; break;
                             }
 
                             if (LastPlayer > PlayerIndex[S.Player]) Column++;
@@ -410,6 +427,7 @@ namespace TenhouViewer.Paifu
 
                             DrawTsumoTile(PlayerIndex[S.Player], LastTile, NakiType, false);
 
+                            if (Kan) Column++;
                             // Can be ron after chakan or ankan!
                         }
                         break;
@@ -418,6 +436,7 @@ namespace TenhouViewer.Paifu
                             if ((LastPlayer > PlayerIndex[S.Player]) || (S.Player == Dealer)) Column++;
 
                             DrawRon(PlayerIndex[S.Player], "ロン", true);
+                            DrawYaku(PlayerIndex[S.Player], S.Player);
                         }
                         break;
                 }
@@ -494,10 +513,47 @@ namespace TenhouViewer.Paifu
         {
             int Line = (Winner) ? 2 : 3; // draw tile line or discard tile line
 
-            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : 0)) * TileWidth;
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column + 1 + ((!Winner) ? 1 : -1)) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * Line);
 
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight / 2 - G.MeasureString(Comment, Fcomment).Height / 2), TileWidth);
+        }
+
+        private void DrawYaku(int Index, int Player)
+        {
+            int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth - InternalPadding - YakuWidth;
+            int Y = Index * FieldHeight + PaddingV + InternalPadding;
+
+            Font F = Fcomment;
+            Brush Br = new SolidBrush(Color.Black);
+
+            for (int i = 0; i < Rnd.Yaku[Player].Count; i++)
+            {
+                int Yaku = Rnd.Yaku[Player][i].Index;
+                int Cost = Rnd.Yaku[Player][i].Cost;
+
+                string YakuName = Mahjong.YakuName.GetYakuName("jp", Yaku);
+
+                G.DrawString(YakuName, F, Br, X, Y);
+                G.DrawString(Cost.ToString(), F, Br, X + CostOffset, Y);
+
+                Y += Convert.ToInt32(G.MeasureString(YakuName, F).Height + YakuOffset);
+            }
+
+            {
+                string Fu = String.Format("{0:d}符", Rnd.FuCount[Player]);
+                string Han = String.Format("{0:d}翻", Rnd.HanCount[Player]);
+
+                G.DrawString(Fu, F, Br, X, Y);
+                G.DrawString(Han, F, Br, X + CostOffset, Y);
+
+                Y += Convert.ToInt32(G.MeasureString(Fu, F).Height + YakuOffset);
+            }
+
+            {
+                string Cost = String.Format("{0:d}点", Rnd.Cost[Player]);
+                G.DrawString(Cost, F, new SolidBrush(Color.Green), X, Y);
+            }
         }
 
         private void DrawShanten(int Index, int Line, string Text)
