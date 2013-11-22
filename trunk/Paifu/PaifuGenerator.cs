@@ -301,9 +301,9 @@ namespace TenhouViewer.Paifu
                         {
                             RotateFlipType Rotate = RotateFlipType.RotateNoneFlipNone;
 
-                            if (((N.FromWho == 1) && (i == 3)) ||
-                                ((N.FromWho == 2) && (i == 1)) ||
-                                ((N.FromWho == 3) && (i == 0))) Rotate = RotateFlipType.Rotate90FlipNone;
+                            if (((N.FromWho == 1) && (j == 3)) ||
+                                ((N.FromWho == 2) && (j == 1)) ||
+                                ((N.FromWho == 3) && (j == 0))) Rotate = RotateFlipType.Rotate90FlipNone;
 
                             Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
                         }
@@ -427,7 +427,7 @@ namespace TenhouViewer.Paifu
 
                             DrawTsumoTile(PlayerIndex[S.Player], LastTile, NakiType, false);
 
-                            if (Kan) Column++;
+                            if (Kan && (S.NakiData.Type != Mahjong.NakiType.ANKAN)) Column++;
                             // Can be ron after chakan or ankan!
                         }
                         break;
