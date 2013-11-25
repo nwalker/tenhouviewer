@@ -11,9 +11,10 @@ namespace TenhouViewer.Paifu
         Mahjong.Tile Tile;
         public Bitmap Bmp;
 
-        public PaifuTileImage(int Index, float Scale)
+        public PaifuTileImage(int Index, float Scale, bool Red)
         {
             Tile = new Mahjong.Tile(Index);
+            Tile.AkaNashi = !Red;
 
             string TileName;
 

@@ -39,6 +39,8 @@ namespace TenhouViewer.Paifu
         Mahjong.Replay R;
         Mahjong.Round Rnd;
 
+        bool Red = true;
+
         int[] Players = new int[4];
         int[] PlayerIndex = new int[4];
         int Dealer = 0;
@@ -56,6 +58,9 @@ namespace TenhouViewer.Paifu
         {
             R = Replay;
             Rnd = R.Rounds[Round];
+
+            Red = ((Replay.LobbyType & 0x0002) == 0x0002);
+
             // Replay only one game, if it need
             if (Rnd.Hands[0].Count == 0) Rnd.ReplayGame();
 
@@ -85,7 +90,7 @@ namespace TenhouViewer.Paifu
 
         private void CalcTileDimensions()
         {
-            PaifuTileImage Img = new PaifuTileImage(-1, Scale);
+            PaifuTileImage Img = new PaifuTileImage(-1, Scale, Red);
 
             TileWidth = Img.Bmp.Width;
             TileHeight = Img.Bmp.Height;
@@ -464,7 +469,7 @@ namespace TenhouViewer.Paifu
 
         private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate)
         {
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
             switch (Rotate)
             {
                 case RotateFlipType.Rotate90FlipNone: TileBitmap.RotateFlip(Rotate); break;
@@ -486,7 +491,7 @@ namespace TenhouViewer.Paifu
 
             if (Tsumogiri) Tile = -2;
 
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
@@ -498,7 +503,7 @@ namespace TenhouViewer.Paifu
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
 
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
@@ -509,7 +514,7 @@ namespace TenhouViewer.Paifu
         {
             int X = PaddingH + Index * TileWidth + TileWidth / 2;
 
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale).Bmp;
+            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
         }
