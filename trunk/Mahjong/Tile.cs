@@ -14,6 +14,9 @@ namespace TenhouViewer.Mahjong
         public bool Red;
         public string TileType;
 
+        // Is Akadora disabled?
+        public bool AkaNashi = false;
+
         public int DoraType;
 
         //1  - 1 ман
@@ -63,7 +66,7 @@ namespace TenhouViewer.Mahjong
                 TileType = "z";
             }
 
-            if (Red)
+            if (Red && !AkaNashi)
             {
                 TileName = "0" + TileType;
             }

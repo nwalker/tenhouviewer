@@ -103,7 +103,7 @@ namespace TenhouViewer.Mahjong
 
             for (int i = 0; i < DoraCount; i++)
             {
-                int DoraPointer = new Tile(Wall.Tiles[5 + i * 2]).TileId;
+                int DoraPointer = Wall.Tiles[5 + i * 2];
 
                 DoraList.Add(DoraPointer);
             }
@@ -119,8 +119,8 @@ namespace TenhouViewer.Mahjong
 
             for (int i = 0; i < DoraCount; i++)
             {
-                int DoraPointer = new Tile(Wall.Tiles[4 + i * 2]).TileId;
-                int DoraType = DoraPointer + 1;
+                int DoraPointer = Wall.Tiles[4 + i * 2];
+                int DoraType = new Tile(DoraPointer).TileId + 1;
 
                 // pin, sou, man
                 if (DoraType % 10 == 0) DoraType = DoraType - 9;
