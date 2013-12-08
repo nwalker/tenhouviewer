@@ -538,10 +538,45 @@ namespace TenhouViewer.Mahjong
             }
         }
 
+        private int[] AnalyzeDangerTiles(Hand[] Hands, List<int>[] Waitings, int Player)
+        {
+            List<int> DangerTiles = new List<int>();
+
+            // Build danger tiles list
+            List<int> Danger = new List<int>();
+
+            for (int j = 0; j < PlayerCount; j++)
+            {
+                if (Player == j) continue; // Skip player's self hand
+                if(Waitings[j] == null) continue; // Skip noten hands
+
+                for(int k = 0; k < Waitings[j].Count; k++)
+                {
+                    // Skip exists
+                    if (Danger.Contains(Waitings[j][k])) continue;
+                    Danger.Add(Waitings[j][k]);
+                }
+            }
+
+            for (int j = 0; j < Hands[Player].Tiles.Length; j++)
+            {
+                Tile T = new Tile(Hands[Player].Tiles[j]);
+
+                if (Danger.Contains(T.TileId)) DangerTiles.Add(T.Index);
+            }
+
+            return (DangerTiles.Count > 0) ? DangerTiles.ToArray() : null;
+        }
+
         // Get all hands in round
         public void ReplayGame()
         {
             Hand[] TempHands = new Hand[PlayerCount];
+
+            List<int>[] TempWaitings = new List<int>[PlayerCount];
+
+            for (int i = 0; i < 4; i++) TempWaitings[i] = new List<int>();
+
             int LastTile = -1;
 
             // Init hands
@@ -568,6 +603,9 @@ namespace TenhouViewer.Mahjong
                     case StepType.STEP_DRAWTILE:
                         {
                             TempHands[S.Player].Draw(S.Tile);
+
+                            // analyze danger tiles
+                            S.Danger = AnalyzeDangerTiles(TempHands, TempWaitings, S.Player);
                         }
                         break;
                     case StepType.STEP_DRAWDEADTILE:
@@ -575,6 +613,9 @@ namespace TenhouViewer.Mahjong
                             LastTile = S.Tile;
 
                             TempHands[S.Player].Draw(S.Tile);
+
+                            // analyze danger tiles
+                            S.Danger = AnalyzeDangerTiles(TempHands, TempWaitings, S.Player);
                         }
                         break;
                     case StepType.STEP_DISCARDTILE:
@@ -590,7 +631,9 @@ namespace TenhouViewer.Mahjong
 
                             if (TShanten == 0) // Tempai
                             {
-                                S.Waiting = TempHands[S.Player].WaitingList.ToArray();
+                                TempWaitings[S.Player] = TempHands[S.Player].WaitingList;
+
+                                S.Waiting = TempWaitings[S.Player].ToArray();
                             }
                         }
                         break;
@@ -614,6 +657,9 @@ namespace TenhouViewer.Mahjong
 
                             TempHands[S.Player].Naki.Add(S.NakiData);
                             TempHands[S.Player].OpenTiles(S.NakiData.Tiles);
+
+                            // analyze danger tiles
+                            S.Danger = AnalyzeDangerTiles(TempHands, TempWaitings, S.Player);
                         }
                         break;
                     case StepType.STEP_TSUMO:
