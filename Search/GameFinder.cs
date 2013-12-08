@@ -73,6 +73,10 @@ namespace TenhouViewer.Search
         public int FuMax = -1;
         public int FuMin = -1;
 
+        // Danger tiles count
+        public int DangerMax = -1;
+        public int DangerMin = -1;
+
         // Lobby
         public int Lobby = -1;
 
@@ -170,6 +174,7 @@ namespace TenhouViewer.Search
                 CheckDraw(R);
                 CheckLobby(R);
                 CheckWind(R);
+                DangerSteps(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -461,6 +466,32 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void DangerSteps(Result R)
+        {
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+                bool[] PlayerFlag = new bool[R.Replay.PlayerCount];
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++) PlayerFlag[j] = false;
+
+                for (int j = 0; j < Rnd.Steps.Count; j++)
+                {
+                    int[] D = Rnd.Steps[j].Danger;
+                    if (D == null) continue;
+                    
+                    if (((D.Length >= DangerMin) || (DangerMin == -1)) &&
+                        ((D.Length <= DangerMax) || (DangerMax == -1))) 
+                        PlayerFlag[Rnd.Steps[j].Player] = true;
+                }
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    if (!PlayerFlag[j]) R.HandMark[i][j] = false;
                 }
             }
         }

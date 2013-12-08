@@ -552,6 +552,8 @@ namespace TenhouViewer.Mahjong
 
                 for(int k = 0; k < Waitings[j].Count; k++)
                 {
+                    if (Waitings[j][k] == -1) continue;
+
                     // Skip exists
                     if (Danger.Contains(Waitings[j][k])) continue;
                     Danger.Add(Waitings[j][k]);
@@ -560,6 +562,7 @@ namespace TenhouViewer.Mahjong
 
             for (int j = 0; j < Hands[Player].Tiles.Length; j++)
             {
+                if (Hands[Player].Tiles[j] == -1) continue;
                 Tile T = new Tile(Hands[Player].Tiles[j]);
 
                 if (Danger.Contains(T.TileId)) DangerTiles.Add(T.Index);
