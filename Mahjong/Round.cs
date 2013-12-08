@@ -587,6 +587,11 @@ namespace TenhouViewer.Mahjong
                             if(TShanten == 0) Tempai[S.Player] = true;
 
                             Shanten[S.Player].Add(TShanten);
+
+                            if (TShanten == 0) // Tempai
+                            {
+                                S.Waiting = TempHands[S.Player].WaitingList.ToArray();
+                            }
                         }
                         break;
                     case StepType.STEP_NAKI:

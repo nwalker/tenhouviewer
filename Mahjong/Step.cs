@@ -36,6 +36,8 @@ namespace TenhouViewer.Mahjong
         public StepType Type;
         public Naki NakiData = null;
 
+        public int[] Waiting = null;
+
         public Step(int Player)
         {
             this.Player = Player;
@@ -176,6 +178,21 @@ namespace TenhouViewer.Mahjong
             }
         }
 
+        private void WriteWaiting(XmlSave X)
+        {
+            if (Waiting == null) return;
+
+            X.StartTag("waiting");
+            for (int i = 0; i < Waiting.Length; i++)
+            {
+                X.StartTag("tiletype");
+                X.Attribute("value", Waiting[i]);
+
+                X.EndTag();
+            }
+            X.EndTag();
+        }
+
         public void WriteXml(XmlSave X)
         {
             switch (Type)
@@ -192,6 +209,7 @@ namespace TenhouViewer.Mahjong
                 X.StartTag("discardtile");
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
+                WriteWaiting(X);
 
                 X.EndTag();
                 break;
@@ -208,6 +226,7 @@ namespace TenhouViewer.Mahjong
                 X.StartTag("naki");
                 X.Attribute("player", Player);
                 NakiData.WriteXml(X);
+                WriteWaiting(X);
                 X.EndTag();
                 break;
 
