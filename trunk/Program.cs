@@ -334,6 +334,21 @@ namespace TenhouViewer
             }
         }
 
+        static int CountDangerous(Mahjong.Round Rnd, int Player)
+        {
+            int MaxCount = 0;
+
+            for (int j = 0; j < Rnd.Steps.Count; j++)
+            {
+                int[] D = Rnd.Steps[j].Danger;
+                if (D == null) continue;
+
+                if (D.Length > MaxCount) MaxCount = D.Length;
+            }
+
+            return MaxCount;
+        }
+
         static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
@@ -432,6 +447,9 @@ namespace TenhouViewer
                                         break;
                                     case "players":
                                         Temp += String.Format("{0:d}\t", Rnd.PlayerCount);
+                                        break;
+                                    case "danger":
+                                        Temp += String.Format("{0:d}\t", CountDangerous(Rnd, k));
                                         break;
                                 }
                             }
@@ -724,6 +742,19 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands, which has fu count less (or equal) than {0:d};", TempValue));
                         break;
+                    case "dangermin":
+                        TempValue = ParseIntArg(Value, 0, 14, "dangermin");
+                        if (TempValue != -1) Finder.DangerMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has danger tiles count greater (or equal) than {0:d};", TempValue));
+                        break;
+                    case "dangermax":
+                        TempValue = ParseIntArg(Value, 0, 14, "dangermax");
+                        if (TempValue != -1) Finder.DangerMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has has danger tiles count less (or equal) than {0:d};", TempValue));
+                        break;
+
                     case "lobby":
                         TempValue = ParseIntArg(Value, 0, 9999, "lobby");
                         if (TempValue != -1) Finder.Lobby = TempValue;
