@@ -37,6 +37,7 @@ namespace TenhouViewer.Mahjong
         public Naki NakiData = null;
 
         public int[] Waiting = null;
+        public int[] Danger = null;
 
         public Step(int Player)
         {
@@ -112,7 +113,7 @@ namespace TenhouViewer.Mahjong
 
         public void ReadXml(XmlLoad X)
         {
-            if(!X.Read()) return;
+            if (!X.Read()) return;
 
             switch (X.ElementName)
             {
@@ -176,6 +177,52 @@ namespace TenhouViewer.Mahjong
                     Player = X.GetIntAttribute("player");
                     break;
             }
+
+            {
+                XmlLoad Subtree = X.GetSubtree();
+                if (Subtree.Read())
+                {
+                    switch (Subtree.ElementName)
+                    {
+                        case "waiting":
+                            {
+                                List<int> W = new List<int>();
+
+                                XmlLoad TileTypes = Subtree.GetSubtree();
+                                while(TileTypes.Read())
+                                {
+                                    switch (TileTypes.ElementName)
+                                    {
+                                        case "tiletype":
+                                            W.Add(TileTypes.GetIntAttribute("value"));
+                                            break;
+                                    }
+                                }
+
+                                if (W.Count > 0) Waiting = W.ToArray();
+                            }
+                            break;
+                        case "danger":
+                            {
+                                List<int> D = new List<int>();
+
+                                XmlLoad TileTypes = Subtree.GetSubtree();
+                                while (TileTypes.Read())
+                                {
+                                    switch (TileTypes.ElementName)
+                                    {
+                                        case "tile":
+                                            D.Add(TileTypes.GetIntAttribute("value"));
+                                            break;
+                                    }
+                                }
+
+                                if (D.Count > 0) Danger = D.ToArray();
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         private void WriteWaiting(XmlSave X)
@@ -183,10 +230,27 @@ namespace TenhouViewer.Mahjong
             if (Waiting == null) return;
 
             X.StartTag("waiting");
+            X.Attribute("count", Waiting.Length);
             for (int i = 0; i < Waiting.Length; i++)
             {
                 X.StartTag("tiletype");
                 X.Attribute("value", Waiting[i]);
+
+                X.EndTag();
+            }
+            X.EndTag();
+        }
+
+        private void WriteDanger(XmlSave X)
+        {
+            if (Danger == null) return;
+
+            X.StartTag("danger");
+            X.Attribute("count", Danger.Length);
+            for (int i = 0; i < Danger.Length; i++)
+            {
+                X.StartTag("tile");
+                X.Attribute("value", Danger[i]);
 
                 X.EndTag();
             }
@@ -202,6 +266,8 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
 
+                WriteDanger(X);
+
                 X.EndTag();
                 break;
 
@@ -210,7 +276,7 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
                 WriteWaiting(X);
-
+                
                 X.EndTag();
                 break;
 
@@ -218,6 +284,8 @@ namespace TenhouViewer.Mahjong
                 X.StartTag("drawdeadtile");
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
+
+                WriteDanger(X);
 
                 X.EndTag();
                 break;
@@ -227,6 +295,8 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("player", Player);
                 NakiData.WriteXml(X);
                 WriteWaiting(X);
+                WriteDanger(X);
+
                 X.EndTag();
                 break;
 
