@@ -49,6 +49,8 @@ namespace TenhouViewer
             Console.WriteLine(" hanmax=N - find all hands which has han count less (or equal) than N (1-13);");
             Console.WriteLine(" fumin=N - find all hands which has fu count greater (or equal) than N (1-120);");
             Console.WriteLine(" fumax=N - find all hands which has fu count less (or equal) than N (1-120);");
+            Console.WriteLine(" dangermin=N - find all hands which has danger tiles count greater (or equal) than N (0-14);");
+            Console.WriteLine(" dangermax=N - find all hands which has danger tiles  count less (or equal) than N (0-14);");
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
@@ -59,6 +61,7 @@ namespace TenhouViewer
             Console.WriteLine(" dealer - find all dealer's hands;");
             Console.WriteLine(" winner - find all completed hands;");
             Console.WriteLine(" loser - find all players (games), who dealt into ron;");
+            Console.WriteLine(" furiten=N - find all players (games), who has (has not) furiten (0-1);");
             Console.WriteLine(" players=N - count of players in game (3-4);");
             Console.WriteLine(" roundwind=N - wind of current round (0-3);");
             Console.WriteLine(" playerwind=N - player's wind (0-3);");
@@ -755,7 +758,15 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands, which has has danger tiles count less (or equal) than {0:d};", TempValue));
                         break;
+                    case "furiten":
+                        TempValue = ParseIntArg(Value, 0, 1, "furiten");
+                        if (TempValue != -1)
+                            Finder.Furiten = TempValue;
+                        else
+                            Finder.Furiten = 1;
 
+                        Console.WriteLine(String.Format("Filter: only hands, which has {0:s} furiten lobby;", (Finder.Furiten == 0) ? "not" : ""));
+                        break;
                     case "lobby":
                         TempValue = ParseIntArg(Value, 0, 9999, "lobby");
                         if (TempValue != -1) Finder.Lobby = TempValue;

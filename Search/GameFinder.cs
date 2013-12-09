@@ -92,6 +92,9 @@ namespace TenhouViewer.Search
         public int PlayerWind = -1;
         public int RoundWind = -1;
 
+        // Furiten
+        public int Furiten = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -175,6 +178,7 @@ namespace TenhouViewer.Search
                 CheckLobby(R);
                 CheckWind(R);
                 DangerSteps(R);
+                CheckFuriten(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -466,6 +470,32 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckFuriten(Result R)
+        {
+            if(Furiten == -1) return;
+
+            bool FRef = (Furiten == 1);
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+                bool[] TempFuriten = new bool[R.Replay.PlayerCount];
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++) TempFuriten[j] = false;
+
+                for (int j = 0; j < Rnd.Steps.Count; j++)
+                {
+                    Mahjong.Step S = Rnd.Steps[j];
+                    if (S.Furiten) TempFuriten[S.Player] = true;
+                }
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    if(TempFuriten[j] != FRef) R.HandMark[i][j] = false;
                 }
             }
         }
