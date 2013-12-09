@@ -274,7 +274,7 @@ namespace TenhouViewer.Paifu
 
             for (int i = 0; i < Hand.Naki.Count; i++)
             {
-                Mahjong.Naki N = Hand.Naki[i];
+                Mahjong.Naki N = Hand.Naki[Hand.Naki.Count - i - 1];
 
                 switch (N.Type)
                 {
