@@ -125,6 +125,7 @@ namespace TenhouViewer
             Console.WriteLine(" roundwind - wind of current round;");
             Console.WriteLine(" playerwind - player's wind;");
             Console.WriteLine(" from - nickname of player who p[layed into ron;");
+            Console.WriteLine(" furiten - furiten hand;");
 
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
@@ -353,6 +354,18 @@ namespace TenhouViewer
             return MaxCount;
         }
 
+        static bool HasFuriten(Mahjong.Round Rnd, int Player)
+        {
+            for (int j = 0; j < Rnd.Steps.Count; j++)
+            {
+                if (Rnd.Steps[j].Player != Player) continue;
+
+                if (Rnd.Steps[j].Furiten) return true;
+            }
+
+            return false;
+        }
+
         static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
@@ -454,6 +467,9 @@ namespace TenhouViewer
                                         break;
                                     case "danger":
                                         Temp += String.Format("{0:d}\t", CountDangerous(Rnd, k));
+                                        break;
+                                    case "furiten":
+                                        Temp += String.Format("{0:d}\t", HasFuriten(Rnd, k) ? 1 : 0);
                                         break;
                                 }
                             }
