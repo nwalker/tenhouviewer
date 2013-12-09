@@ -342,6 +342,7 @@ namespace TenhouViewer
             {
                 int[] D = Rnd.Steps[j].Danger;
                 if (D == null) continue;
+                if (Rnd.Steps[j].Player != Player) continue;
 
                 if (D.Length > MaxCount) MaxCount = D.Length;
             }

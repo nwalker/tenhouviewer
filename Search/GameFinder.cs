@@ -475,23 +475,27 @@ namespace TenhouViewer.Search
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
-                bool[] PlayerFlag = new bool[R.Replay.PlayerCount];
+                int[] MaxDangerTiles = new int[R.Replay.PlayerCount];
 
-                for (int j = 0; j < R.Replay.PlayerCount; j++) PlayerFlag[j] = false;
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    MaxDangerTiles[j] = 0;
 
                 for (int j = 0; j < Rnd.Steps.Count; j++)
                 {
                     int[] D = Rnd.Steps[j].Danger;
                     if (D == null) continue;
-                    
-                    if (((D.Length >= DangerMin) || (DangerMin == -1)) &&
-                        ((D.Length <= DangerMax) || (DangerMax == -1))) 
-                        PlayerFlag[Rnd.Steps[j].Player] = true;
-                }
 
+                    int Player = Rnd.Steps[j].Player;
+
+                    if (MaxDangerTiles[Player] < D.Length) MaxDangerTiles[Player] = D.Length;
+                }
+                
+                    
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
-                    if (!PlayerFlag[j]) R.HandMark[i][j] = false;
+                    if (!(((MaxDangerTiles[j] >= DangerMin) || (DangerMin == -1)) &&
+                         ((MaxDangerTiles[j] <= DangerMax) || (DangerMax == -1))))
+                        R.HandMark[i][j] = false;
                 }
             }
         }
