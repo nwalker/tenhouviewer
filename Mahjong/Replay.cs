@@ -83,6 +83,8 @@ namespace TenhouViewer.Mahjong
                                 Players[j] = new Player();
                                 Players[j].ReadXml(Subtree);
                             }
+
+                            Subtree.Close();
                         }
                         break;
                     case "roundlist":
@@ -126,11 +128,15 @@ namespace TenhouViewer.Mahjong
                                             }
                                         }
 
+                                        RoundData.Close();
+
                                         // try to load more data
                                         R.Load(FName);
                                         break;
                                 }
                             }
+
+                            Subtree.Close();
                         }
                         break;
                 }

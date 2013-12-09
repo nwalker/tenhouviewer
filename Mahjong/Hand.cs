@@ -109,6 +109,7 @@ namespace TenhouViewer.Mahjong
                                     break;
                             }
                         }
+                        Subtree.Close();
                     }
                     break;
                 case "naki":
@@ -124,6 +125,7 @@ namespace TenhouViewer.Mahjong
 
                             Naki.Add(N);
                         }
+                        Subtree.Close();
                     }
                     break;
             }

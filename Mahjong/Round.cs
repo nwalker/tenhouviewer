@@ -186,10 +186,13 @@ namespace TenhouViewer.Mahjong
                             for (int j = 0; j < Count; j++)
                             {
                                 Step NewStep = new Step(-1);
+
                                 NewStep.ReadXml(Subtree);
 
                                 Steps.Add(NewStep);
                             }
+
+                            Subtree.Close();
                         }
                         break;
                     case "hands":
@@ -208,10 +211,14 @@ namespace TenhouViewer.Mahjong
                                             StartHands[Player] = new Hand();
 
                                             StartHands[Player].ReadXml(HandData);
+
+                                            HandData.Close();
                                         }
                                         break;
                                 }
                             }
+
+                            Subtree.Close();
                         }
                         break;
                     case "shantenlist":
@@ -241,10 +248,14 @@ namespace TenhouViewer.Mahjong
                                                         break;
                                                 }
                                             }
+
+                                            ShantenData.Close();
                                         }
                                         break;
                                 }
                             }
+
+                            Subtree.Close();
                         }
                         break;
                     case "agari":
@@ -278,6 +289,8 @@ namespace TenhouViewer.Mahjong
                                                         break;
                                                 }
                                             }
+
+                                            YakuList.Close();
                                         }
                                         break;
                                     case "waitings":
@@ -294,10 +307,14 @@ namespace TenhouViewer.Mahjong
                                                         break;
                                                 }
                                             }
+
+                                            WaitList.Close();
                                         }
                                         break;
                                 }
                             }
+
+                            Subtree.Close();
                         }
                         break;
 
@@ -316,6 +333,7 @@ namespace TenhouViewer.Mahjong
                                         break;
                                 }
                             }
+                            Doras.Close();
                         }
                         break;
                     case "uradora":
@@ -334,6 +352,7 @@ namespace TenhouViewer.Mahjong
                                         break;
                                 }
                             }
+                            Doras.Close();
                         }
                         break;
                 }
@@ -676,9 +695,6 @@ namespace TenhouViewer.Mahjong
 
                             TempHands[S.Player].Naki.Add(S.NakiData);
                             TempHands[S.Player].OpenTiles(S.NakiData.Tiles);
-
-                            // analyze danger tiles
-                            S.Danger = AnalyzeDangerTiles(TempHands, TempWaitings, S.Player);
                         }
                         break;
                     case StepType.STEP_TSUMO:

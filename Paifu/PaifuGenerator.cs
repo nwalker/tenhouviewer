@@ -54,6 +54,8 @@ namespace TenhouViewer.Paifu
         Bitmap B;
         Graphics G;
 
+        Color DangerColor = Color.FromArgb(204, 119, 0);
+
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
             R = Replay;
@@ -348,6 +350,9 @@ namespace TenhouViewer.Paifu
         private void DrawSteps()
         {
             int LastPlayer = -1;
+            List<int>[] DangerTiles = new List<int>[R.PlayerCount];
+
+            for (int i = 0; i < R.PlayerCount; i++) DangerTiles[i] = null;
 
             for (int i = 0; i < Rnd.Steps.Count; i++)
             {
@@ -365,11 +370,20 @@ namespace TenhouViewer.Paifu
                             bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
                                 (Rnd.Steps[i + 1].Player == S.Player));
 
+                            if (S.Danger != null)
+                                DangerTiles[S.Player] = new List<int>(S.Danger);
+                            else
+                                DangerTiles[S.Player] = null;
+
+                            bool Danger = false;
+                            if (DangerTiles[S.Player] != null)
+                                Danger = DangerTiles[S.Player].Contains(S.Tile);
+
                             LastTile = S.Tile;
                             LastPlayer = PlayerIndex[S.Player];
 
                             string Comment = (Tsumo) ? "ツモ" : "";
-                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
+                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri, Danger);
 
                             if (Tsumo) DrawYaku(PlayerIndex[S.Player], S.Player);
                         }
@@ -384,11 +398,20 @@ namespace TenhouViewer.Paifu
                             bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
                                 (Rnd.Steps[i + 1].Player == S.Player));
 
+                            if (S.Danger != null)
+                                DangerTiles[S.Player] = new List<int>(S.Danger);
+                            else
+                                DangerTiles[S.Player] = null;
+
+                            bool Danger = false;
+                            if (DangerTiles[S.Player] != null)
+                                Danger = DangerTiles[S.Player].Contains(S.Tile);
+
                             LastTile = S.Tile;
                             LastPlayer = PlayerIndex[S.Player];
 
                             string Comment = (Tsumo) ? "ツモ" : "";
-                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri);
+                            DrawTsumoTile(PlayerIndex[S.Player], S.Tile, Comment, Tsumogiri, Danger);
 
                             if (Tsumo) DrawYaku(PlayerIndex[S.Player], S.Player);
                         }
@@ -404,6 +427,10 @@ namespace TenhouViewer.Paifu
                             bool Ron = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_RON) &&
                                         (Rnd.Steps[i + 1].FromWho == S.Player));
 
+                            bool Danger = false;
+                            if (DangerTiles[S.Player] != null)
+                                Danger = DangerTiles[S.Player].Contains(S.Tile);
+
                             string Comment = "";
 
                             if (Ron)
@@ -413,7 +440,7 @@ namespace TenhouViewer.Paifu
 
                             LastPlayer = PlayerIndex[S.Player];
 
-                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment);
+                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment, Danger);
                         }
                         break;
                     case Mahjong.StepType.STEP_NAKI:
@@ -435,7 +462,16 @@ namespace TenhouViewer.Paifu
                             if (LastPlayer > PlayerIndex[S.Player]) Column++;
                             LastPlayer = PlayerIndex[S.Player];
 
-                            DrawTsumoTile(PlayerIndex[S.Player], LastTile, NakiType, false);
+                            bool Danger = false;
+                            if (DangerTiles[S.Player] != null)
+                                Danger = DangerTiles[S.Player].Contains(S.Tile);
+
+                            DrawTsumoTile(PlayerIndex[S.Player], LastTile, NakiType, false, Danger);
+
+                            if (S.Danger != null)
+                                DangerTiles[S.Player] = new List<int>(S.Danger);
+                            else
+                                DangerTiles[S.Player] = null;
 
                             if (Kan && (S.NakiData.Type != Mahjong.NakiType.ANKAN)) Column++;
                             // Can be ron after chakan or ankan!
@@ -484,26 +520,32 @@ namespace TenhouViewer.Paifu
             return Pos + TileBitmap.Width;
         }
 
-        private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri)
+        private void DrawTsumoTile(int Index, int Tile, string Comment, bool Tsumogiri, bool Danger)
         {
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 2);
 
             if (Tsumogiri) Tile = -2;
 
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
+            PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
+
+            if (Danger && !Tsumogiri) TileImage.Colorize(DangerColor);
+            Bitmap TileBitmap = TileImage.Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
         }
 
-        private void DrawDiscardTile(int Index, int Tile, string Comment)
+        private void DrawDiscardTile(int Index, int Tile, string Comment, bool Danger)
         {
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
 
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
+            PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
+            if (Danger)
+                TileImage.Colorize(DangerColor);
+            Bitmap TileBitmap = TileImage.Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
 

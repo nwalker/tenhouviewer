@@ -138,6 +138,7 @@ namespace TenhouViewer.Mahjong
                                     break;
                             }
                         }
+                        Subtree.Close();
                     }
                     break;
             }
