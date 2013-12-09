@@ -56,6 +56,11 @@ namespace TenhouViewer.Mahjong
             return new XmlLoad(R);
         }
 
+        public void Close()
+        {
+            // F.Skip();
+        }
+
         public bool Read()
         {
             while (true)

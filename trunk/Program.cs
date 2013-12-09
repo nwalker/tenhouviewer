@@ -116,6 +116,7 @@ namespace TenhouViewer
             Console.WriteLine(" ron - is ron-agari ;");
             Console.WriteLine(" cost - cost of hand;");
             Console.WriteLine(" han - amount of game points in hand;");
+            Console.WriteLine(" fu - amount of minipoints in hand;");
             Console.WriteLine(" waiting - amount of tile types in waiting;");
             Console.WriteLine(" step - amount of player steps in round;");
             Console.WriteLine(" yaku - list of yaku;");
@@ -434,6 +435,9 @@ namespace TenhouViewer
                                         break;
                                     case "han":
                                         Temp += String.Format("{0:d}\t", Rnd.HanCount[k]);
+                                        break;
+                                    case "fu":
+                                        Temp += String.Format("{0:d}\t", Rnd.FuCount[k]);
                                         break;
                                     case "waiting":
                                         Temp += String.Format("{0:d}\t", Rnd.WinWaiting[k].Count);

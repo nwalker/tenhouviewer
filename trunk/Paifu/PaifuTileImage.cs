@@ -10,6 +10,7 @@ namespace TenhouViewer.Paifu
     {
         Mahjong.Tile Tile;
         public Bitmap Bmp;
+        public Bitmap Original;
 
         public PaifuTileImage(int Index, float Scale, bool Red)
         {
@@ -37,7 +38,18 @@ namespace TenhouViewer.Paifu
             if (!File.Exists(FileName)) FileName = String.Format(".//tiles//{0:s}.png", TileName);
 
             Bitmap B = new Bitmap(FileName);
-            Bmp = B;// new Bitmap(B);
+            Original = B;// new Bitmap(B);
+            Bmp = new Bitmap(Original);
+        }
+
+        public void Colorize(Color Target)
+        {
+            Bmp = new Bitmap(Original);
+
+            Graphics G = Graphics.FromImage(Bmp);
+            Brush B = new SolidBrush(Color.FromArgb(50, Target));
+
+            G.FillRectangle(B, new Rectangle(0, 0, Bmp.Width, Bmp.Height));
         }
     }
 }

@@ -148,6 +148,8 @@ namespace TenhouViewer.Mahjong
 
                         NakiData = new Naki();
                         NakiData.ReadXml(X);
+
+                        Subtree.Close();
                     }
                     break;
                 case "riichi1":
@@ -206,6 +208,7 @@ namespace TenhouViewer.Mahjong
                                     }
                                 }
 
+                                TileTypes.Close();
                                 if (W.Count > 0) Waiting = W.ToArray();
                             }
                             break;
@@ -213,22 +216,25 @@ namespace TenhouViewer.Mahjong
                             {
                                 List<int> D = new List<int>();
 
-                                XmlLoad TileTypes = Subtree.GetSubtree();
-                                while (TileTypes.Read())
+                                XmlLoad Tiles = Subtree.GetSubtree();
+                                while (Tiles.Read())
                                 {
-                                    switch (TileTypes.ElementName)
+                                    switch (Tiles.ElementName)
                                     {
                                         case "tile":
-                                            D.Add(TileTypes.GetIntAttribute("value"));
+                                            D.Add(Tiles.GetIntAttribute("value"));
                                             break;
                                     }
                                 }
 
+                                Tiles.Close();
                                 if (D.Count > 0) Danger = D.ToArray();
                             }
                             break;
                     }
                 }
+
+                Subtree.Close();
             }
         }
 
@@ -306,7 +312,6 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("player", Player);
                 NakiData.WriteXml(X);
                 WriteWaiting(X);
-                WriteDanger(X);
 
                 X.EndTag();
                 break;
