@@ -571,14 +571,28 @@ namespace TenhouViewer.Mahjong
             return (DangerTiles.Count > 0) ? DangerTiles.ToArray() : null;
         }
 
+        private bool IsFuriten(List<int> Discard, int[] Waitings)
+        {
+            for (int i = 0; i < Waitings.Length; i++)
+            {
+                if (Discard.Contains(Waitings[i])) return true;
+            }
+
+            return false;
+        }
+
         // Get all hands in round
         public void ReplayGame()
         {
             Hand[] TempHands = new Hand[PlayerCount];
-
             List<int>[] TempWaitings = new List<int>[PlayerCount];
+            List<int>[] Discard = new List<int>[PlayerCount];
 
-            for (int i = 0; i < 4; i++) TempWaitings[i] = new List<int>();
+            for (int i = 0; i < 4; i++)
+            {
+                TempWaitings[i] = new List<int>();
+                Discard[i] = new List<int>();
+            }
 
             int LastTile = -1;
 
@@ -631,12 +645,14 @@ namespace TenhouViewer.Mahjong
                             if(TShanten == 0) Tempai[S.Player] = true;
 
                             Shanten[S.Player].Add(TShanten);
+                            Discard[S.Player].Add(new Tile(S.Tile).TileId);
 
                             if (TShanten == 0) // Tempai
                             {
                                 TempWaitings[S.Player] = TempHands[S.Player].WaitingList;
 
                                 S.Waiting = TempWaitings[S.Player].ToArray();
+                                S.Furiten = IsFuriten(Discard[S.Player], S.Waiting);
                             }
                         }
                         break;

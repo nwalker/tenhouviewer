@@ -36,6 +36,8 @@ namespace TenhouViewer.Mahjong
         public StepType Type;
         public Naki NakiData = null;
 
+        public bool Furiten = false;
+
         public int[] Waiting = null;
         public int[] Danger = null;
 
@@ -127,6 +129,11 @@ namespace TenhouViewer.Mahjong
                     Type = StepType.STEP_DISCARDTILE;
                     Player = X.GetIntAttribute("player");
                     Tile = X.GetIntAttribute("tile");
+                    {
+                        int F = X.GetIntAttribute("furiten");
+
+                        Furiten = (F == 1);
+                    }
                     break;
                 case "drawdeadtile":
                     Type = StepType.STEP_DRAWDEADTILE;
@@ -275,6 +282,10 @@ namespace TenhouViewer.Mahjong
                 X.StartTag("discardtile");
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
+
+                if (Furiten)
+                    X.Attribute("furiten", 1);
+
                 WriteWaiting(X);
                 
                 X.EndTag();
