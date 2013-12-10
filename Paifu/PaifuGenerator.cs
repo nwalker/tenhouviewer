@@ -59,6 +59,8 @@ namespace TenhouViewer.Paifu
 
         Color FuritenColor = Color.FromArgb(200, 204, 119, 0);
 
+        Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red};
+
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
             R = Replay;
@@ -457,7 +459,7 @@ namespace TenhouViewer.Paifu
 
                             LastPlayer = PlayerIndex[S.Player];
 
-                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment, Danger, S.Furiten);
+                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment, Danger, S.Furiten, S.Shanten);
                         }
                         break;
                     case Mahjong.StepType.STEP_NAKI:
@@ -566,7 +568,7 @@ namespace TenhouViewer.Paifu
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
         }
 
-        private void DrawDiscardTile(int Index, int Tile, string Comment, bool Danger, bool Furiten)
+        private void DrawDiscardTile(int Index, int Tile, string Comment, bool Danger, bool Furiten, int Shanten)
         {
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
@@ -584,6 +586,14 @@ namespace TenhouViewer.Paifu
                 Brush Gray = new SolidBrush(Color.FromArgb(200, Color.Black));
 
                 G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+            }
+            else if ((Shanten >= 0) && (Shanten < ShantenColor.Length))
+            {
+                Brush Gray = new SolidBrush(ShantenColor[Shanten]);
+
+                G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+
+                if ((Comment.CompareTo("") == 0) && (Shanten > 0)) DrawCenteredString(Color.Black, Fcomment, Shanten.ToString(), new PointF(X, Y + TileHeight), TileWidth);
             }
         }
 
