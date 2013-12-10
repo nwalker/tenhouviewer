@@ -440,7 +440,7 @@ namespace TenhouViewer.Paifu
 
                             LastPlayer = PlayerIndex[S.Player];
 
-                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment, Danger);
+                            DrawDiscardTile(PlayerIndex[S.Player], S.Tile, Comment, Danger, S.Furiten);
                         }
                         break;
                     case Mahjong.StepType.STEP_NAKI:
@@ -537,7 +537,7 @@ namespace TenhouViewer.Paifu
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y - G.MeasureString(Comment, Fcomment).Height), TileWidth);
         }
 
-        private void DrawDiscardTile(int Index, int Tile, string Comment, bool Danger)
+        private void DrawDiscardTile(int Index, int Tile, string Comment, bool Danger, bool Furiten)
         {
             int X = PaddingH + RoundColumnWidth + PlayerColumnWidth + InternalPadding + (Column) * TileWidth;
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
@@ -548,8 +548,14 @@ namespace TenhouViewer.Paifu
             Bitmap TileBitmap = TileImage.Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
-
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
+
+            if (Furiten)
+            {
+                Brush Gray = new SolidBrush(Color.FromArgb(200, Color.Black));
+
+                G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+            }
         }
 
         private void DrawDoraTile(int Index, int Y, int Tile)
