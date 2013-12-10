@@ -788,20 +788,12 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only hands, which has has danger tiles count less (or equal) than {0:d};", TempValue));
                         break;
                     case "furiten":
-                        TempValue = ParseIntArg(Value, 0, 1, "furiten");
-                        if (TempValue != -1)
-                            Finder.Furiten = TempValue;
-                        else
-                            Finder.Furiten = 1;
+                        Finder.Furiten = ParseBoolArg(Value, "furiten");
 
                         Console.WriteLine(String.Format("Filter: only hands, which has {0:s} furiten;", (Finder.Furiten == 0) ? "no" : ""));
                         break;
                     case "riichi":
-                        TempValue = ParseIntArg(Value, 0, 1, "riichi");
-                        if (TempValue != -1)
-                            Finder.Riichi = TempValue;
-                        else
-                            Finder.Riichi = 1;
+                        Finder.Riichi = ParseBoolArg(Value, "riichi");
 
                         Console.WriteLine(String.Format("Filter: only hands {0:s} riichi;", (Finder.Riichi == 0) ? "without" : "with"));
                         break;
@@ -912,31 +904,19 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only player with nickname '{0:s}';", Value));
                         break;
                     case "dealer":
-                        TempValue = ParseIntArg(Value, 0, 1, "dealer");
-                        if (TempValue != -1)
-                            Finder.Dealer = TempValue;
-                        else
-                            Finder.Dealer = 1;
+                        Finder.Dealer = ParseBoolArg(Value, "dealer");
 
-                        Console.WriteLine(String.Format("Filter: only {0:s} dealer hands;", (TempValue == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only {0:s} dealer hands;", (Finder.Dealer == 0) ? "not" : ""));
                         break;
                     case "loser":
-                        TempValue = ParseIntArg(Value, 0, 1, "loser");
-                        if (TempValue != -1)
-                            Finder.Loser = TempValue;
-                        else
-                            Finder.Loser = 1;
+                        Finder.Loser = ParseBoolArg(Value, "loser");
 
-                        Console.WriteLine(String.Format("Filter: only players, who {0:s} dealt into ron;", (TempValue == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only players, who {0:s} dealt into ron;", (Finder.Loser == 0) ? "not" : ""));
                         break;
                     case "winner":
-                        TempValue = ParseIntArg(Value, 0, 1, "winner");
-                        if (TempValue != -1)
-                            Finder.Winner = TempValue;
-                        else
-                            Finder.Winner = 1;
+                        Finder.Winner = ParseBoolArg(Value, "winner");
 
-                        Console.WriteLine(String.Format("Filter: only players, who {0:s} completed hand;", (TempValue == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only players, who {0:s} completed hand;", (Finder.Winner == 0) ? "not" : ""));
                         break;
                     case "players":
                         TempValue = ParseIntArg(Value, 3, 4, "players");
@@ -990,6 +970,33 @@ namespace TenhouViewer
             return Text;
         }
 
+        private static int ParseBoolArg(string Value, string ArgName)
+        {
+            int Temp = 1;
+
+            if (Value == "") return 1;
+
+            try
+            {
+                Temp = Convert.ToInt32(Value);
+            }
+            catch (Exception)
+            {
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, 0 or 1, or not specified): '{s:3}'",
+                    ArgName, 0, 1, Value));
+                return 1;
+            }
+
+            if ((Temp < 0) || (Temp > 1))
+            {
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, 0 or 1, or not specified): '{s:1}'",
+                    ArgName, Value));
+                return 1;
+            }
+
+            return Temp;
+        }
+
         private static int ParseIntArg(string Value, int Min, int Max, string ArgName)
         {
             int Temp = -1;
@@ -1000,13 +1007,13 @@ namespace TenhouViewer
             }
             catch (Exception)
             {
-                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): {s:3}",
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): '{s:3}'",
                     ArgName, Min, Max, Value));
                 return -1;
             }
             if ((Temp < Min) || (Temp > Max))
             {
-                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): {s:3}",
+                Console.Write(String.Format("Error: incorrect argument for '{s:0}' query (must be number, {d:1}-{d:2}): '{s:3}'",
                     ArgName, Min, Max, Value));
                 return -1;
             }
