@@ -699,6 +699,9 @@ namespace TenhouViewer.Mahjong
 
                             TempHands[S.Player].Naki.Add(S.NakiData);
                             TempHands[S.Player].OpenTiles(S.NakiData.Tiles);
+
+                            // analyze danger tiles
+                            S.Danger = AnalyzeDangerTiles(TempHands, TempWaitings, S.Player);
                         }
                         break;
                     case StepType.STEP_TSUMO:

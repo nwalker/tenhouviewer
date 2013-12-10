@@ -42,6 +42,18 @@ namespace TenhouViewer.Search
         // Is player loser (discard to ron)
         public int Loser = -1;
 
+        // Is player furiten
+        public int Furiten = -1;
+
+        // Is player declared riichi
+        public int Riichi = -1;
+
+        // Is ron-agari
+        public int Ron = -1;
+
+        // Is tsumo-agari
+        public int Tsumo = -1;
+
         // Is round end in draw
         public bool Draw = false;
         public int DrawReason = -1;
@@ -92,18 +104,12 @@ namespace TenhouViewer.Search
         public int PlayerWind = -1;
         public int RoundWind = -1;
 
-        // Furiten
-        public int Furiten = -1;
-
         // Riichi count
         public int RiichiCount = -1;
 
         // Naki count
         public int NakiCount = -1;
         public int OpenedSets = -1;
-
-        // Is player declared riichi
-        public int Riichi = -1;
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -191,6 +197,7 @@ namespace TenhouViewer.Search
                 CheckFuriten(R);
                 CheckNaki(R);
                 CheckRiichi(R);
+                CheckAgari(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -425,6 +432,39 @@ namespace TenhouViewer.Search
                     {
                         if (Rnd.Wind[j] != PlayerWind) R.PlayerMark[i] = false;
                     }
+                }
+            }
+        }
+
+        private void CheckAgari(Result R)
+        {
+            if (Ron != -1)
+            {
+                bool IsRon = (Ron != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    bool RonAgari = (Rnd.Loser.Contains(true));
+                    bool Winner = (Rnd.Winner.Contains(true));
+
+                    if ((!Winner) && (RonAgari != IsRon)) R.RoundMark[i] = false;
+                }
+            }
+
+            if (Tsumo != -1)
+            {
+                bool IsTsumo = (Tsumo != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    bool RonAgari = (Rnd.Loser.Contains(true));
+                    bool Winner = (Rnd.Winner.Contains(true));
+
+                    if ((!Winner) && (RonAgari == IsTsumo)) R.RoundMark[i] = false;
                 }
             }
         }

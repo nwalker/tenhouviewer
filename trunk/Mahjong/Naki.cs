@@ -114,40 +114,30 @@ namespace TenhouViewer.Mahjong
 
         public void ReadXml(XmlLoad X)
         {
-            if (!X.Read()) return;
+            int Count = X.GetIntAttribute("count");
 
-            switch (X.ElementName)
+            Type = (NakiType)X.GetIntAttribute("value");
+            FromWho = X.GetIntAttribute("from");
+
+            Tiles = new List<int>();
+
+            XmlLoad Subtree = X.GetSubtree();
+            for (int i = 0; i < Count; i++)
             {
-                case "type":
-                    {
-                        int Count = X.GetIntAttribute("count");
-
-                        Type = (NakiType)X.GetIntAttribute("value");
-                        FromWho = X.GetIntAttribute("from");
-
-                        Tiles = new List<int>();
-
-                        XmlLoad Subtree = X.GetSubtree();
-                        for (int i = 0; i < Count; i++)
-                        {
-                            if (!Subtree.Read()) break;
-                            switch (Subtree.ElementName)
-                            {
-                                case "tile":
-                                    Tiles.Add(Subtree.GetIntAttribute("value"));
-                                    break;
-                            }
-                        }
-                        Subtree.Close();
-                    }
-                    break;
+                if (!Subtree.Read()) break;
+                switch (Subtree.ElementName)
+                {
+                    case "tile":
+                        Tiles.Add(Subtree.GetIntAttribute("value"));
+                        break;
+                }
             }
-
+            Subtree.Close();
         }
 
         public void WriteXml(XmlSave X)
         {
-            X.StartTag("type");
+            X.StartTag("nakidata");
             X.Attribute("value", Convert.ToInt16(Type));
             X.Attribute("from", FromWho);
             X.Attribute("count", Tiles.Count);
