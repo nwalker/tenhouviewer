@@ -70,7 +70,8 @@ namespace TenhouViewer
             Console.WriteLine(" roundwind=N - wind of current round (0-3);");
             Console.WriteLine(" playerwind=N - player's wind (0-3);");
             Console.WriteLine(" riichicount=N - find all rounds with N declared riichi (0-4);");
-            Console.WriteLine(" nakicount=N - find all hands with N declared nakies (0-4);");
+            Console.WriteLine(" nakicount=N - find all hands with N declared nakies (0-12);");
+            Console.WriteLine(" openedsets=N - find all hands with N opened sets (0-4);");
             Console.WriteLine(" riichi=N - find all hands with declared (or not) riichi (0-1);");
 
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
@@ -804,11 +805,18 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only rounds with {0:d} declared riichi;", Finder.RiichiCount));
                         break;
                     case "nakicount":
-                        TempValue = ParseIntArg(Value, 0, 4, "nakicount");
+                        TempValue = ParseIntArg(Value, 0, 12, "nakicount");
                         if (TempValue != -1) Finder.NakiCount = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands with {0:d} declared nakies;", Finder.NakiCount));
                         break;
+                    case "openedsets":
+                        TempValue = ParseIntArg(Value, 0, 4, "openedsets");
+                        if (TempValue != -1) Finder.OpenedSets = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands with {0:d} opened sets;", Finder.OpenedSets));
+                        break;
+
                     case "lobby":
                         TempValue = ParseIntArg(Value, 0, 9999, "lobby");
                         if (TempValue != -1) Finder.Lobby = TempValue;

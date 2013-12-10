@@ -100,6 +100,7 @@ namespace TenhouViewer.Search
 
         // Naki count
         public int NakiCount = -1;
+        public int OpenedSets = -1;
 
         // Is player declared riichi
         public int Riichi = -1;
@@ -522,7 +523,20 @@ namespace TenhouViewer.Search
 
                     for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
-                        if (Rnd.OpenedSets[j] != NakiCount) R.HandMark[i][j] = false;
+                        if (Rnd.Naki[j] != NakiCount) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (OpenedSets != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.OpenedSets[j] != OpenedSets) R.HandMark[i][j] = false;
                     }
                 }
             }
