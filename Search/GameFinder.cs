@@ -25,13 +25,13 @@ namespace TenhouViewer.Search
         public int[] Waitings = null;
 
         // Player count
-        public int PlayerCount = 0;
+        public int PlayerCount = -1;
 
         // Player place
-        public int Place = 0;
+        public int Place = -1;
 
         // Rank (1 = 1ku, 10 = 1dan, 11 = 2dan, ...)
-        public int Rank = 0;
+        public int Rank = -1;
 
         // Is player dealer?
         public int Dealer = -1;
@@ -47,7 +47,7 @@ namespace TenhouViewer.Search
         public int DrawReason = -1;
 
         // Maximum steps (tile discard) in round
-        public int StepsMax = 0;
+        public int StepsMax = -1;
 
         // Amount of tiles to wait
         public int WaitingCountMin = -1;
@@ -103,7 +103,6 @@ namespace TenhouViewer.Search
 
         // Is player declared riichi
         public int Riichi = -1;
-
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -235,7 +234,7 @@ namespace TenhouViewer.Search
 
         private void CheckPlayerCount(Result R)
         {
-            if (PlayerCount == 0) return;
+            if (PlayerCount == -1) return;
 
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
@@ -258,7 +257,7 @@ namespace TenhouViewer.Search
 
         private void CheckPlace(Result R)
         {
-            if (Place == 0) return;
+            if (Place == -1) return;
 
             for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
@@ -297,7 +296,7 @@ namespace TenhouViewer.Search
 
         private void CheckRank(Result R)
         {
-            if (Rank == 0) return;
+            if (Rank == -1) return;
 
             for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
@@ -531,7 +530,7 @@ namespace TenhouViewer.Search
 
         private void CheckSteps(Result R)
         {
-            if (StepsMax == 0) return;
+            if (StepsMax == -1) return;
 
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
