@@ -55,7 +55,9 @@ namespace TenhouViewer.Paifu
         Graphics G;
 
         List<int>[] DangerTiles = new List<int>[4];
-        Color DangerColor = Color.FromArgb(204, 119, 0);
+        Color DangerColor = Color.FromArgb(200, 204, 119, 0);
+
+        Color FuritenColor = Color.FromArgb(200, 204, 119, 0);
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
