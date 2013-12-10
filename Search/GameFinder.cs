@@ -34,13 +34,13 @@ namespace TenhouViewer.Search
         public int Rank = 0;
 
         // Is player dealer?
-        public bool Dealer = false;
+        public int Dealer = -1;
 
         // Is player winner?
-        public bool Winner = false;
+        public int Winner = -1;
 
         // Is player loser (discard to ron)
-        public bool Loser = false;
+        public int Loser = -1;
 
         // Is round end in draw
         public bool Draw = false;
@@ -94,6 +94,16 @@ namespace TenhouViewer.Search
 
         // Furiten
         public int Furiten = -1;
+
+        // Riichi count
+        public int RiichiCount = -1;
+
+        // Naki count
+        public int NakiCount = -1;
+
+        // Is player declared riichi
+        public int Riichi = -1;
+
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -177,8 +187,10 @@ namespace TenhouViewer.Search
                 CheckDraw(R);
                 CheckLobby(R);
                 CheckWind(R);
-                DangerSteps(R);
+                CheckDangerSteps(R);
                 CheckFuriten(R);
+                CheckNaki(R);
+                CheckRiichi(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -419,42 +431,100 @@ namespace TenhouViewer.Search
 
         private void CheckWinner(Result R)
         {
-            if (!Winner) return;
+            if (Winner == -1) return;
+
+            bool IsWinner = (Winner != 0);
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
-                    if (!Rnd.Winner[j]) R.HandMark[i][j] = false;
+                    if (Rnd.Winner[j] != IsWinner) R.HandMark[i][j] = false;
                 }
             }
         }
 
         private void CheckDealer(Result R)
         {
-            if (!Dealer) return;
+            if (Dealer == -1) return;
+
+            bool IsDealer = (Dealer != 0);
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
-                    if (!Rnd.Dealer[j]) R.HandMark[i][j] = false;
+                    if (Rnd.Dealer[j] != IsDealer) R.HandMark[i][j] = false;
                 }
             }
         }
 
         private void CheckLoser(Result R)
         {
-            if (!Loser) return;
+            if (Loser == -1) return;
+            bool IsLoser = (Loser != 0);
+
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
-                    if (!Rnd.Loser[j]) R.HandMark[i][j] = false;
+                    if (Rnd.Loser[j] != IsLoser) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckRiichi(Result R)
+        {
+            if (RiichiCount != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+                    int Count = 0;
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.Riichi[j] >= 0) Count++;
+                    }
+
+                    if (Count != RiichiCount) R.RoundMark[i] = false;
+                }
+            }
+
+            if (Riichi != -1)
+            {
+                bool IsRiichi = (Riichi != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        bool PlayerRiichi = Rnd.Riichi[j] > 0;
+
+                        if (IsRiichi != PlayerRiichi) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+        }
+
+        private void CheckNaki(Result R)
+        {
+            if (NakiCount != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.OpenedSets[j] != NakiCount) R.HandMark[i][j] = false;
+                    }
                 }
             }
         }
@@ -500,7 +570,7 @@ namespace TenhouViewer.Search
             }
         }
 
-        private void DangerSteps(Result R)
+        private void CheckDangerSteps(Result R)
         {
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
