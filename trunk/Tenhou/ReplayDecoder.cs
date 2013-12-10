@@ -276,7 +276,11 @@ namespace TenhouViewer.Tenhou
             Step.Naki(Naki.GetNaki());
 
             CurrentRound.Steps.Add(Step);
-            CurrentRound.OpenedSets[Who]++;
+
+            CurrentRound.Naki[Who]++;
+            // Ignore chakan and nuki naki
+            if (!((Step.NakiData.Type == Mahjong.NakiType.CHAKAN) || (Step.NakiData.Type == Mahjong.NakiType.NUKI)))
+                CurrentRound.OpenedSets[Who]++;
         }
 
         private void DORA(XmlReader Reader)
