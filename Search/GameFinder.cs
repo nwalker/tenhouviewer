@@ -107,6 +107,12 @@ namespace TenhouViewer.Search
         // Riichi count
         public int RiichiCount = -1;
 
+        // Renchan stick count
+        public int RenchanStick = -1;
+
+        // Round index (w-1, e-4)
+        public int RoundIndex = -1;
+
         // Naki count
         public int NakiCount = -1;
         public int OpenedSets = -1;
@@ -198,6 +204,7 @@ namespace TenhouViewer.Search
                 CheckNaki(R);
                 CheckRiichi(R);
                 CheckAgari(R);
+                CheckRound(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -271,6 +278,28 @@ namespace TenhouViewer.Search
             {
                 if (R.Replay.Place[i] == Place)
                     R.PlayerMark[i] = false;
+            }
+        }
+
+        private void CheckRound(Result R)
+        {
+            if (RenchanStick != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    if (Rnd.RenchanStick != RenchanStick) R.RoundMark[i] = false;
+                }
+            }
+            if (RoundIndex != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    if (Rnd.Index != RoundIndex) R.RoundMark[i] = false;
+                }
             }
         }
 

@@ -71,8 +71,10 @@ namespace TenhouViewer
             Console.WriteLine(" tsumo=N - find all rounds ended with tsumo (0-1);");
             Console.WriteLine(" players=N - count of players in game (3-4);");
             Console.WriteLine(" roundwind=N - wind of current round (0-3);");
+            Console.WriteLine(" round=N - index of current round (0:w1, 1:w2, 2:w3, 3: w4, 4: s1, ...);");
             Console.WriteLine(" playerwind=N - player's wind (0-3);");
             Console.WriteLine(" riichicount=N - find all rounds with N declared riichi (0-4);");
+            Console.WriteLine(" renchanstick=N - find all rounds with N renchan stick (0-30);");
             Console.WriteLine(" nakicount=N - find all hands with N declared nakies (0-12);");
             Console.WriteLine(" openedsets=N - find all hands with N opened sets (0-4);");
             
@@ -141,6 +143,7 @@ namespace TenhouViewer
             Console.WriteLine(" playerwind - player's wind;");
             Console.WriteLine(" from - nickname of player who p[layed into ron;");
             Console.WriteLine(" furiten - furiten hand;");
+            Console.WriteLine(" draw - round ended in draw;");
 
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
@@ -488,6 +491,9 @@ namespace TenhouViewer
                                     case "furiten":
                                         Temp += String.Format("{0:d}\t", HasFuriten(Rnd, k) ? 1 : 0);
                                         break;
+                                    case "draw":
+                                        Temp += String.Format("{0:d}\t", (Rnd.Result == Mahjong.RoundResult.Draw) ? 1 : 0);
+                                        break;
                                 }
                             }
 
@@ -829,7 +835,12 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands with {0:d} opened sets;", Finder.OpenedSets));
                         break;
+                    case "renchanstick":
+                        TempValue = ParseIntArg(Value, 0, 15, "renchanstick");
+                        if (TempValue != -1) Finder.RenchanStick = TempValue;
 
+                        Console.WriteLine(String.Format("Filter: only games with {0:d} renchan sticks;", Tenhou.Wind.GetText(TempValue)));
+                        break;
                     case "lobby":
                         TempValue = ParseIntArg(Value, 0, 9999, "lobby");
                         if (TempValue != -1) Finder.Lobby = TempValue;
@@ -956,6 +967,12 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.PlayerWind = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands with player wind {0:d};", Tenhou.Wind.GetText(TempValue)));
+                        break;
+                    case "round":
+                        TempValue = ParseIntArg(Value, 0, 15, "round");
+                        if (TempValue != -1) Finder.RoundIndex = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only games with round index {0:d};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "draw":
                         string Comment;
