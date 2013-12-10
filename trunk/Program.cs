@@ -25,9 +25,13 @@ namespace TenhouViewer
         {
             Console.WriteLine("Help:");
             Console.WriteLine("TenhouViewer -DHash - download game;");
+
             Console.WriteLine("TenhouViewer -dLog.txt - download all games from log Log.txt;");
+
             Console.WriteLine("TenhouViewer -PHash - parse game;");
+
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
+
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
             Console.WriteLine(" lobby=N - find all games from specified lobby (0-6);");
             Console.WriteLine(" aka=N - only games with aka-dora nashi/ari (0-1);");
@@ -58,13 +62,17 @@ namespace TenhouViewer
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
             Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54 or name);");
             Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);");
-            Console.WriteLine(" dealer - find all dealer's hands;");
-            Console.WriteLine(" winner - find all completed hands;");
-            Console.WriteLine(" loser - find all players (games), who dealt into ron;");
+            Console.WriteLine(" dealer=N - find all (not) dealer's hands (0-1);");
+            Console.WriteLine(" winner=N - find all (not) completed hands (0-1);");
+            Console.WriteLine(" loser=N - find all players (games), who (not) dealt into ron (0-1);");
             Console.WriteLine(" furiten=N - find all players (games), who has (has not) furiten (0-1);");
             Console.WriteLine(" players=N - count of players in game (3-4);");
             Console.WriteLine(" roundwind=N - wind of current round (0-3);");
             Console.WriteLine(" playerwind=N - player's wind (0-3);");
+            Console.WriteLine(" riichicount=N - find all rounds with N declared riichi (0-4);");
+            Console.WriteLine(" nakicount=N - find all hands with N declared nakies (0-4);");
+            Console.WriteLine(" riichi=N - find all hands with declared (or not) riichi (0-1);");
+
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" index - round index in list;");
@@ -89,6 +97,7 @@ namespace TenhouViewer
             Console.WriteLine(" players - count of players in round;");
             Console.WriteLine(" draw - round ended in draw;");
             Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
+
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
             Console.WriteLine(" index - game index in list;");
             Console.WriteLine(" lobby - lobby index;");
@@ -99,6 +108,7 @@ namespace TenhouViewer
             Console.WriteLine(" balance - balance in the end of game;");
             Console.WriteLine(" players - count of players in game;");
             Console.WriteLine(" datetime - date of game;");
+
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" lobby - lobby index;");
@@ -331,7 +341,6 @@ namespace TenhouViewer
                     if (!R.RoundMark[r]) continue;
 
                     Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
-
 
                     string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
                     P.Save(FileName);
@@ -785,7 +794,28 @@ namespace TenhouViewer
                         else
                             Finder.Furiten = 1;
 
-                        Console.WriteLine(String.Format("Filter: only hands, which has {0:s} furiten lobby;", (Finder.Furiten == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which has {0:s} furiten;", (Finder.Furiten == 0) ? "no" : ""));
+                        break;
+                    case "riichi":
+                        TempValue = ParseIntArg(Value, 0, 1, "riichi");
+                        if (TempValue != -1)
+                            Finder.Riichi = TempValue;
+                        else
+                            Finder.Riichi = 1;
+
+                        Console.WriteLine(String.Format("Filter: only hands {0:s} riichi;", (Finder.Riichi == 0) ? "without" : "with"));
+                        break;
+                    case "riichicount":
+                        TempValue = ParseIntArg(Value, 0, 4, "riichicount");
+                        if (TempValue != -1) Finder.RiichiCount = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only rounds with {0:d} declared riichi;", Finder.RiichiCount));
+                        break;
+                    case "nakicount":
+                        TempValue = ParseIntArg(Value, 0, 4, "nakicount");
+                        if (TempValue != -1) Finder.NakiCount = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands with {0:d} declared nakies;", Finder.NakiCount));
                         break;
                     case "lobby":
                         TempValue = ParseIntArg(Value, 0, 9999, "lobby");
@@ -868,7 +898,6 @@ namespace TenhouViewer
                             }
                         }
                         break;
-
                     case "wait":
                         Finder.Waitings = DecompositeIntList(Value);
 
@@ -883,19 +912,31 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only player with nickname '{0:s}';", Value));
                         break;
                     case "dealer":
-                        Finder.Dealer = true;
+                        TempValue = ParseIntArg(Value, 0, 1, "dealer");
+                        if (TempValue != -1)
+                            Finder.Dealer = TempValue;
+                        else
+                            Finder.Dealer = 1;
 
-                        Console.WriteLine("Filter: only dealer hands;");
+                        Console.WriteLine(String.Format("Filter: only {0:s} dealer hands;", (TempValue == 0) ? "not" : ""));
                         break;
                     case "loser":
-                        Finder.Loser = true;
+                        TempValue = ParseIntArg(Value, 0, 1, "loser");
+                        if (TempValue != -1)
+                            Finder.Loser = TempValue;
+                        else
+                            Finder.Loser = 1;
 
-                        Console.WriteLine("Filter: only players, who dealt into ron;");
+                        Console.WriteLine(String.Format("Filter: only players, who {0:s} dealt into ron;", (TempValue == 0) ? "not" : ""));
                         break;
                     case "winner":
-                        Finder.Winner = true;
+                        TempValue = ParseIntArg(Value, 0, 1, "winner");
+                        if (TempValue != -1)
+                            Finder.Winner = TempValue;
+                        else
+                            Finder.Winner = 1;
 
-                        Console.WriteLine("Filter: only players, who completed hand;");
+                        Console.WriteLine(String.Format("Filter: only players, who {0:s} completed hand;", (TempValue == 0) ? "not" : ""));
                         break;
                     case "players":
                         TempValue = ParseIntArg(Value, 3, 4, "players");
