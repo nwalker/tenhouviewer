@@ -143,14 +143,6 @@ namespace TenhouViewer.Mahjong
                 case "naki":
                     Type = StepType.STEP_NAKI;
                     Player = X.GetIntAttribute("player");
-                    {
-                        XmlLoad Subtree = X.GetSubtree();
-
-                        NakiData = new Naki();
-                        NakiData.ReadXml(X);
-
-                        Subtree.Close();
-                    }
                     break;
                 case "riichi1":
                     Type = StepType.STEP_RIICHI;
@@ -189,7 +181,7 @@ namespace TenhouViewer.Mahjong
 
             {
                 XmlLoad Subtree = X.GetSubtree();
-                if (Subtree.Read())
+                while (Subtree.Read())
                 {
                     switch (Subtree.ElementName)
                     {
@@ -229,6 +221,12 @@ namespace TenhouViewer.Mahjong
 
                                 Tiles.Close();
                                 if (D.Count > 0) Danger = D.ToArray();
+                            }
+                            break;
+                        case "nakidata":
+                            {
+                                NakiData = new Naki();
+                                NakiData.ReadXml(Subtree);
                             }
                             break;
                     }
@@ -312,6 +310,7 @@ namespace TenhouViewer.Mahjong
                 X.Attribute("player", Player);
                 NakiData.WriteXml(X);
                 WriteWaiting(X);
+                WriteDanger(X);
 
                 X.EndTag();
                 break;

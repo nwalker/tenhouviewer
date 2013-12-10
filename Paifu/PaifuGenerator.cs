@@ -54,6 +54,7 @@ namespace TenhouViewer.Paifu
         Bitmap B;
         Graphics G;
 
+        List<int>[] DangerTiles = new List<int>[4];
         Color DangerColor = Color.FromArgb(204, 119, 0);
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
@@ -65,6 +66,8 @@ namespace TenhouViewer.Paifu
 
             // Replay only one game, if it need
             if (Rnd.Hands[0].Count == 0) Rnd.ReplayGame();
+
+            for (int i = 0; i < R.PlayerCount; i++) DangerTiles[i] = null;
 
             CalcPlayersPositions();
             CalcTileDimensions();
@@ -235,7 +238,7 @@ namespace TenhouViewer.Paifu
                 int Tile = Rnd.StartHands[Player].Tiles[i];
                 if(Tile == -1) continue;
 
-                Pos = DrawHandTile(Index, Tile, Pos, 0, 0, RotateFlipType.RotateNoneFlipNone);
+                Pos = DrawHandTile(Index, Tile, Pos, 0, 0, RotateFlipType.RotateNoneFlipNone, false);
             }
 
             if(Rnd.Shanten[Player].Count > 0)
@@ -257,12 +260,20 @@ namespace TenhouViewer.Paifu
                 if (Tile == -1) continue;
                 if (Tile == LastTile) continue;
 
-                Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                bool Danger = false;
+                if (DangerTiles[Player] != null)
+                    Danger = DangerTiles[Player].Contains(Tile);
+
+                Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone, Danger);
             }
             Pos += TileWidth / 2;
             if (Rnd.Winner[Player])
             {
-                Pos = DrawHandTile(Index, LastTile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                bool Danger = false;
+                if (DangerTiles[Player] != null)
+                    Danger = DangerTiles[Player].Contains(LastTile);
+
+                Pos = DrawHandTile(Index, LastTile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone, Danger);
                 Pos += TileWidth / 2;
             }
 
@@ -279,14 +290,14 @@ namespace TenhouViewer.Paifu
                 switch (N.Type)
                 {
                     case Mahjong.NakiType.NUKI:
-                        Pos = DrawHandTile(Index, N.Tiles[0], Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                        Pos = DrawHandTile(Index, N.Tiles[0], Pos, 5, 0, RotateFlipType.RotateNoneFlipNone, false);
                         break;
 
                     case Mahjong.NakiType.CHI:
                         for (int j = 0; j < 3; j++)
                         {
                             RotateFlipType Rotate = (j == 0) ? RotateFlipType.Rotate90FlipNone : RotateFlipType.RotateNoneFlipNone;
-                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate, false);
                         }
                         break;
                     case Mahjong.NakiType.PON:
@@ -295,7 +306,7 @@ namespace TenhouViewer.Paifu
                             RotateFlipType Rotate = (j == (3 - N.FromWho)) ? RotateFlipType.Rotate90FlipNone : RotateFlipType.RotateNoneFlipNone;
 
                             // 1: AB[C] 2: A[B]C 3: [A]BC
-                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate, false);
                         }
                         break;
                     case Mahjong.NakiType.ANKAN:
@@ -305,7 +316,7 @@ namespace TenhouViewer.Paifu
 
                             // Close first and last tiles
                             if((j == 0)||(j == 3)) Tile = -1;
-                            Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone);
+                            Pos = DrawHandTile(Index, Tile, Pos, 5, 0, RotateFlipType.RotateNoneFlipNone, false);
                         }
                         break;
                     case Mahjong.NakiType.MINKAN:
@@ -317,7 +328,7 @@ namespace TenhouViewer.Paifu
                                 ((N.FromWho == 2) && (j == 1)) ||
                                 ((N.FromWho == 3) && (j == 0))) Rotate = RotateFlipType.Rotate90FlipNone;
 
-                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate);
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, 0, Rotate, false);
                         }
                         break;
                     case Mahjong.NakiType.CHAKAN:
@@ -338,7 +349,7 @@ namespace TenhouViewer.Paifu
                                 YOffset = -TileWidth;
                             }
 
-                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, YOffset, Rotate);
+                            Pos = DrawHandTile(Index, N.Tiles[j], Pos, 5, YOffset, Rotate, false);
                         }
                         break;
                 }
@@ -350,13 +361,11 @@ namespace TenhouViewer.Paifu
         private void DrawSteps()
         {
             int LastPlayer = -1;
-            List<int>[] DangerTiles = new List<int>[R.PlayerCount];
-
-            for (int i = 0; i < R.PlayerCount; i++) DangerTiles[i] = null;
-
+            
             for (int i = 0; i < Rnd.Steps.Count; i++)
             {
                 Mahjong.Step S = Rnd.Steps[i];
+
                 switch (S.Type)
                 {
                     case Mahjong.StepType.STEP_DRAWTILE:
@@ -370,10 +379,13 @@ namespace TenhouViewer.Paifu
                             bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
                                 (Rnd.Steps[i + 1].Player == S.Player));
 
-                            if (S.Danger != null)
-                                DangerTiles[S.Player] = new List<int>(S.Danger);
-                            else
-                                DangerTiles[S.Player] = null;
+                            if (S.Player != -1)
+                            {
+                                if (S.Danger != null)
+                                    DangerTiles[S.Player] = new List<int>(S.Danger);
+                                else
+                                    DangerTiles[S.Player] = null;
+                            }
 
                             bool Danger = false;
                             if (DangerTiles[S.Player] != null)
@@ -398,10 +410,13 @@ namespace TenhouViewer.Paifu
                             bool Tsumo = ((Rnd.Steps[i + 1].Type == Mahjong.StepType.STEP_TSUMO) &&
                                 (Rnd.Steps[i + 1].Player == S.Player));
 
-                            if (S.Danger != null)
-                                DangerTiles[S.Player] = new List<int>(S.Danger);
-                            else
-                                DangerTiles[S.Player] = null;
+                            if (S.Player != -1)
+                            {
+                                if (S.Danger != null)
+                                    DangerTiles[S.Player] = new List<int>(S.Danger);
+                                else
+                                    DangerTiles[S.Player] = null;
+                            }
 
                             bool Danger = false;
                             if (DangerTiles[S.Player] != null)
@@ -462,6 +477,14 @@ namespace TenhouViewer.Paifu
                             if (LastPlayer > PlayerIndex[S.Player]) Column++;
                             LastPlayer = PlayerIndex[S.Player];
 
+                            if (S.Player != -1)
+                            {
+                                if (S.Danger != null)
+                                    DangerTiles[S.Player] = new List<int>(S.Danger);
+                                else
+                                    DangerTiles[S.Player] = null;
+                            }
+
                             bool Danger = false;
                             if (DangerTiles[S.Player] != null)
                                 Danger = DangerTiles[S.Player].Contains(S.Tile);
@@ -503,9 +526,13 @@ namespace TenhouViewer.Paifu
             return new PointF(Pointer.X, fY + Size.Height);
         }
 
-        private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate)
+        private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate, bool Danger)
         {
-            Bitmap TileBitmap = new PaifuTileImage(Tile, Scale, Red).Bmp;
+            PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
+            if (Danger)
+                TileImage.Colorize(DangerColor);
+            Bitmap TileBitmap = TileImage.Bmp;
+
             switch (Rotate)
             {
                 case RotateFlipType.Rotate90FlipNone: TileBitmap.RotateFlip(Rotate); break;
