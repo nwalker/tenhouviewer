@@ -667,6 +667,8 @@ namespace TenhouViewer.Mahjong
                             int TShanten = TempHands[S.Player].Shanten;
                             if(TShanten == 0) Tempai[S.Player] = true;
 
+                            S.Shanten = TShanten;
+
                             Shanten[S.Player].Add(TShanten);
                             Discard[S.Player].Add(new Tile(S.Tile).TileId);
 

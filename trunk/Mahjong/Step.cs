@@ -33,6 +33,7 @@ namespace TenhouViewer.Mahjong
         public int FromWho = -1;
         public int Tile = -1;
         public int Reason = -1;
+        public int Shanten = -1;
         public StepType Type;
         public Naki NakiData = null;
 
@@ -129,6 +130,7 @@ namespace TenhouViewer.Mahjong
                     Type = StepType.STEP_DISCARDTILE;
                     Player = X.GetIntAttribute("player");
                     Tile = X.GetIntAttribute("tile");
+                    Shanten = X.GetIntAttribute("shanten");
                     {
                         int F = X.GetIntAttribute("furiten");
 
@@ -286,6 +288,7 @@ namespace TenhouViewer.Mahjong
                 X.StartTag("discardtile");
                 X.Attribute("player", Player);
                 X.Attribute("tile", Tile);
+                X.Attribute("shanten", Shanten);
 
                 if (Furiten)
                     X.Attribute("furiten", 1);
