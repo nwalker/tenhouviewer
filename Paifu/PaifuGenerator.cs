@@ -36,7 +36,6 @@ namespace TenhouViewer.Paifu
         int FieldHeight;
 
         readonly string[] Winds = { "東", "南", "西", "北" };
-        readonly string[] Ranks = { "新人", "9級", "8級", "7級", "6級", "5級", "4級", "3級", "2級", "1級", "初段", "二段", "三段", "四段", "五段", "六段", "七段", "八段", "九段", "十段" };
 
         Mahjong.Replay R;
         Mahjong.Round Rnd;
@@ -234,7 +233,7 @@ namespace TenhouViewer.Paifu
             float Y = Index * FieldHeight + PaddingV;
             PointF Pointer = new PointF(X, Y);
 
-            string PlayerRank = String.Format("{0:s} {1:d}R", Ranks[R.Players[Player].Rank], R.Players[Player].Rating);
+            string PlayerRank = String.Format("{0:s} {1:d}R", Tenhou.Rank.GetName(R.Players[Player].Rank), R.Players[Player].Rating);
 
             string NickName = R.Players[Player].NickName;
             if (ShowNames == 0)

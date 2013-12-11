@@ -121,8 +121,10 @@ namespace TenhouViewer
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" type - lobby type (aka,kui,nan,dan,...);");
             Console.WriteLine(" nickname - nickname of the player;");
-            Console.WriteLine(" rating - rating of the player;");
-            Console.WriteLine(" rank - rank of the player;");
+            Console.WriteLine(" rating - rating of the player (number);");
+            Console.WriteLine(" rank - rank of the player (number);");
+            Console.WriteLine(" jrating - rating of the player (1256R);");
+            Console.WriteLine(" jrank - rank of the player (四段);");
             Console.WriteLine(" place - place (result) in game;");
             Console.WriteLine(" pay - player payment in round;");
             Console.WriteLine(" dealer - is player dealer;");
@@ -507,6 +509,12 @@ namespace TenhouViewer
                                         break;
                                     case "rank":
                                         Temp += String.Format("{0:d}\t", R.Replay.Players[k].Rank);
+                                        break;
+                                    case "jrating":
+                                        Temp += String.Format("{0:d}R\t", R.Replay.Players[k].Rating);
+                                        break;
+                                    case "jrank":
+                                        Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Replay.Players[k].Rank));
                                         break;
                                     case "pay":
                                         Temp += String.Format("{0:d}\t", Rnd.Pay[k]);
@@ -1081,6 +1089,11 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
                         break;
+                    case "form":
+                        Finder.Form = ParseForm(Value);
+
+                        Console.WriteLine(String.Format("Filter: only hands with form '{0:s}';", Value));
+                        break;
                 }
             }
 
@@ -1097,6 +1110,39 @@ namespace TenhouViewer
             }
 
             return Text;
+        }
+
+        private static int[] ParseForm(string Value)
+        {
+            int[] Form = new int[11];
+            int MinNumber = 11;
+            int MaxNumber = 0;
+
+            for (int i = 0; i < Form.Length; i++) Form[i] = -1;
+
+            foreach (char C in Value)
+            {
+                if ((C >= '1') && (C <= '9'))
+                {
+                    int Number = (C - '0');
+
+                    if (Number < MinNumber) MinNumber = Number;
+                    if (Number > MaxNumber) MaxNumber = Number;
+
+                    if (Form[Number] == -1)
+                        Form[Number] = 1;
+                    else
+                        Form[Number]++;
+                }
+            }
+
+            if (MaxNumber != 0)
+            {
+                Form[MinNumber - 1] = 0;
+                Form[MaxNumber + 1] = 0;
+            }
+
+            return Form;
         }
 
         private static int ParseBoolArg(string Value, string ArgName)
