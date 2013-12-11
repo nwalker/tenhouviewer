@@ -61,6 +61,8 @@ namespace TenhouViewer.Statistic
                         case "lobby": Temp += String.Format("{0:d}\t", R.Replay.Lobby); break;
                         case "rating": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rating); break;
                         case "rank": Temp += String.Format("{0:d}\t", R.Replay.Players[Index].Rank); break;
+                        case "jrating": Temp += String.Format("{0:d}R\t", R.Replay.Players[Index].Rating); break;
+                        case "jrank": Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Replay.Players[Index].Rank)); break;
                         case "place": Temp += String.Format("{0:d}\t", R.Replay.Place[Index]); break;
                         case "result": Temp += String.Format("{0:d}\t", R.Replay.Result[Index]); break;
                         case "balance": Temp += String.Format("{0:d}\t", R.Replay.Balance[Index]); break;

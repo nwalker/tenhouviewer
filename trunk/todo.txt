@@ -1,17 +1,19 @@
 ﻿TODO:
-3. Write shanten couint in paifu (option);
 4. Find query: waiting on tile;
 5. Find query: out count in tempai;
 6. Luck calculating;
 7. GUI
-9. forms search [2334, 34455 etc]
 10. tiles search [by list: 1m, 2m, 3m, 1p, 2p, 3p, 1p, 1p, 2s, 3s, n, n]
-11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
 
+
+in process:
+9. forms search [2334, 34455 etc]
 
 completed:
 1. Report yaku, han/fu information in paifu;
 2. Mark dangerous tiles in paifu (calc waitings [x], furiten [x], option);
+3. Write shanten number in paifu (option);
 8. Mark tempai [shanten number too]
+11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
 
 test: 2013010409gm-0001-0000-c82cfbe8_1.png [haku marked as dangerous - is true?]

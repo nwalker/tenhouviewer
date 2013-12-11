@@ -110,6 +110,8 @@ namespace TenhouViewer
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" rating - player rating before this game;");
             Console.WriteLine(" rank - player rank before this game (1=1ku, 10=1dan,...);");
+            Console.WriteLine(" jrating - player rating before this game (1256R);");
+            Console.WriteLine(" jrank - player rank before this game (四段);");
             Console.WriteLine(" place - place in game;");
             Console.WriteLine(" result - game result with uma;");
             Console.WriteLine(" balance - balance in the end of game;");
