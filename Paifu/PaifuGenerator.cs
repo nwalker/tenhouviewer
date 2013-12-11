@@ -248,6 +248,17 @@ namespace TenhouViewer.Paifu
 
             Pointer = DrawCenteredString(Color.Black, Fsmall, String.Format("{0:d}", Rnd.BalanceBefore[Player]), Pointer, PlayerColumnWidth);
             Pointer = DrawCenteredString(((Rnd.Pay[Player] >= 0) ? Color.Green : Color.Red), Fsmall, String.Format("{0:d}", Rnd.Pay[Player]), Pointer, PlayerColumnWidth);
+
+            {
+                Color Fill = Color.Gray;
+                switch (R.Players[Player].Sex)
+                {
+                    case Mahjong.Sex.Female: Fill = Color.LightPink; break;
+                    case Mahjong.Sex.Male: Fill = Color.Cyan; break;
+                }
+
+                G.FillRectangle(new SolidBrush(Fill), PaddingH + RoundColumnWidth + 1, PaddingV + FieldHeight * (Index + 1) - 6 - 1, PlayerColumnWidth - 2, 6);
+            }
         }
 
         private void DrawStartHand(int Index)
