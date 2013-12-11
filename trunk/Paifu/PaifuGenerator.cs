@@ -23,6 +23,8 @@ namespace TenhouViewer.Paifu
         int RoundColumnWidth = 100;
         int TilesColumnWidth = 1050;
         int YakuWidth = 180;
+        int NoYakuWidth = 70;
+
         int CostOffset = 95;
         int YakuOffset = 5;
 
@@ -61,7 +63,9 @@ namespace TenhouViewer.Paifu
 
         Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red};
 
-        public int ShowShanten = 0;
+        public int ShowShanten = 0;  // show shanten info: false
+        public int ShowNames = 1;    // show real nicknames: true
+        public int ShowYakuInfo = 1; // show yaku info: true
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
@@ -118,7 +122,9 @@ namespace TenhouViewer.Paifu
                 CircleCount = StepCount + 4;
             }
 
-            TilesColumnWidth = TileWidth * CircleCount + YakuWidth;
+            TilesColumnWidth = TileWidth * CircleCount;
+
+            TilesColumnWidth += (ShowYakuInfo != 0) ? YakuWidth : NoYakuWidth;
 
             Width = RoundColumnWidth + PlayerColumnWidth + TilesColumnWidth + PaddingH * 2;
             Height = 2 * PaddingV + R.PlayerCount * (2 * InternalPadding + 6 * TileHeight);
@@ -228,8 +234,14 @@ namespace TenhouViewer.Paifu
 
             string PlayerRank = String.Format("{0:s} {1:d}R", Ranks[R.Players[Player].Rank], R.Players[Player].Rating);
 
+            string NickName = R.Players[Player].NickName;
+            if (ShowNames == 0)
+            {
+                NickName = Convert.ToChar(Convert.ToByte('A') + Player) + "-san";
+            }
+
             Pointer = DrawCenteredString(Color.Black, Fbig, Winds[Index], Pointer, PlayerColumnWidth);
-            Pointer = DrawCenteredString(Color.Black, Fsmall, R.Players[Player].NickName, Pointer, PlayerColumnWidth);
+            Pointer = DrawCenteredString(Color.Black, Fsmall, NickName, Pointer, PlayerColumnWidth);
             Pointer = DrawCenteredString(Color.Black, Fsmall, PlayerRank, Pointer, PlayerColumnWidth);
             Pointer.Y += PaddingV;
 
@@ -250,8 +262,11 @@ namespace TenhouViewer.Paifu
                 Pos = DrawHandTile(Index, Tile, Pos, 0, 0, RotateFlipType.RotateNoneFlipNone, false);
             }
 
-            if(Rnd.Shanten[Player].Count > 0)
-                DrawShanten(Index, 0, Convert.ToString(Rnd.Shanten[Player][0]));
+            if (ShowShanten != 0)
+            {
+                if (Rnd.Shanten[Player].Count > 0)
+                    DrawShanten(Index, 0, Convert.ToString(Rnd.Shanten[Player][0]));
+            }
         }
 
         private void DrawLastHand(int Index)
@@ -286,10 +301,13 @@ namespace TenhouViewer.Paifu
                 Pos += TileWidth / 2;
             }
 
-            if (Rnd.Shanten[Player].Count > 0)
+            if (ShowShanten != 0)
             {
-                int Shanten = Rnd.Shanten[Player][Rnd.Shanten[Player].Count - 1];
-                DrawShanten(Index, 5, (Shanten >= 0) ? Shanten.ToString() : "アガリ");
+                if (Rnd.Shanten[Player].Count > 0)
+                {
+                    int Shanten = Rnd.Shanten[Player][Rnd.Shanten[Player].Count - 1];
+                    DrawShanten(Index, 5, (Shanten >= 0) ? Shanten.ToString() : "アガリ");
+                }
             }
 
             for (int i = 0; i < Hand.Naki.Count; i++)
@@ -631,6 +649,8 @@ namespace TenhouViewer.Paifu
 
             Font F = Fcomment;
             Brush Br = new SolidBrush(Color.Black);
+
+            if (ShowYakuInfo == 0) return;
 
             for (int i = 0; i < Rnd.Yaku[Player].Count; i++)
             {
