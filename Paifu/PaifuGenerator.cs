@@ -64,6 +64,7 @@ namespace TenhouViewer.Paifu
         Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red};
 
         public int ShowShanten = 0;  // show shanten info: false
+        public int ShowDanger = 1;   // show danger tiles: true
         public int ShowNames = 1;    // show real nicknames: true
         public int ShowYakuInfo = 1; // show yaku info: true
 
@@ -556,7 +557,7 @@ namespace TenhouViewer.Paifu
         private int DrawHandTile(int Index, int Tile, int Pos, int Line, int YOffset, RotateFlipType Rotate, bool Danger)
         {
             PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
-            if (Danger)
+            if (Danger && (ShowDanger != 0))
                 TileImage.Colorize(DangerColor);
             Bitmap TileBitmap = TileImage.Bmp;
 
@@ -583,7 +584,7 @@ namespace TenhouViewer.Paifu
 
             PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
 
-            if (Danger && !Tsumogiri) TileImage.Colorize(DangerColor);
+            if (Danger && !Tsumogiri && (ShowDanger != 0)) TileImage.Colorize(DangerColor);
             Bitmap TileBitmap = TileImage.Bmp;
 
             G.DrawImage(TileBitmap, new Point(X, Y));
@@ -597,7 +598,7 @@ namespace TenhouViewer.Paifu
             int Y = Index * FieldHeight + PaddingV + InternalPadding + (TileHeight * 3);
 
             PaifuTileImage TileImage = new PaifuTileImage(Tile, Scale, Red);
-            if (Danger)
+            if (Danger && (ShowDanger != 0))
                 TileImage.Colorize(DangerColor);
             Bitmap TileBitmap = TileImage.Bmp;
 
