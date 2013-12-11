@@ -67,6 +67,7 @@ namespace TenhouViewer.Paifu
         public int ShowDanger = 1;   // show danger tiles: true
         public int ShowNames = 1;    // show real nicknames: true
         public int ShowYakuInfo = 1; // show yaku info: true
+        public int ShowColor = 1;    // show shanten in colors
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
@@ -615,10 +616,12 @@ namespace TenhouViewer.Paifu
                 }
                 else if ((Shanten >= 0) && (Shanten < ShantenColor.Length))
                 {
-                    Brush Gray = new SolidBrush(ShantenColor[Shanten]);
+                    if (ShowColor != 0)
+                    {
+                        Brush BrColor = new SolidBrush(ShantenColor[Shanten]);
 
-                    G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
-
+                        G.FillRectangle(BrColor, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+                    }
                     if ((Comment.CompareTo("") == 0) && (Shanten > 0)) DrawCenteredString(Color.Black, Fcomment, Shanten.ToString(), new PointF(X, Y + TileHeight), TileWidth);
                 }
             }

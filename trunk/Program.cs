@@ -156,6 +156,7 @@ namespace TenhouViewer
             Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
+            Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
 
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
@@ -163,6 +164,7 @@ namespace TenhouViewer
             Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
+            Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
         }
 
         static void ParseArgs(string[] args)
@@ -280,6 +282,7 @@ namespace TenhouViewer
             int ShowYaku = 1;
             int ShowNames = 1;
             int ShowDanger = 1;
+            int ShowColor = 1;
 
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
@@ -309,7 +312,9 @@ namespace TenhouViewer
                     case "danger":
                         ShowDanger = ParseBoolArg(A.Value, "danger");
                         break;
-
+                    case "color":
+                        ShowColor = ParseBoolArg(A.Value, "color");
+                        break;
                 }
             }
 
@@ -338,6 +343,7 @@ namespace TenhouViewer
                 P.ShowDanger = ShowDanger;
                 P.ShowYakuInfo = ShowYaku;
                 P.ShowNames = ShowNames;
+                P.ShowColor = ShowColor;
 
                 P.Generate();
                 P.Save(FileName);
@@ -407,6 +413,9 @@ namespace TenhouViewer
                                 break;
                             case "danger":
                                 P.ShowDanger = ParseBoolArg(A.Value, "danger");
+                                break;
+                            case "color":
+                                P.ShowColor = ParseBoolArg(A.Value, "color");
                                 break;
                         }
                     }
