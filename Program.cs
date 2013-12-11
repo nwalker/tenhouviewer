@@ -152,11 +152,15 @@ namespace TenhouViewer
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" filename - filename to save result (for specified round, without extension);");
             Console.WriteLine(" round - round index (from 0);");
-            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking);");
+            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking; [0]-1);");
+            Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
+            Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
 
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
-            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking);");
+            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking; [0]-1);");
+            Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
+            Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
         }
 
         static void ParseArgs(string[] args)
@@ -271,6 +275,8 @@ namespace TenhouViewer
             string FN = "";
             int Round = -1;
             int ShowShanten = 0;
+            int ShowYaku = 1;
+            int ShowNames = 1;
 
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
@@ -290,6 +296,12 @@ namespace TenhouViewer
                         break;
                     case "shanten":
                         ShowShanten = ParseBoolArg(A.Value, "shanten");
+                        break;
+                    case "yaku":
+                        ShowYaku = ParseBoolArg(A.Value, "yaku");
+                        break;
+                    case "nickname":
+                        ShowNames = ParseBoolArg(A.Value, "nickname");
                         break;
                 }
             }
@@ -375,6 +387,12 @@ namespace TenhouViewer
                                 break;
                             case "shanten":
                                 P.ShowShanten = ParseBoolArg(A.Value, "shanten");
+                                break;
+                            case "yaku":
+                                P.ShowYakuInfo = ParseBoolArg(A.Value, "yaku");
+                                break;
+                            case "nickname":
+                                P.ShowNames = ParseBoolArg(A.Value, "nickname");
                                 break;
                         }
                     }
