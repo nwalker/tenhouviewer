@@ -611,7 +611,7 @@ namespace TenhouViewer.Mahjong
             List<int>[] TempWaitings = new List<int>[PlayerCount];
             List<int>[] Discard = new List<int>[PlayerCount];
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < PlayerCount; i++)
             {
                 TempWaitings[i] = new List<int>();
                 Discard[i] = new List<int>();

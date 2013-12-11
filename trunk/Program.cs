@@ -155,12 +155,14 @@ namespace TenhouViewer
             Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking; [0]-1);");
             Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
+            Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
 
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking; [0]-1);");
             Console.WriteLine(" yaku - add yaku and cost info in paifu (0-[1]);");
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
+            Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
         }
 
         static void ParseArgs(string[] args)
@@ -277,6 +279,7 @@ namespace TenhouViewer
             int ShowShanten = 0;
             int ShowYaku = 1;
             int ShowNames = 1;
+            int ShowDanger = 1;
 
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
@@ -303,6 +306,10 @@ namespace TenhouViewer
                     case "nickname":
                         ShowNames = ParseBoolArg(A.Value, "nickname");
                         break;
+                    case "danger":
+                        ShowDanger = ParseBoolArg(A.Value, "danger");
+                        break;
+
                 }
             }
 
@@ -328,6 +335,10 @@ namespace TenhouViewer
                 }
 
                 P.ShowShanten = ShowShanten;
+                P.ShowDanger = ShowDanger;
+                P.ShowYakuInfo = ShowYaku;
+                P.ShowNames = ShowNames;
+
                 P.Generate();
                 P.Save(FileName);
             }
@@ -393,6 +404,9 @@ namespace TenhouViewer
                                 break;
                             case "nickname":
                                 P.ShowNames = ParseBoolArg(A.Value, "nickname");
+                                break;
+                            case "danger":
+                                P.ShowDanger = ParseBoolArg(A.Value, "danger");
                                 break;
                         }
                     }
