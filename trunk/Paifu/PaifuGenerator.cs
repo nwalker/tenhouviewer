@@ -61,6 +61,8 @@ namespace TenhouViewer.Paifu
 
         Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red};
 
+        public int ShowShanten = 0;
+
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
             R = Replay;
@@ -72,7 +74,10 @@ namespace TenhouViewer.Paifu
             if (Rnd.Hands[0].Count == 0) Rnd.ReplayGame();
 
             for (int i = 0; i < R.PlayerCount; i++) DangerTiles[i] = null;
+        }
 
+        public void Generate()
+        {
             CalcPlayersPositions();
             CalcTileDimensions();
 
@@ -581,19 +586,22 @@ namespace TenhouViewer.Paifu
             G.DrawImage(TileBitmap, new Point(X, Y));
             DrawCenteredString(Color.Black, Fcomment, Comment, new PointF(X, Y + TileHeight), TileWidth);
 
-            if (Furiten)
+            if (ShowShanten != 0)
             {
-                Brush Gray = new SolidBrush(Color.FromArgb(200, Color.Black));
+                if (Furiten)
+                {
+                    Brush Gray = new SolidBrush(Color.FromArgb(200, Color.Black));
 
-                G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
-            }
-            else if ((Shanten >= 0) && (Shanten < ShantenColor.Length))
-            {
-                Brush Gray = new SolidBrush(ShantenColor[Shanten]);
+                    G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+                }
+                else if ((Shanten >= 0) && (Shanten < ShantenColor.Length))
+                {
+                    Brush Gray = new SolidBrush(ShantenColor[Shanten]);
 
-                G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
+                    G.FillRectangle(Gray, X, Y + TileBitmap.Height, TileBitmap.Width, TileBitmap.Height / 10);
 
-                if ((Comment.CompareTo("") == 0) && (Shanten > 0)) DrawCenteredString(Color.Black, Fcomment, Shanten.ToString(), new PointF(X, Y + TileHeight), TileWidth);
+                    if ((Comment.CompareTo("") == 0) && (Shanten > 0)) DrawCenteredString(Color.Black, Fcomment, Shanten.ToString(), new PointF(X, Y + TileHeight), TileWidth);
+                }
             }
         }
 

@@ -12,6 +12,9 @@ namespace TenhouViewer.Search
         // Find queries
         // Fields use if they has not default values
 
+        // Hash
+        public string Hash = null;
+
         // NickName
         public string NickName = null;
 
@@ -181,6 +184,7 @@ namespace TenhouViewer.Search
                 Result R = GameList[i];
 
                 // filters
+                CheckHash(R);
                 CheckPlayerCount(R);
                 CheckNickName(R);
                 CheckYaku(R);
@@ -246,6 +250,12 @@ namespace TenhouViewer.Search
         }
 
         // filters
+        private void CheckHash(Result R)
+        {
+            if (Hash == null) return;
+
+            if (R.Replay.Hash.CompareTo(Hash) != 0) R.ReplayMark = false;
+        }
 
         private void CheckPlayerCount(Result R)
         {
