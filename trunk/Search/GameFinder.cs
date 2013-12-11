@@ -120,6 +120,10 @@ namespace TenhouViewer.Search
         public int NakiCount = -1;
         public int OpenedSets = -1;
 
+        // Target form
+        // -1 - any; 0-4 - mask tile;
+        public int[] Form = null;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -183,6 +187,8 @@ namespace TenhouViewer.Search
             {
                 Result R = GameList[i];
 
+                Console.Title = String.Format("Completed {0:d}/{1:d}, found {2:d}", i, GameList.Count, ResultList.Count);
+
                 // filters
                 CheckHash(R);
                 CheckPlayerCount(R);
@@ -209,6 +215,7 @@ namespace TenhouViewer.Search
                 CheckRiichi(R);
                 CheckAgari(R);
                 CheckRound(R);
+                CheckForm(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -249,7 +256,70 @@ namespace TenhouViewer.Search
             }
         }
 
+        private bool CheckFormInHand(Mahjong.Hand H)
+        {
+            int[] Tehai = new int[38];
+
+            for (int i = 0; i < Tehai.Length; i++) Tehai[i] = 0;
+
+            // Create tehai
+            for (int i = 0; i < H.Tiles.Length; i++)
+            {
+                if (H.Tiles[i] == -1) continue;
+
+                Mahjong.Tile T = new Mahjong.Tile(H.Tiles[i]);
+
+                Tehai[T.TileId]++;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                bool Mark = true;
+                for (int j = 1; j < 10; j++)
+                {
+                    if (Form[j] == -1) continue;
+
+                    if (Form[j] != Tehai[i * 10 + j])
+                    {
+                        Mark = false;
+                        break;
+                    }
+                }
+
+                if (Mark) return true;
+            }
+
+            return false;
+        }
+
         // filters
+        private void CheckForm(Result R)
+        {
+            if (Form == null) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                Rnd.ReplayGame();
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    bool Mark = false;
+                    for (int k = 0; k < Rnd.Hands[j].Count; k++)
+                    {
+                        if (CheckFormInHand(Rnd.Hands[j][k]))
+                        {
+                            Mark = true;
+                            break;
+                        }
+                    }
+
+                    if(!Mark) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
         private void CheckHash(Result R)
         {
             if (Hash == null) return;
