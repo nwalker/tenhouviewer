@@ -1096,6 +1096,42 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands with form '{0:s}';", Value));
                         break;
+                    case "drowntiles":
+                        Finder.DrownTiles = ParseTilesList(Value);
+
+                        if(Finder.DrownTiles != null)
+                        {
+                            if(Finder.DrownTiles.Length > 0)
+                            {
+                                List<string> StrDrownTiles = new List<string>();
+                                for(int k = 0; k < Finder.DrownTiles.Length; k++)
+                                {
+                                    int TileCount = Finder.DrownTiles[k];
+
+                                    if (TileCount == 0) continue;
+
+                                    int TileType = k / 10;
+                                    int TileValue = k % 10;
+
+                                    string StringName = "";
+                                    switch (TileType)
+                                    {
+                                        case 0: StringName = TileValue.ToString() + "m"; break;
+                                        case 1: StringName = TileValue.ToString() + "p"; break;
+                                        case 2: StringName = TileValue.ToString() + "s"; break;
+                                        case 3: StringName = TileValue.ToString() + "z"; break;
+                                    }
+
+                                    for (int l = 0; l < TileCount; l++) StrDrownTiles.Add(StringName);
+                                }
+
+                                string TilesList = String.Join(",", StrDrownTiles.ToArray());
+
+                                Console.WriteLine(String.Format("Filter: only hands with drown tiles '{0:s}';", Value));
+                            }
+                        }
+                        
+                        break;
                 }
             }
 
@@ -1145,6 +1181,57 @@ namespace TenhouViewer
             }
 
             return Form;
+        }
+
+        private static int[] ParseTilesList(string Value)
+        {
+            int[] TilesList = new int[38];
+            for (int i = 0; i < TilesList.Length; i++) TilesList[i] = 0;
+
+            string[] delimiter = new string[] { "," };
+            string[] Temp;
+
+            if (Value == null) return null;
+            Temp = Value.Split(delimiter, StringSplitOptions.None);
+
+            foreach (string TileName in Temp)
+            {
+                string CropTileName = TileName.Trim();
+
+                if (CropTileName.Length != 2) continue;
+
+                char TileValue = CropTileName[0];
+                char TileType = CropTileName[1];
+
+                // Check format
+                if ((TileValue < '1') || (TileValue > '9')) continue;
+                if ((TileType != 'm') || (TileType != 'p') || (TileType != 's') || (TileType != 'z')) continue;
+
+                int TileIntValue = TileValue - '0';
+
+                switch (TileType)
+                {
+                    case 'm':
+                        TileIntValue += 0;
+                        break;
+                    case 'p':
+                        TileIntValue += 10;
+                        break;
+                    case 's':
+                        TileIntValue += 20;
+                        break;
+                    case 'z':
+                        TileIntValue += 30;
+                        break;
+                }
+
+                // ignore 8z, 9z
+                if (TileIntValue >= TilesList.Length) continue;
+
+                TilesList[TileIntValue]++;
+            }
+
+            return TilesList;
         }
 
         private static int ParseBoolArg(string Value, string ArgName)
