@@ -120,9 +120,12 @@ namespace TenhouViewer.Search
         public int NakiCount = -1;
         public int OpenedSets = -1;
 
-        // Target form
-        // -1 - any; 0-4 - mask tile;
+        // Form in hand
+        // -1 - any; 0-4 - tile count;
         public int[] Form = null;
+
+        // Drown tiles (count of every type)
+        public int[] DrownTiles = null;
 
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
@@ -216,6 +219,7 @@ namespace TenhouViewer.Search
                 CheckAgari(R);
                 CheckRound(R);
                 CheckForm(R);
+                CheckTiles(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -316,6 +320,46 @@ namespace TenhouViewer.Search
                     }
 
                     if(!Mark) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckTiles(Result R)
+        {
+            if (DrownTiles == null) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    // build drown tiles map
+                    int[] RealDrownTiles = new int[DrownTiles.Length];
+                    for (int k = 0; k < RealDrownTiles.Length; k++) RealDrownTiles[i] = 0;
+
+                    for (int k = 0; k < Rnd.Steps.Count; k++)
+                    {
+                        Mahjong.Step S = Rnd.Steps[k];
+                        if (S.Player != j) continue;
+
+                        if ((S.Type == Mahjong.StepType.STEP_DRAWTILE) || (S.Type == Mahjong.StepType.STEP_DRAWDEADTILE))
+                        {
+                            Mahjong.Tile T = new Mahjong.Tile(S.Tile);
+
+                            RealDrownTiles[T.TileId]++;
+                        }
+                    }
+
+                    // compare drown tiles with mask
+                    for (int k = 0; k < RealDrownTiles.Length; k++)
+                    {
+                        if (RealDrownTiles[k] < DrownTiles[k])
+                        {
+                            R.HandMark[i][j] = false;
+                            break;
+                        }
+                    }
                 }
             }
         }
