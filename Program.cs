@@ -58,6 +58,7 @@ namespace TenhouViewer
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
+            Console.WriteLine(" hash=N - find game with hash N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
             Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54 or name);");
@@ -146,12 +147,16 @@ namespace TenhouViewer
             Console.WriteLine(" draw - round ended in draw;");
 
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
+
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" filename - filename to save result (for specified round, without extension);");
             Console.WriteLine(" round - round index (from 0);");
+            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking);");
+
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
+            Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking);");
         }
 
         static void ParseArgs(string[] args)
@@ -265,15 +270,28 @@ namespace TenhouViewer
             string Dir = "paifu";
             string FN = "";
             int Round = -1;
+            int ShowShanten = 0;
 
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
-            foreach(Argument A in ArgList)
+            // Parse options
+            foreach (Argument A in ArgList)
             {
-                if (A.Name.CompareTo("dir") == 0) Dir = A.Value;
-                if (A.Name.CompareTo("round") == 0) Round = Convert.ToInt32(A.Value);
-
-                if (A.Name.CompareTo("filename") == 0) FN = A.Value;
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value;
+                        break;
+                    case "round":
+                        Round = Convert.ToInt32(A.Value);
+                        break;
+                    case "filename":
+                        FN = A.Value;
+                        break;
+                    case "shanten":
+                        ShowShanten = ParseBoolArg(A.Value, "shanten");
+                        break;
+                }
             }
 
             Mahjong.Replay R = new Mahjong.Replay();
@@ -296,6 +314,9 @@ namespace TenhouViewer
                 {
                     FileName = (Round == -1) ? String.Format("{0:s}_{1:d}.png", FN, i) : String.Format("{0:s}.png", FN);
                 }
+
+                P.ShowShanten = ShowShanten;
+                P.Generate();
                 P.Save(FileName);
             }
         }
@@ -331,11 +352,6 @@ namespace TenhouViewer
         {
             string Dir = "paifu";
 
-            foreach (Argument A in ArgList)
-            {
-                if (A.Name.CompareTo("dir") == 0) Dir = A.Value;
-            }
-
             if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
             for (int i = 0; i < Results.Count; i++)
             {
@@ -349,7 +365,22 @@ namespace TenhouViewer
 
                     Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
 
+                    // Parse options
+                    foreach (Argument A in ArgList)
+                    {
+                        switch (A.Name)
+                        {
+                            case "dir":
+                                Dir = A.Value;
+                                break;
+                            case "shanten":
+                                P.ShowShanten = ParseBoolArg(A.Value, "shanten");
+                                break;
+                        }
+                    }
                     string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
+
+                    P.Generate();
                     P.Save(FileName);
                 }
             }
@@ -934,6 +965,11 @@ namespace TenhouViewer
                         Finder.NickName = Value;
 
                         Console.WriteLine(String.Format("Filter: only player with nickname '{0:s}';", Value));
+                        break;
+                    case "hash":
+                        Finder.Hash = Value;
+
+                        Console.WriteLine(String.Format("Filter: only rounds from game with hash '{0:s}';", Value));
                         break;
                     case "dealer":
                         Finder.Dealer = ParseBoolArg(Value, "dealer");
