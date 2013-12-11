@@ -103,7 +103,7 @@ namespace TenhouViewer.Paifu
 
         public void Save(string FileName)
         {
-            
+
             B.Save(FileName);
         }
 

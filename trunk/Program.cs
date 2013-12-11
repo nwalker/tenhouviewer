@@ -380,8 +380,40 @@ namespace TenhouViewer
         static void CreatePaifuList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             string Dir = "paifu";
+            int ShowShanten = 0;
+            int ShowYaku = 1;
+            int ShowNames = 1;
+            int ShowDanger = 1;
+            int ShowColor = 1;
 
-            if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value;
+                        if (!Directory.Exists(Dir))
+                            Directory.CreateDirectory(Dir);
+                        break;
+                    case "shanten":
+                        ShowShanten = ParseBoolArg(A.Value, "shanten");
+                        break;
+                    case "yaku":
+                        ShowYaku = ParseBoolArg(A.Value, "yaku");
+                        break;
+                    case "nickname":
+                        ShowNames = ParseBoolArg(A.Value, "nickname");
+                        break;
+                    case "danger":
+                        ShowDanger = ParseBoolArg(A.Value, "danger");
+                        break;
+                    case "color":
+                        ShowColor = ParseBoolArg(A.Value, "color");
+                        break;
+                }
+            }
+
             for (int i = 0; i < Results.Count; i++)
             {
                 Search.Result R = Results[i];
@@ -394,32 +426,14 @@ namespace TenhouViewer
 
                     Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
 
-                    // Parse options
-                    foreach (Argument A in ArgList)
-                    {
-                        switch (A.Name)
-                        {
-                            case "dir":
-                                Dir = A.Value;
-                                break;
-                            case "shanten":
-                                P.ShowShanten = ParseBoolArg(A.Value, "shanten");
-                                break;
-                            case "yaku":
-                                P.ShowYakuInfo = ParseBoolArg(A.Value, "yaku");
-                                break;
-                            case "nickname":
-                                P.ShowNames = ParseBoolArg(A.Value, "nickname");
-                                break;
-                            case "danger":
-                                P.ShowDanger = ParseBoolArg(A.Value, "danger");
-                                break;
-                            case "color":
-                                P.ShowColor = ParseBoolArg(A.Value, "color");
-                                break;
-                        }
-                    }
+
                     string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
+
+                    P.ShowShanten = ShowShanten;
+                    P.ShowDanger = ShowDanger;
+                    P.ShowYakuInfo = ShowYaku;
+                    P.ShowNames = ShowNames;
+                    P.ShowColor = ShowColor;
 
                     P.Generate();
                     P.Save(FileName);
