@@ -79,7 +79,8 @@ namespace TenhouViewer
             Console.WriteLine(" renchanstick=N - find all rounds with N renchan stick (0-30);");
             Console.WriteLine(" nakicount=N - find all hands with N declared nakies (0-12);");
             Console.WriteLine(" openedsets=N - find all hands with N opened sets (0-4);");
-            
+            Console.WriteLine(" form=NNN - find all hands, which contains specified form in specified suits (numbers + suits m,p,s);");
+            Console.WriteLine(" drowntiles=N,M,X - find all hands, in which player drown specified tiles (1p,1p,2m,6z,...);");
 
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
@@ -162,6 +163,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
+            Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
 
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
@@ -170,6 +172,7 @@ namespace TenhouViewer
             Console.WriteLine(" nickname - add nicknames info in paifu instead A,B,C,D (0-[1]);");
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
+            Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
         }
 
         static void ParseArgs(string[] args)
