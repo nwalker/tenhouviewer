@@ -26,6 +26,8 @@ namespace TenhouViewer.Mahjong
         public List<Step> Steps = new List<Step>();
         public Hand[] StartHands = new Hand[4]; // Start hands
         public List<Hand>[] Hands = new List<Hand>[4];
+        public List<int>[] Safe = new List<int>[4];
+
         public List<int>[] Shanten = new List<int>[4];
 
         public List<int>[] WinWaiting = new List<int>[4];

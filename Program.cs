@@ -58,6 +58,7 @@ namespace TenhouViewer
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
+            Console.WriteLine(" sex=N - find player of pecified sex N (char: f - female, m - male, c - computer);");
             Console.WriteLine(" hash=N - find game with hash N (string);");
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
@@ -287,6 +288,7 @@ namespace TenhouViewer
             int ShowNames = 1;
             int ShowDanger = 1;
             int ShowColor = 1;
+            int ShowSex = 0;
 
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
@@ -319,6 +321,9 @@ namespace TenhouViewer
                     case "color":
                         ShowColor = ParseBoolArg(A.Value, "color");
                         break;
+                    case "sex":
+                        ShowSex = ParseBoolArg(A.Value, "sex");
+                        break;
                 }
             }
 
@@ -348,6 +353,7 @@ namespace TenhouViewer
                 P.ShowYakuInfo = ShowYaku;
                 P.ShowNames = ShowNames;
                 P.ShowColor = ShowColor;
+                P.ShowSex = ShowSex;
 
                 P.Generate();
                 P.Save(FileName);
@@ -389,6 +395,7 @@ namespace TenhouViewer
             int ShowNames = 1;
             int ShowDanger = 1;
             int ShowColor = 1;
+            int ShowSex = 0;
 
             // Parse options
             foreach (Argument A in ArgList)
@@ -415,6 +422,9 @@ namespace TenhouViewer
                     case "color":
                         ShowColor = ParseBoolArg(A.Value, "color");
                         break;
+                    case "sex":
+                        ShowSex = ParseBoolArg(A.Value, "sex");
+                        break;
                 }
             }
 
@@ -438,6 +448,7 @@ namespace TenhouViewer
                     P.ShowYakuInfo = ShowYaku;
                     P.ShowNames = ShowNames;
                     P.ShowColor = ShowColor;
+                    P.ShowSex = ShowSex;
 
                     P.Generate();
                     P.Save(FileName);
@@ -1076,20 +1087,23 @@ namespace TenhouViewer
                         Console.WriteLine(String.Format("Filter: only games with round index {0:d};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "draw":
-                        string Comment;
-                        Finder.Draw = true;
-                        switch (Value)
                         {
-                            case "yao9": Finder.DrawReason = 0; Comment = "only games which ended in a draw because of kyushu kyuhai"; break;
-                            case "reach4": Finder.DrawReason = 1; Comment = "only games which ended in a draw because of 4 reach"; break;
-                            case "ron3": Finder.DrawReason = 2; Comment = "only games which ended in a draw because of triple ron"; break; 
-                            case "kan4": Finder.DrawReason = 3; Comment = "only games which ended in a draw because of 4 kans"; break;
-                            case "kaze4": Finder.DrawReason = 4; Comment = "only games which ended in a draw because of 4 winds"; break;
-                            case "nm": Finder.DrawReason = 5; Comment = "only games which ended in a draw with nagashi mangan"; break;
-                            default: Finder.DrawReason = -1; Comment = "only games which ended in a draw (no agari)"; break;
-                        }
+                            string Comment;
 
-                        Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
+                            Finder.Draw = true;
+                            switch (Value)
+                            {
+                                case "yao9": Finder.DrawReason = 0; Comment = "only games which ended in a draw because of kyushu kyuhai"; break;
+                                case "reach4": Finder.DrawReason = 1; Comment = "only games which ended in a draw because of 4 reach"; break;
+                                case "ron3": Finder.DrawReason = 2; Comment = "only games which ended in a draw because of triple ron"; break; 
+                                case "kan4": Finder.DrawReason = 3; Comment = "only games which ended in a draw because of 4 kans"; break;
+                                case "kaze4": Finder.DrawReason = 4; Comment = "only games which ended in a draw because of 4 winds"; break;
+                                case "nm": Finder.DrawReason = 5; Comment = "only games which ended in a draw with nagashi mangan"; break;
+                                default: Finder.DrawReason = -1; Comment = "only games which ended in a draw (no agari)"; break;
+                            }
+
+                            Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
+                        }
                         break;
                     case "form":
                         Finder.Form = ParseForm(Value);
@@ -1132,6 +1146,25 @@ namespace TenhouViewer
                         }
                         
                         break;
+                    case "sex":
+                        {
+                            string Comment = "";
+                            bool Skip = false;
+
+                            switch (Value)
+                            {
+                                case "f": Finder.Sex = Mahjong.Sex.Female; Comment = "only female players"; break;
+                                case "m": Finder.Sex = Mahjong.Sex.Male; Comment = "only male players"; break;
+                                case "c": Finder.Sex = Mahjong.Sex.Computer; Comment = "only bot players (computer)"; break;
+                                default:
+                                    Console.WriteLine("Invalid 'sex' query - skipped, should be 'f', 'm' or 'c';");
+                                    Skip = true;
+                                    break;
+                            }
+
+                            if(!Skip) Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
+                        }
+                        break;
                 }
             }
 
@@ -1152,11 +1185,16 @@ namespace TenhouViewer
 
         private static int[] ParseForm(string Value)
         {
-            int[] Form = new int[11];
+            int[] Form = new int[14]; // 11 for tiles (exclude 0, 10), 3 for suit flags
             int MinNumber = 11;
             int MaxNumber = 0;
 
+            bool[] SuitFilter = new bool[3];
+
+            for (int i = 0; i < SuitFilter.Length; i++) SuitFilter[i] = false;
             for (int i = 0; i < Form.Length; i++) Form[i] = -1;
+
+            Value = Value.ToLower();
 
             foreach (char C in Value)
             {
@@ -1172,12 +1210,26 @@ namespace TenhouViewer
                     else
                         Form[Number]++;
                 }
+                if (C == 'm') SuitFilter[0] = true;
+                if (C == 'p') SuitFilter[1] = true;
+                if (C == 's') SuitFilter[2] = true;
             }
 
             if (MaxNumber != 0)
             {
                 Form[MinNumber - 1] = 0;
                 Form[MaxNumber + 1] = 0;
+            }
+
+            if(SuitFilter.Contains(true))
+            {
+                // Find specified
+                for (int i = 0; i < SuitFilter.Length; i++) Form[11 + i] = (SuitFilter[i]) ? 1 : 0;
+            }
+            else
+            {
+                // Find all
+                for (int i = 0; i < SuitFilter.Length; i++) Form[11 + i] = 1;
             }
 
             return Form;

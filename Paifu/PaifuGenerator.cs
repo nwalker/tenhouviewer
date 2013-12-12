@@ -67,6 +67,7 @@ namespace TenhouViewer.Paifu
         public int ShowNames = 1;    // show real nicknames: true
         public int ShowYakuInfo = 1; // show yaku info: true
         public int ShowColor = 1;    // show shanten in colors
+        public int ShowSex = 0;      // show player's sex
 
         public PaifuGenerator(Mahjong.Replay Replay, int Round)
         {
@@ -249,15 +250,35 @@ namespace TenhouViewer.Paifu
             Pointer = DrawCenteredString(Color.Black, Fsmall, String.Format("{0:d}", Rnd.BalanceBefore[Player]), Pointer, PlayerColumnWidth);
             Pointer = DrawCenteredString(((Rnd.Pay[Player] >= 0) ? Color.Green : Color.Red), Fsmall, String.Format("{0:d}", Rnd.Pay[Player]), Pointer, PlayerColumnWidth);
 
+            if (ShowSex != 0)
             {
+                string Sex = "";
                 Color Fill = Color.Gray;
                 switch (R.Players[Player].Sex)
                 {
-                    case Mahjong.Sex.Female: Fill = Color.LightPink; break;
-                    case Mahjong.Sex.Male: Fill = Color.Cyan; break;
+                    case Mahjong.Sex.Female: Fill = Color.LightPink; Sex = "女"; break;
+                    case Mahjong.Sex.Male: Fill = Color.Cyan; Sex = "男"; break;
+                    case Mahjong.Sex.Computer: Sex = "COM"; break;
                 }
 
-                G.FillRectangle(new SolidBrush(Fill), PaddingH + RoundColumnWidth + 1, PaddingV + FieldHeight * (Index + 1) - 6 - 1, PlayerColumnWidth - 2, 6);
+                SizeF Size = G.MeasureString(Sex, Fsmall);
+
+                int Height = Convert.ToInt32(Size.Height);
+                int tX = PaddingH + RoundColumnWidth + 1;
+                int tY = PaddingV + FieldHeight * (Index + 1) - Height - 1;
+
+                G.FillRectangle(new SolidBrush(Fill), tX, tY, PlayerColumnWidth - 2, Height);
+
+                // Show sex kanji
+                {
+                    Brush Br = new SolidBrush(Color.Black);
+
+                    float fX = tX + (PlayerColumnWidth - Size.Width - 2) / 2;
+                    float fY = tY + 1;
+
+                    // Draw wind indicator
+                    G.DrawString(Sex, Fsmall, Br, fX, fY);
+                }
             }
         }
 
