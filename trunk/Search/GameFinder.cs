@@ -127,6 +127,9 @@ namespace TenhouViewer.Search
         // Drown tiles (count of every type)
         public int[] DrownTiles = null;
 
+        // Player's sex
+        public Mahjong.Sex Sex = Mahjong.Sex.Unknown;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -220,6 +223,7 @@ namespace TenhouViewer.Search
                 CheckRound(R);
                 CheckForm(R);
                 CheckTiles(R);
+                CheckSex(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -276,21 +280,26 @@ namespace TenhouViewer.Search
                 Tehai[T.TileId]++;
             }
 
+            // Check form in specified suits
             for (int i = 0; i < 3; i++)
             {
                 bool Mark = true;
-                for (int j = 1; j < 10; j++)
+
+                if (Form[11 + i] != 0)
                 {
-                    if (Form[j] == -1) continue;
-
-                    if (Form[j] != Tehai[i * 10 + j])
+                    for (int j = 1; j < 10; j++)
                     {
-                        Mark = false;
-                        break;
-                    }
-                }
+                        if (Form[j] == -1) continue;
 
-                if (Mark) return true;
+                        if (Form[j] != Tehai[i * 10 + j])
+                        {
+                            Mark = false;
+                            break;
+                        }
+                    }
+
+                    if (Mark) return true;
+                }
             }
 
             return false;
@@ -390,6 +399,17 @@ namespace TenhouViewer.Search
             for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
                 if (R.Replay.Players[i].NickName.CompareTo(NickName) != 0)
+                    R.PlayerMark[i] = false;
+            }
+        }
+
+        private void CheckSex(Result R)
+        {
+            if (Sex == Mahjong.Sex.Unknown) return;
+
+            for (int i = 0; i < R.Replay.PlayerCount; i++)
+            {
+                if (R.Replay.Players[i].Sex != Sex)
                     R.PlayerMark[i] = false;
             }
         }

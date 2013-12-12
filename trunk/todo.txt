@@ -4,7 +4,16 @@
 6. Luck calculating;
 7. GUI
 10. tiles search [by list: 1m, 2m, 3m, 1p, 2p, 3p, 1p, 1p, 2s, 3s, n, n]
-
+12. safe tiles (don't forget kokushi waits)
+  - analyze jihai [one full discarded type of tiles - no kokushi, isolated jihai tiles are safe);
+  - (without possible kokushi) if player have all tiles [one of jihai], and all other was discarded - they are safe;
+  - analyze kabe condition;
+  - last dropped tile are safe;
+  - tile discarded by all another players are safe (single tile);
+  - analyze discarded after riichi tiles [all discarded tiles are safe against riiched player]
+  - extended: analyze level of dangerous [http://osamuko.com/basic-defense-techniques-in-mahjong/]
+13. waiting type: ryanmen, sanmenchan, kanchan, penchan, tanki, syanpon, etc
+14. sliding forms
 
 in process:
 9. forms search [2334, 34455 etc]
@@ -15,5 +24,3 @@ completed:
 3. Write shanten number in paifu (option);
 8. Mark tempai [shanten number too]
 11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
-
-test: 2013010409gm-0001-0000-c82cfbe8_1.png [haku marked as dangerous - is true?]
