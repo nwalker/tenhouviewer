@@ -14,13 +14,19 @@
   - extended: analyze level of dangerous [http://osamuko.com/basic-defense-techniques-in-mahjong/]
 13. waiting type: ryanmen, sanmenchan, kanchan, penchan, tanki, syanpon, etc
 14. sliding forms
-
-in process:
-9. forms search [2334, 34455 etc]
+15. tournier mode?
+  - build games table;
+  - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
+  - list of interesting events (yaku, cost, ...);
+16. parsed logs from different files (for example, log.txt, tournier.txt) in different folders: parsed/log/..., parsed/tournier/... [specified by option folder=]?
+Search should be repetiable with using generated files (without parsing logs many times)
+17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit); 
+18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 
 completed:
 1. Report yaku, han/fu information in paifu;
 2. Mark dangerous tiles in paifu (calc waitings [x], furiten [x], option);
 3. Write shanten number in paifu (option);
 8. Mark tempai [shanten number too]
+9. forms search [2334, 34455 etc]
 11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]

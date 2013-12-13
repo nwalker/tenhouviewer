@@ -71,6 +71,7 @@ namespace TenhouViewer
             Console.WriteLine(" furiten=N - find all players (games), who has (has not) furiten (0-1);");
             Console.WriteLine(" ron=N - find all rounds ended with ron (0-1);");
             Console.WriteLine(" tsumo=N - find all rounds ended with tsumo (0-1);");
+            Console.WriteLine(" tempai=N - find all hands, which has (not) tempai (0-1);");
             Console.WriteLine(" players=N - count of players in game (3-4);");
             Console.WriteLine(" roundwind=N - wind of current round (0-3);");
             Console.WriteLine(" round=N - index of current round (0:w1, 1:w2, 2:w3, 3: w4, 4: s1, ...);");
@@ -81,6 +82,7 @@ namespace TenhouViewer
             Console.WriteLine(" openedsets=N - find all hands with N opened sets (0-4);");
             Console.WriteLine(" form=NNN - find all hands, which contains specified form in specified suits (numbers + suits m,p,s);");
             Console.WriteLine(" drowntiles=N,M,X - find all hands, in which player drown specified tiles (1p,1p,2m,6z,...);");
+            Console.WriteLine(" color=m,p,s,0,1 - find all colored hands;");
 
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
@@ -1065,6 +1067,11 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only players, who {0:s} completed hand;", (Finder.Winner == 0) ? "not" : ""));
                         break;
+                    case "tempai":
+                        Finder.Tempai = ParseBoolArg(Value, "tempai");
+
+                        Console.WriteLine(String.Format("Filter: only {0:s} hands, which had tempai;", (Finder.Tempai == 0) ? "not" : ""));
+                        break;
                     case "players":
                         TempValue = ParseIntArg(Value, 3, 4, "players");
                         if (TempValue != -1) Finder.PlayerCount = TempValue;
@@ -1166,6 +1173,22 @@ namespace TenhouViewer
                             }
 
                             if(!Skip) Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
+                        }
+                        break;
+                    case "color":
+                        {
+                            string Comment = "";
+
+                            switch (Value)
+                            {
+                                case "m": Finder.Colored = 1; Finder.ColoredSuit = 0; Comment = "only man-colored hands"; break;
+                                case "p": Finder.Colored = 1; Finder.ColoredSuit = 1; Comment = "only pin-colored hands"; break;
+                                case "s": Finder.Colored = 1; Finder.ColoredSuit = 2; Comment = "only sou-colored hands"; break;
+                                case "0": Finder.Colored = 0; Comment = "only not colored hands"; break;
+                                default: Finder.Colored = 1; Comment = "only colored hands"; break;
+                            }
+
+                            Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
                         }
                         break;
                 }
