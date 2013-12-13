@@ -22,9 +22,14 @@ namespace TenhouViewer.Tenhou
             {
                 const string url = "http://tenhou.net/0/?log=";
                 int Pos = line.IndexOf(url);
-                int PosEnd = line.IndexOf("&tw=");
+                int PosEndTW = line.IndexOf("&tw=");
+                int PosEndTS = line.IndexOf("&ts=");
+                int PosEnd = PosEndTW;
+
+                if ((PosEndTW != -1) && (PosEndTS != -1)) PosEnd = (PosEndTW > PosEndTS) ? PosEndTS : PosEndTW;
 
                 if (PosEnd == -1) PosEnd = line.IndexOf("\">");
+
                 if (Pos >= 0)
                 {
                     Pos += url.Length;

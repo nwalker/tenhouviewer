@@ -57,6 +57,13 @@ namespace TenhouViewer.Search
         // Is tsumo-agari
         public int Tsumo = -1;
 
+        // Is tempai
+        public int Tempai = -1;
+
+        // Is colored hand (>80% tiles in one suit in any step of hand)
+        public int Colored = -1;
+        public int ColoredSuit = -1;
+
         // Is round end in draw
         public bool Draw = false;
         public int DrawReason = -1;
@@ -224,6 +231,7 @@ namespace TenhouViewer.Search
                 CheckForm(R);
                 CheckTiles(R);
                 CheckSex(R);
+                CheckColor(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -368,6 +376,138 @@ namespace TenhouViewer.Search
                             R.HandMark[i][j] = false;
                             break;
                         }
+                    }
+                }
+            }
+        }
+
+        // 0: non-colored,
+        // 1-3: m, p, s colored
+        private int IsColoredHand(Mahjong.Hand H)
+        {
+            int[] Suits = new int[3];
+            int NakiSuit = -1;
+            int ActiveTileCount = 0;
+
+            // Init
+            for (int i = 0; i < Suits.Length; i++) Suits[i] = 0;
+
+            // Check naki
+            for (int i = 0; i < H.Naki.Count; i++)
+            {
+                if ((H.Naki[i].Type == Mahjong.NakiType.NUKI) ||
+                    (H.Naki[i].Type == Mahjong.NakiType.CHAKAN)) continue;
+
+                int CurrentNakiSuit = -1;
+
+                switch (new Mahjong.Tile(H.Naki[i].Tiles[0]).TileType)
+                {
+                    case "m": CurrentNakiSuit = 0; break;
+                    case "p": CurrentNakiSuit = 1; break;
+                    case "s": CurrentNakiSuit = 2; break;
+                    case "z": 
+                        // Jihai are accepted by any suit
+                        continue;
+                }
+
+                // No nakies before
+                if (NakiSuit == -1)
+                    NakiSuit = CurrentNakiSuit;
+                else if (NakiSuit != CurrentNakiSuit) return 0; // at least 2 sets of different suits - this is not colored hand
+            }
+
+            for (int i = 0; i < H.Tiles.Length; i++)
+            {
+                if (H.Tiles[i] == -1) continue;
+
+                switch (new Mahjong.Tile(H.Tiles[i]).TileType)
+                {
+                    case "m": Suits[0]++; ActiveTileCount++; break;
+                    case "p": Suits[1]++; ActiveTileCount++; break;
+                    case "s": Suits[2]++; ActiveTileCount++; break;
+                    case "z":
+                        // Jihai are accepted by any suit
+                        continue;
+                }
+            }
+
+            if (NakiSuit != -1) // Has opened sets of some suit
+            {
+                int AnotherSuitTiles = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i != NakiSuit) AnotherSuitTiles += Suits[i];
+                }
+
+                switch (ActiveTileCount)
+                {
+                    case 0: return NakiSuit;
+                    case 1: return NakiSuit;
+                    case 2: return NakiSuit;
+                    default: return (AnotherSuitTiles < 3) ? NakiSuit : 0;
+                }
+            }
+            else // no suit sets
+            {
+                int MaxTilesSuit = -1;
+
+                if ((Suits[0] >= Suits[1]) && (Suits[0] >= Suits[2]))
+                {
+                    // Suit[0] max
+                    MaxTilesSuit = 0;
+                }
+                else if ((Suits[1] >= Suits[0]) && (Suits[1] >= Suits[2]))
+                {
+                    // Suit[2] max
+                    MaxTilesSuit = 1;
+                }
+                else if ((Suits[2] >= Suits[0]) && (Suits[2] >= Suits[1]))
+                {
+                    // Suit[0] max
+                    MaxTilesSuit = 2;
+                }
+                else
+                    return 0;
+
+                if (ActiveTileCount > 0)
+                {
+                    double SuitFraction = Convert.ToDouble(Suits[MaxTilesSuit]) / Convert.ToDouble(ActiveTileCount);
+
+                    return (SuitFraction > 0.8f) ? MaxTilesSuit : 0;
+                }
+                else
+                    return 4;
+            }
+        }
+
+        private void CheckColor(Result R)
+        {
+            if (Colored != -1)
+            {
+                bool IsColored = (Colored != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    // Restore hands
+                    Rnd.ReplayGame();
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        bool ColoredFlag = false;
+                        for (int k = 0; k < Rnd.Hands[j].Count; k++)
+                        {
+                            int Suit = IsColoredHand(Rnd.Hands[j][k]);
+
+                                if (((Suit == ColoredSuit) || (ColoredSuit == -1) || (!IsColored)) && (Suit != 0))
+                                {
+                                    ColoredFlag = true;
+                                    break;
+                                }
+                        }
+
+                        if (ColoredFlag != IsColored) R.HandMark[i][j] = false;
                     }
                 }
             }
@@ -544,20 +684,38 @@ namespace TenhouViewer.Search
 
         private void CheckShanten(Result R)
         {
-            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            if ((ShantenMin != -1) || (ShantenMax != -1))
             {
-                Mahjong.Round Rnd = R.Replay.Rounds[i];
-
-                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
                 {
-                    if (Rnd.Shanten[j].Count > 0)
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
-                        if (ShantenMin != -1) if (Rnd.Shanten[j][0] < ShantenMin) R.HandMark[i][j] = false;
-                        if (ShantenMax != -1) if (Rnd.Shanten[j][0] > ShantenMax) R.HandMark[i][j] = false;
+                        if (Rnd.Shanten[j].Count > 0)
+                        {
+                            if (ShantenMin != -1) if (Rnd.Shanten[j][0] < ShantenMin) R.HandMark[i][j] = false;
+                            if (ShantenMax != -1) if (Rnd.Shanten[j][0] > ShantenMax) R.HandMark[i][j] = false;
+                        }
+                        else
+                        {
+                            R.HandMark[i][j] = false;
+                        }
                     }
-                    else
+                }
+            }
+
+            if (Tempai != -1)
+            {
+                bool IsTempai = (Tempai != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
-                        R.HandMark[i][j] = false;
+                        if (IsTempai != Rnd.Shanten[j].Contains(0)) R.HandMark[i][j] = false;
                     }
                 }
             }
