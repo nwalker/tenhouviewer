@@ -63,6 +63,7 @@ namespace TenhouViewer.Search
         // Is colored hand (>80% tiles in one suit in any step of hand)
         public int Colored = -1;
         public int ColoredSuit = -1;
+        public int ColoredForced = -1;
 
         // Is round end in draw
         public bool Draw = false;
@@ -439,12 +440,16 @@ namespace TenhouViewer.Search
                     if (i != NakiSuit) AnotherSuitTiles += Suits[i];
                 }
 
-                switch (ActiveTileCount)
+                if (ColoredForced != -1)
                 {
-                    case 0: return NakiSuit;
-                    case 1: return NakiSuit;
-                    case 2: return NakiSuit;
-                    default: return (AnotherSuitTiles < 3) ? NakiSuit : 0;
+                    return (AnotherSuitTiles == 0) ? NakiSuit : 0;
+                }
+                else
+                {
+                    if (ActiveTileCount < 3)
+                        return NakiSuit;
+                    else
+                        return (AnotherSuitTiles < 3) ? NakiSuit : 0;
                 }
             }
             else // no suit sets
@@ -469,14 +474,21 @@ namespace TenhouViewer.Search
                 else
                     return 0;
 
-                if (ActiveTileCount > 0)
+                if (ColoredForced != -1)
                 {
-                    double SuitFraction = Convert.ToDouble(Suits[MaxTilesSuit]) / Convert.ToDouble(ActiveTileCount);
-
-                    return (SuitFraction > 0.8f) ? MaxTilesSuit : 0;
+                    return (ActiveTileCount == Suits[MaxTilesSuit]) ? MaxTilesSuit : 0;
                 }
                 else
-                    return 4;
+                {
+                    if (ActiveTileCount > 0)
+                    {
+                        double SuitFraction = Convert.ToDouble(Suits[MaxTilesSuit]) / Convert.ToDouble(ActiveTileCount);
+
+                        return (SuitFraction > 0.8f) ? MaxTilesSuit : 0;
+                    }
+                    else
+                        return 4;
+                }
             }
         }
 

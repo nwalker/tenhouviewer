@@ -82,7 +82,7 @@ namespace TenhouViewer
             Console.WriteLine(" openedsets=N - find all hands with N opened sets (0-4);");
             Console.WriteLine(" form=NNN - find all hands, which contains specified form in specified suits (numbers + suits m,p,s);");
             Console.WriteLine(" drowntiles=N,M,X - find all hands, in which player drown specified tiles (1p,1p,2m,6z,...);");
-            Console.WriteLine(" color=m,p,s,0,1 - find all colored hands;");
+            Console.WriteLine(" color=m,p,s,M,P,S,0,1 - find all colored (>80% for lower case, 100% for upper case) hands;");
 
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
@@ -1184,6 +1184,9 @@ namespace TenhouViewer
                                 case "m": Finder.Colored = 1; Finder.ColoredSuit = 0; Comment = "only man-colored hands"; break;
                                 case "p": Finder.Colored = 1; Finder.ColoredSuit = 1; Comment = "only pin-colored hands"; break;
                                 case "s": Finder.Colored = 1; Finder.ColoredSuit = 2; Comment = "only sou-colored hands"; break;
+                                case "M": Finder.Colored = 1; Finder.ColoredSuit = 0; Finder.ColoredForced = 1; Comment = "only man-colored hands (without other suits)"; break;
+                                case "P": Finder.Colored = 1; Finder.ColoredSuit = 1; Finder.ColoredForced = 1; Comment = "only pin-colored hands (without other suits)"; break;
+                                case "S": Finder.Colored = 1; Finder.ColoredSuit = 2; Finder.ColoredForced = 1; Comment = "only sou-colored hands (without other suits)"; break;
                                 case "0": Finder.Colored = 0; Comment = "only not colored hands"; break;
                                 default: Finder.Colored = 1; Comment = "only colored hands"; break;
                             }
