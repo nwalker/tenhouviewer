@@ -277,6 +277,12 @@ namespace TenhouViewer
                         // Paifu by hash
                         CreatePaifu(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
+                    case "i":
+                        // Discards by find results
+                        GraphResult = null;
+                        FindResult = null;
+                        CreateDiscardList(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
                     case "I":
                         // Discard by hash
                         CreateDiscard(ArgList[i].Value, ArgList[i].Arguments, ResultList);
@@ -296,6 +302,7 @@ namespace TenhouViewer
         {
             int Round = -1;
             int Player = -1;
+            bool RiichiLimit = false;
             string FN = null;
             string Dir = "discard";
 
@@ -324,6 +331,9 @@ namespace TenhouViewer
                     case "filename":
                         FN = A.Value;
                         break;
+                    case "riichi":
+                        RiichiLimit = true;
+                        break;
                     default:
                         break;
                 }
@@ -350,11 +360,64 @@ namespace TenhouViewer
                     }
                     else
                     {
-                        FileName = (Round == -1) ? String.Format("{0:s}_{1:d}.png", FN, i) : String.Format("{0:s}.png", FN);
+                        FileName = (Round == -1) ? String.Format("{0:s}_{1:d}_{2:d}.png", FN, i, p) : String.Format("{0:s}.png", FN);
                     }
+
+                    D.RiichiLimit = RiichiLimit;
 
                     D.Generate();
                     D.Save(FileName);
+                }
+            }
+        }
+
+        static void CreateDiscardList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            string Dir = "discard";
+            bool RiichiLimit = false;
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value;
+                        if (!Directory.Exists(Dir))
+                            Directory.CreateDirectory(Dir);
+                        break;
+                    case "riichi":
+                        RiichiLimit = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+
+                Console.Title = String.Format("Discard creating {0:d}/{1:d}", i + 1, Results.Count);
+
+                for (int r = 0; r < R.Replay.Rounds.Count; r++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[r];
+
+                    if (!R.RoundMark[r]) continue;
+
+                    for (int p = 0; p < R.Replay.PlayerCount; p++)
+                    {
+                        if (!R.HandMark[r][p]) continue;
+
+                        Discarder.Discard D = new Discarder.Discard(R.Replay, r, p);
+
+                        string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
+
+                        D.RiichiLimit = RiichiLimit;
+                        D.Generate();
+                        D.Save(FileName);
+                    }
                 }
             }
         }
