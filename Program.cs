@@ -149,6 +149,7 @@ namespace TenhouViewer
             Console.WriteLine(" waiting - amount of tile types in waiting;");
             Console.WriteLine(" step - amount of player steps in round;");
             Console.WriteLine(" yaku - list of yaku;");
+            Console.WriteLine(" jyaku - list of yaku (japanese);");
             Console.WriteLine(" round - current round (0-1e, 1-2e, ...);");
             Console.WriteLine(" roundindex - index of round in game;");
             Console.WriteLine(" place - player's place in game;");
@@ -585,7 +586,10 @@ namespace TenhouViewer
                                         Temp += String.Format("{0:d}\t", Rnd.StepCount[k]);
                                         break;
                                     case "yaku":
-                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k]));
+                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k], "en"));
+                                        break;
+                                    case "jyaku":
+                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k], "jp"));
                                         break;
                                     case "round":
                                         Temp += String.Format("{0:d}\t", Rnd.CurrentRound);
@@ -649,7 +653,7 @@ namespace TenhouViewer
                             Output.Add(String.Format(Format,
                                               R.Replay.Hash, r, k, R.Replay.Rounds[r].Pay[k],
                                               Rnd.StepCount[k],
-                                              R.Replay.Players[k].NickName, YakuList(Rnd.Yaku[k])));
+                                              R.Replay.Players[k].NickName, YakuList(Rnd.Yaku[k], "en")));
                         }
                     }
                 }
@@ -919,6 +923,18 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.DangerMax = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands, which has has danger tiles count less (or equal) than {0:d};", TempValue));
+                        break;
+                    case "doramin":
+                        TempValue = ParseIntArg(Value, 0, 35, "doramin");
+                        if (TempValue != -1) Finder.DoraMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has dora count greater (or equal) than {0:d};", TempValue));
+                        break;
+                    case "doramax":
+                        TempValue = ParseIntArg(Value, 0, 35, "doramax");
+                        if (TempValue != -1) Finder.DoraMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has dora count less (or equal) than {0:d};", TempValue));
                         break;
                     case "furiten":
                         Finder.Furiten = ParseBoolArg(Value, "furiten");
@@ -1236,17 +1252,21 @@ namespace TenhouViewer
             return Finder.Find();
         }
 
-        static private string YakuList(List<Mahjong.Yaku> Yaku)
+        static private string YakuList(List<Mahjong.Yaku> Yaku, string Lang)
         {
             string Text = "";
 
             for (int i = 0; i < Yaku.Count; i++)
             {
-                string Name = Mahjong.YakuName.GetYakuName("en", Yaku[i].Index);
+                string Name = Mahjong.YakuName.GetYakuName(Lang, Yaku[i].Index);
 
-                if (Yaku[i].Index > 52) // Dora
+                if (Yaku[i].Index >= 52) // Dora
                 {
-                    Text += String.Format("{0:s} {1:d}", Name, Yaku[i].Cost);
+                    switch (Lang)
+                    {
+                        case "en": Text += String.Format("{0:s} {1:d} ", Name, Yaku[i].Cost); break;
+                        case "jp": Text += String.Format("{0:s}{1:d} ", Name, Yaku[i].Cost); break;
+                    }
                 }
                 else
                 {

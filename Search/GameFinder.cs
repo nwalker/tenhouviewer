@@ -100,6 +100,10 @@ namespace TenhouViewer.Search
         public int DangerMax = -1;
         public int DangerMin = -1;
 
+        // Dora tiles count
+        public int DoraMax = -1;
+        public int DoraMin = -1;
+
         // Lobby
         public int Lobby = -1;
 
@@ -249,6 +253,7 @@ namespace TenhouViewer.Search
                 CheckSex(R);
                 CheckColor(R);
                 CheckSuji(R);
+                CheckDora(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -1135,6 +1140,38 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if(TempFuriten[j] != FRef) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private void CheckDora(Result R)
+        {
+            if ((DoraMax == -1) && (DoraMin == -1)) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    bool Ok = true;
+
+                    if (Rnd.Winner[j])
+                    {
+                        int Count = 0;
+
+                        for (int y = 0; y < Rnd.Yaku[j].Count; y++)
+                        {
+                            if (Rnd.Yaku[j][y].Index >= 52) Count += Rnd.Yaku[j][y].Cost;
+                        }
+
+                        if(DoraMin != -1) if(Count < DoraMin) Ok = false;
+                        if(DoraMax != -1) if(Count > DoraMax) Ok = false;
+                    }
+                    else
+                        Ok = false;
+
+                    if (!Ok) R.HandMark[i][j] = false;
                 }
             }
         }
