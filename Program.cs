@@ -83,6 +83,10 @@ namespace TenhouViewer
             Console.WriteLine(" form=NNN - find all hands, which contains specified form in specified suits (numbers + suits m,p,s);");
             Console.WriteLine(" drowntiles=N,M,X - find all hands, in which player drown specified tiles (1p,1p,2m,6z,...);");
             Console.WriteLine(" color=m,p,s,M,P,S,0,1 - find all colored (>80% for lower case, 100% for upper case) hands;");
+            Console.WriteLine(" omotesuji=N - find all hands which has (not) omote-suji waiting to discard (0-1);");
+            Console.WriteLine(" senkisuji=N - find all hands which has (not) senki-suji waiting to discard (0-1);");
+            Console.WriteLine(" urasuji=N - find all hands which has (not) ura-suji waiting to discard (0-1);");
+            Console.WriteLine(" matagisuji=N - find all hands which has (not) matagi-suji waiting to discard (0-1);");
 
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
@@ -295,6 +299,12 @@ namespace TenhouViewer
             int ShowColor = 1;
             int ShowSex = 0;
 
+            if (Hash.CompareTo("") == 0)
+            {
+                Console.WriteLine("Error: Hash not defined.");
+                return;
+            }
+
             Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
 
             // Parse options
@@ -437,6 +447,8 @@ namespace TenhouViewer
             {
                 Search.Result R = Results[i];
 
+                Console.Title = String.Format("Paifu creating {0:d}/{1:d}", i, Results.Count);
+
                 for (int r = 0; r < R.Replay.Rounds.Count; r++)
                 {
                     Mahjong.Round Rnd = R.Replay.Rounds[r];
@@ -444,7 +456,6 @@ namespace TenhouViewer
                     if (!R.RoundMark[r]) continue;
 
                     Paifu.PaifuGenerator P = new Paifu.PaifuGenerator(R.Replay, r);
-
 
                     string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
 
@@ -1070,7 +1081,32 @@ namespace TenhouViewer
                     case "tempai":
                         Finder.Tempai = ParseBoolArg(Value, "tempai");
 
-                        Console.WriteLine(String.Format("Filter: only {0:s} hands, which had tempai;", (Finder.Tempai == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had tempai;", (Finder.Tempai == 0) ? "not" : ""));
+                        break;
+                    case "omotesuji":
+                        Finder.OmoteSujiWait = ParseBoolArg(Value, "omotesuji");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had omote-suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not" : ""));
+                        break;
+                    case "suji":
+                        Finder.OmoteSujiWait = ParseBoolArg(Value, "suji");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had (omote)suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not" : ""));
+                        break;
+                    case "senkisuji":
+                        Finder.SenkiSujiWait = ParseBoolArg(Value, "senkisuji");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had senki-suji wait to discarded tile;", (Finder.SenkiSujiWait == 0) ? "not" : ""));
+                        break;
+                    case "urasuji":
+                        Finder.UraSujiWait = ParseBoolArg(Value, "urasuji");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had ura-suji wait to discarded tile;", (Finder.UraSujiWait == 0) ? "not" : ""));
+                        break;
+                    case "matagisuji":
+                        Finder.MatagiSujiWait = ParseBoolArg(Value, "matagisuji");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had matagi-suji wait to discarded tile;", (Finder.MatagiSujiWait == 0) ? "not" : ""));
                         break;
                     case "players":
                         TempValue = ParseIntArg(Value, 3, 4, "players");

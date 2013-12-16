@@ -138,6 +138,18 @@ namespace TenhouViewer.Search
         // Player's sex
         public Mahjong.Sex Sex = Mahjong.Sex.Unknown;
 
+        // Has omote-suji to win waiting in discard?
+        public int OmoteSujiWait = -1;
+
+        // Has senki-suji to win waiting in discard?
+        public int SenkiSujiWait = -1;
+
+        // Has ura-suji to win waiting in discard?
+        public int UraSujiWait = -1;
+
+        // Has matagi-suji to win waiting in discard?
+        public int MatagiSujiWait = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -201,7 +213,7 @@ namespace TenhouViewer.Search
             {
                 Result R = GameList[i];
 
-                Console.Title = String.Format("Completed {0:d}/{1:d}, found {2:d}", i, GameList.Count, ResultList.Count);
+                Console.Title = String.Format("Finding {0:d}/{1:d}, found {2:d}", i, GameList.Count, ResultList.Count);
 
                 // filters
                 CheckHash(R);
@@ -233,6 +245,7 @@ namespace TenhouViewer.Search
                 CheckTiles(R);
                 CheckSex(R);
                 CheckColor(R);
+                CheckSuji(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -936,6 +949,163 @@ namespace TenhouViewer.Search
                 for (int j = 0; j < R.Replay.PlayerCount; j++)
                 {
                     if (Rnd.StepCount[j] > StepsMax) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
+        private bool HasOmoteSuji(List<int> Discard, int TileId)
+        {
+            int TileType = TileId / 10;
+            int TileValue = TileId % 10;
+            if (TileId >= 30) return false;
+
+            if (TileValue < 4) // 1-2-3
+            {
+                return (Discard.Contains(TileId + 3) || Discard.Contains(TileId + 6));
+            }
+            else if (TileValue < 7) // 4-5-6
+            {
+                return (Discard.Contains(TileId - 3) || Discard.Contains(TileId + 3));
+            }
+            else // 7-8-9
+            {
+                return (Discard.Contains(TileId - 3) || Discard.Contains(TileId - 6));
+            }
+        }
+
+        private bool HasSenkiSuji(List<int> Discard, int TileId)
+        {
+            int TileType = TileId / 10;
+            int TileValue = TileId % 10;
+            if (TileId >= 30) return false;
+
+            switch (TileValue)
+            {
+                case 1: return Discard.Contains(TileType + 6); // 6
+                case 2: return Discard.Contains(TileType + 7); // 7
+                case 3: return (Discard.Contains(TileType + 1) || Discard.Contains(TileType + 8)); // 1-8
+                case 4: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 6)); // 2-6
+                case 5: return (Discard.Contains(TileType + 3) || Discard.Contains(TileType + 7)); // 3-7
+                case 6: return (Discard.Contains(TileType + 4) || Discard.Contains(TileType + 8)); // 4-8
+                case 7: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 9)); // 2-9
+                case 8: return Discard.Contains(TileType + 3); // 3
+                case 9: return Discard.Contains(TileType + 4); // 4
+            }
+
+            return false;
+        }
+
+        private bool HasUraSuji(List<int> Discard, int TileId)
+        {
+            int TileType = TileId / 10;
+            int TileValue = TileId % 10;
+            if (TileId >= 30) return false;
+
+            switch (TileValue)
+            {
+                case 1: return Discard.Contains(TileType + 5); // 5
+                case 2: return (Discard.Contains(TileType + 1) || Discard.Contains(TileType + 6)); // 1-6
+                case 3: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 7)); // 2-7
+                case 4: return (Discard.Contains(TileType + 3) || Discard.Contains(TileType + 5) ||
+                                Discard.Contains(TileType + 8)); // 3-5-8
+                case 5: return (Discard.Contains(TileType + 1) || Discard.Contains(TileType + 4) ||
+                                Discard.Contains(TileType + 6) || Discard.Contains(TileType + 9)); // 1-4-6-9
+                case 6: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 5) ||
+                                Discard.Contains(TileType + 7)); // 2-5-7
+                case 7: return (Discard.Contains(TileType + 3) || Discard.Contains(TileType + 8)); // 3-8
+                case 8: return (Discard.Contains(TileType + 4) || Discard.Contains(TileType + 9)); // 4-9
+                case 9: return Discard.Contains(TileType + 5); // 5
+            }
+
+            return false;
+        }
+
+        private bool HasMatagiSuji(List<int> Discard, int TileId)
+        {
+            int TileType = TileId / 10;
+            int TileValue = TileId % 10;
+            if (TileId >= 30) return false;
+
+            switch (TileValue)
+            {
+                case 1: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 3)); // 2-3
+                case 2: return (Discard.Contains(TileType + 3) || Discard.Contains(TileType + 4)); // 3-4
+                case 3: return (Discard.Contains(TileType + 4) || Discard.Contains(TileType + 5)); // 4-5
+                case 4: return (Discard.Contains(TileType + 2) || Discard.Contains(TileType + 3) ||
+                                Discard.Contains(TileType + 5) || Discard.Contains(TileType + 6)); // 2-3-5-6
+                case 5: return (Discard.Contains(TileType + 3) || Discard.Contains(TileType + 4) ||
+                                Discard.Contains(TileType + 6) || Discard.Contains(TileType + 7)); // 3-4-6-7
+                case 6: return (Discard.Contains(TileType + 4) || Discard.Contains(TileType + 5) ||
+                                Discard.Contains(TileType + 7) || Discard.Contains(TileType + 8)); // 4-5-7-8
+                case 7: return (Discard.Contains(TileType + 5) || Discard.Contains(TileType + 6)); // 5-6
+                case 8: return (Discard.Contains(TileType + 6) || Discard.Contains(TileType + 7)); // 6-7
+                case 9: return (Discard.Contains(TileType + 7) || Discard.Contains(TileType + 8)); // 7-8
+            }
+
+            return false;
+        }
+
+        private void CheckSuji(Result R)
+        {
+            if ((OmoteSujiWait == -1) && (SenkiSujiWait == -1) && (UraSujiWait == -1) && (MatagiSujiWait == -1)) return;
+            
+            bool IsOmoteSujiWait = (OmoteSujiWait != 0);
+            bool IsSenkiSujiWait = (SenkiSujiWait != 0);
+            bool IsUraSujiWait = (UraSujiWait != 0);
+            bool IsMatagiSujiWait = (MatagiSujiWait != 0);
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+                List<int>[] Discard = new List<int>[R.Replay.PlayerCount];
+
+                bool[] IsOmoteSuji = new bool[R.Replay.PlayerCount];
+                bool[] IsSenkiSuji = new bool[R.Replay.PlayerCount];
+                bool[] IsUraSuji = new bool[R.Replay.PlayerCount];
+                bool[] IsMatagiSuji = new bool[R.Replay.PlayerCount];
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    Discard[j] = new List<int>();
+                    IsOmoteSuji[j] = false;
+                    IsSenkiSuji[j] = false;
+                    IsUraSuji[j] = false;
+                    IsMatagiSuji[j] = false;
+                }
+
+                // Parse discard
+                for (int j = 0; j < Rnd.Steps.Count; j++)
+                {
+                    Mahjong.Step S = Rnd.Steps[j];
+                    if (S.Type != Mahjong.StepType.STEP_DISCARDTILE) continue;
+
+                    Discard[S.Player].Add(new Mahjong.Tile(S.Tile).TileId);
+                }
+
+                // Check waitings
+                for (int j = 0; j < Rnd.Steps.Count; j++)
+                {
+                    Mahjong.Step S = Rnd.Steps[j];
+
+                    // Check waiting
+                    if (S.Waiting != null)
+                    {
+                        for (int k = 0; k < S.Waiting.Length; k++)
+                        {
+                            if (OmoteSujiWait != -1) if (HasOmoteSuji(Discard[S.Player], S.Waiting[k])) IsOmoteSuji[S.Player] = true;
+                            if (SenkiSujiWait != -1) if (HasSenkiSuji(Discard[S.Player], S.Waiting[k])) IsSenkiSuji[S.Player] = true;
+                            if (UraSujiWait != -1) if (HasUraSuji(Discard[S.Player], S.Waiting[k])) IsUraSuji[S.Player] = true;
+                            if (MatagiSujiWait != -1) if (HasMatagiSuji(Discard[S.Player], S.Waiting[k])) IsMatagiSuji[S.Player] = true;
+                        }
+                    }
+                }
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    if (OmoteSujiWait != -1) if (IsOmoteSuji[j] != IsOmoteSujiWait) R.HandMark[i][j] = false;
+                    if (SenkiSujiWait != -1) if (IsSenkiSuji[j] != IsSenkiSujiWait) R.HandMark[i][j] = false;
+                    if (UraSujiWait != -1) if (IsUraSuji[j] != IsUraSujiWait) R.HandMark[i][j] = false;
+                    if (MatagiSujiWait != -1) if (IsMatagiSuji[j] != IsMatagiSujiWait) R.HandMark[i][j] = false;
                 }
             }
         }

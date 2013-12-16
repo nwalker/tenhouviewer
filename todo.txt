@@ -22,6 +22,8 @@
 Search should be repetiable with using generated files (without parsing logs many times)
 17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit); 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
+19. Agari on aka / defined by user tile;
+20. Suji waiting [waiting is suji of discard]
 
 completed:
 1. Report yaku, han/fu information in paifu;
