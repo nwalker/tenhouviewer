@@ -200,6 +200,7 @@ namespace TenhouViewer
             Console.WriteLine(" riichi - limit discard to riichi declaration");
             Console.WriteLine(" naki - highlight tiles got other players;");
             Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
+            Console.WriteLine(" hand - output hand image for this discard;");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -i <params> - get discards for all rounds, which was found before:");
@@ -207,6 +208,8 @@ namespace TenhouViewer
             Console.WriteLine(" riichi - limit discard to riichi declaration;");
             Console.WriteLine(" naki - highlight tiles got other players;");
             Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
+            Console.WriteLine(" hand - output hand image for this discard;");
+
         }
 
         static void ParseArgs(string[] args)
@@ -332,6 +335,7 @@ namespace TenhouViewer
             bool RiichiLimit = false;
             bool NakiHL = false;
             bool TsumogiriHL = false;
+            bool ShowHand = false;
 
             string FN = null;
             string Dir = "discard";
@@ -370,6 +374,9 @@ namespace TenhouViewer
                     case "tsumogiri":
                         TsumogiriHL = true;
                         break;
+                    case "hand":
+                        ShowHand = true;
+                        break;
                     default:
                         break;
                 }
@@ -387,16 +394,17 @@ namespace TenhouViewer
                     if ((Player != -1) && (Player != p)) continue;
 
                     Discarder.Discard D = new Discarder.Discard(R, i, p);
-
-                    string FileName;
+                    string FileName, HandFileName;
                     if (FN == null)
                     {
                         if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
-                        FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);
+                        FileName = String.Format("./{0:s}/{1:s}_{2:d}_{3:d}.png", Dir, Hash, Round, p);
+                        HandFileName = String.Format("./{0:s}/{1:s}_{2:d}_{3:d}_hand.png", Dir, Hash, Round, p);
                     }
                     else
                     {
                         FileName = (Round == -1) ? String.Format("{0:s}_{1:d}_{2:d}.png", FN, i, p) : String.Format("{0:s}.png", FN);
+                        HandFileName = (Round == -1) ? String.Format("{0:s}_{1:d}_{2:d}_hand.png", FN, i, p) : String.Format("{0:s}_hand.png", FN);
                     }
 
                     D.RiichiLimit = RiichiLimit;
@@ -405,6 +413,13 @@ namespace TenhouViewer
 
                     D.Generate();
                     D.Save(FileName);
+
+                    if (ShowHand)
+                    {
+                        Discarder.HandOutput HO = new Discarder.HandOutput(R, i, p);
+                        HO.Generate();
+                        HO.Save(HandFileName);
+                    }
                 }
             }
         }
@@ -415,6 +430,7 @@ namespace TenhouViewer
             bool RiichiLimit = false;
             bool NakiHL = false;
             bool TsumogiriHL = false;
+            bool ShowHand = false;
 
             // Parse options
             foreach (Argument A in ArgList)
@@ -434,6 +450,9 @@ namespace TenhouViewer
                         break;
                     case "tsumogiri":
                         TsumogiriHL = true;
+                        break;
+                    case "hand":
+                        ShowHand = true;
                         break;
                     default:
                         break;
@@ -459,6 +478,7 @@ namespace TenhouViewer
                         Discarder.Discard D = new Discarder.Discard(R.Replay, r, p);
 
                         string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
+                        string HandFileName = String.Format("./{0:s}/{1:s}_{2:d}_hand.png", Dir, R.Replay.Hash, r);
 
                         D.RiichiLimit = RiichiLimit;
                         D.HighlightNaki = NakiHL;
@@ -466,6 +486,13 @@ namespace TenhouViewer
 
                         D.Generate();
                         D.Save(FileName);
+
+                        if (ShowHand)
+                        {
+                            Discarder.HandOutput HO = new Discarder.HandOutput(R.Replay, r, p);
+                            HO.Generate();
+                            HO.Save(HandFileName);
+                        }
                     }
                 }
             }
