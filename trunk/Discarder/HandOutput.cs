@@ -73,12 +73,27 @@ namespace TenhouViewer.Discarder
             return TileBitmap.Width;
         }
 
+        private int LastIncompleteHand()
+        {
+            for(int i = Rnd.Hands[Player].Count - 1; i >= 0; i--)
+            {
+                Mahjong.Hand H = Rnd.Hands[Player][i];
+
+                // Skip agari hands
+                if(H.Shanten == -1) continue;
+
+                return i;
+            }
+
+            return Rnd.Hands[Player].Count - 1;
+        }
+
         private void Replay()
         {
             Rnd.ReplayGame();
 
             // Get last hand
-            int HandIndex = Rnd.Hands[Player].Count - 1;
+            int HandIndex = LastIncompleteHand();
             Mahjong.Hand H = Rnd.Hands[Player][HandIndex];
 
             int tX = PaddingH;

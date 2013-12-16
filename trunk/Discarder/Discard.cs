@@ -72,6 +72,7 @@ namespace TenhouViewer.Discarder
             {
                 if (Rnd.Steps[i].Player != Player) continue;
 
+                if ((Rnd.Steps[i].Type == Mahjong.StepType.STEP_RIICHI) && RiichiLimit) break;
                 if (Rnd.Steps[i].Type == Mahjong.StepType.STEP_DISCARDTILE) CircleCount++;
             }
             if(HowManyDraw != -1) CircleCount = Math.Min(CircleCount, HowManyDraw);
@@ -85,8 +86,11 @@ namespace TenhouViewer.Discarder
                 if (Rnd.Riichi[Player] != 0) ExtraTiles += 1;
             }
 
+            int Rows = ((CircleCount / 6) + 1);
+            if (Rows > 3) Rows = 3;
+
             Width = PaddingH * 2 + (TileWidth) * (6 + ExtraTiles);
-            Height = 2 * PaddingV + (TileHeight * ((CircleCount / 6) + 1));
+            Height = 2 * PaddingV + (TileHeight * Rows);
         }
 
         private bool IsTileNakied(int Step, int Tile)
