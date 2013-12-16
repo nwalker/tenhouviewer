@@ -29,11 +29,14 @@ namespace TenhouViewer.Discarder
 
         public int HowManyDraw = -1;
         public bool RiichiLimit = false;
+        public bool HighlightTsumogiri = false;
+        public bool HighlightNaki = false;
 
         Bitmap B;
         Graphics G;
 
         Color NakiColor = Color.FromArgb(119, 119, 200, 0);
+        Color GiriColor = Color.FromArgb(50, 50, 50, 0);
 
         public Discard(Mahjong.Replay Replay, int Round, int Player)
         {
@@ -113,11 +116,13 @@ namespace TenhouViewer.Discarder
             return false;
         }
 
-        private void DrawTile(int Tile, bool Riichi, bool Nakied)
+        private void DrawTile(int Tile, bool Riichi, bool Nakied, bool Tsumogiri)
         {
             Paifu.PaifuTileImage TileImage = new Paifu.PaifuTileImage(Tile, Scale, Red);
-            if (Nakied)
+            if (Nakied && HighlightNaki)
                 TileImage.Colorize(NakiColor);
+            if (Tsumogiri && HighlightTsumogiri)
+                TileImage.Colorize(GiriColor);
             Bitmap TileBitmap = TileImage.Bmp;
 
             if (Riichi)
@@ -147,6 +152,7 @@ namespace TenhouViewer.Discarder
             bool RiichiFlag = false;
             bool Abort = false;
             int HowManyCounter = 0;
+            int LastTile = -1;
 
             for (int i = 0; i < Rnd.Steps.Count; i++)
             {
@@ -155,11 +161,18 @@ namespace TenhouViewer.Discarder
 
                 switch (S.Type)
                 {
+                    case Mahjong.StepType.STEP_DRAWDEADTILE:
+                        LastTile = S.Tile;
+                        break;
+                    case Mahjong.StepType.STEP_DRAWTILE:
+                        LastTile = S.Tile;
+                        break;
                     case Mahjong.StepType.STEP_DISCARDTILE:
-                        DrawTile(S.Tile, RiichiFlag, IsTileNakied(i, S.Tile));
+                        DrawTile(S.Tile, RiichiFlag, IsTileNakied(i, S.Tile), LastTile == S.Tile);
                         HowManyCounter++;
                         if (RiichiFlag && RiichiLimit) Abort = true;
                         RiichiFlag = false;
+                        LastTile = -1;
                         break;
                     case Mahjong.StepType.STEP_RIICHI:
                         RiichiFlag = true;

@@ -26,12 +26,16 @@ namespace TenhouViewer
             Console.WriteLine("Help:");
             Console.WriteLine("TenhouViewer -DHash - download game;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -dLog.txt - download all games from log Log.txt;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -PHash - parse game;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
             Console.WriteLine(" lobby=N - find all games from specified lobby (0-6);");
             Console.WriteLine(" aka=N - only games with aka-dora nashi/ari (0-1);");
@@ -88,6 +92,7 @@ namespace TenhouViewer
             Console.WriteLine(" urasuji=N - find all hands which has (not) ura-suji waiting to discard (0-1);");
             Console.WriteLine(" matagisuji=N - find all hands which has (not) matagi-suji waiting to discard (0-1);");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" index - round index in list;");
@@ -113,6 +118,7 @@ namespace TenhouViewer
             Console.WriteLine(" draw - round ended in draw;");
             Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
             Console.WriteLine(" index - game index in list;");
             Console.WriteLine(" lobby - lobby index;");
@@ -126,6 +132,7 @@ namespace TenhouViewer
             Console.WriteLine(" players - count of players in game;");
             Console.WriteLine(" datetime - date of game;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" lobby - lobby index;");
@@ -159,8 +166,10 @@ namespace TenhouViewer
             Console.WriteLine(" furiten - furiten hand;");
             Console.WriteLine(" draw - round ended in draw;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -U<hash> <params> - get paifu:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" filename - filename to save result (for specified round, without extension);");
@@ -172,6 +181,7 @@ namespace TenhouViewer
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
             Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
 
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" shanten - add shanten info in paifu (+furiten marking; [0]-1);");
@@ -180,6 +190,23 @@ namespace TenhouViewer
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
             Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
+
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -I<hash> <params> - get discard:");
+            Console.WriteLine(" dir - directory to save result (for all rounds);");
+            Console.WriteLine(" filename - filename to save result (for specified round, without extension);");
+            Console.WriteLine(" round - round index (from 0);");
+            Console.WriteLine(" player - player index (from 0);");
+            Console.WriteLine(" riichi - limit discard to riichi declaration");
+            Console.WriteLine(" naki - highlight tiles got other players;");
+            Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
+
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -i <params> - get discards for all rounds, which was found before:");
+            Console.WriteLine(" dir - directory to save result (for all rounds);");
+            Console.WriteLine(" riichi - limit discard to riichi declaration;");
+            Console.WriteLine(" naki - highlight tiles got other players;");
+            Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
         }
 
         static void ParseArgs(string[] args)
@@ -303,6 +330,9 @@ namespace TenhouViewer
             int Round = -1;
             int Player = -1;
             bool RiichiLimit = false;
+            bool NakiHL = false;
+            bool TsumogiriHL = false;
+
             string FN = null;
             string Dir = "discard";
 
@@ -334,6 +364,12 @@ namespace TenhouViewer
                     case "riichi":
                         RiichiLimit = true;
                         break;
+                    case "naki":
+                        NakiHL = true;
+                        break;
+                    case "tsumogiri":
+                        TsumogiriHL = true;
+                        break;
                     default:
                         break;
                 }
@@ -364,6 +400,8 @@ namespace TenhouViewer
                     }
 
                     D.RiichiLimit = RiichiLimit;
+                    D.HighlightNaki = NakiHL;
+                    D.HighlightTsumogiri = TsumogiriHL;
 
                     D.Generate();
                     D.Save(FileName);
@@ -375,6 +413,8 @@ namespace TenhouViewer
         {
             string Dir = "discard";
             bool RiichiLimit = false;
+            bool NakiHL = false;
+            bool TsumogiriHL = false;
 
             // Parse options
             foreach (Argument A in ArgList)
@@ -388,6 +428,12 @@ namespace TenhouViewer
                         break;
                     case "riichi":
                         RiichiLimit = true;
+                        break;
+                    case "naki":
+                        NakiHL = true;
+                        break;
+                    case "tsumogiri":
+                        TsumogiriHL = true;
                         break;
                     default:
                         break;
@@ -415,6 +461,9 @@ namespace TenhouViewer
                         string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
 
                         D.RiichiLimit = RiichiLimit;
+                        D.HighlightNaki = NakiHL;
+                        D.HighlightTsumogiri = TsumogiriHL;
+
                         D.Generate();
                         D.Save(FileName);
                     }
