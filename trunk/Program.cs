@@ -277,6 +277,10 @@ namespace TenhouViewer
                         // Paifu by hash
                         CreatePaifu(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
+                    case "I":
+                        // Discard by hash
+                        CreateDiscard(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
                 }
             }
 
@@ -288,10 +292,77 @@ namespace TenhouViewer
             }
         }
 
+        static void CreateDiscard(string Hash, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            int Round = -1;
+            int Player = -1;
+            string FN = null;
+            string Dir = "discard";
+
+            if (Hash.CompareTo("") == 0)
+            {
+                Console.WriteLine("Error: Hash not defined.");
+                return;
+            }
+
+            Hash = new Tenhou.TenhouHash(Hash).DecodedHash;
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value;
+                        break;
+                    case "round":
+                        Round = Convert.ToInt32(A.Value);
+                        break;
+                    case "player":
+                        Player = Convert.ToInt32(A.Value);
+                        break;
+                    case "filename":
+                        FN = A.Value;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Mahjong.Replay R = new Mahjong.Replay();
+            R.LoadXml(Hash);
+
+            for (int i = 0; i < R.Rounds.Count; i++)
+            {
+                if ((Round != -1) && (Round != i)) continue;
+
+                for (int p = 0; p < R.PlayerCount; p++)
+                {
+                    if ((Player != -1) && (Player != p)) continue;
+
+                    Discarder.Discard D = new Discarder.Discard(R, i, p);
+
+                    string FileName;
+                    if (FN == null)
+                    {
+                        if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
+                        FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);
+                    }
+                    else
+                    {
+                        FileName = (Round == -1) ? String.Format("{0:s}_{1:d}.png", FN, i) : String.Format("{0:s}.png", FN);
+                    }
+
+                    D.Generate();
+                    D.Save(FileName);
+                }
+            }
+        }
+
         static void CreatePaifu(string Hash, List<Argument> ArgList, List<Search.Result> Results)
         {
             string Dir = "paifu";
-            string FN = "";
+            string FN = null;
             int Round = -1;
             int ShowShanten = 0;
             int ShowYaku = 1;
@@ -354,7 +425,7 @@ namespace TenhouViewer
 
                 string FileName;
 
-                if (FN.CompareTo("") == 0)
+                if (FN == null)
                 {
                     if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
                     FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);

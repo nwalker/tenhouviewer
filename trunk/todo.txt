@@ -22,11 +22,11 @@
 Search should be repetiable with using generated files (without parsing logs many times) 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 19. Agari on aka / defined by user tile;
-21. Dora count search (ura/aka/dora/all);
 
 in process:
 20. Suji waiting [waiting is suji of discard], suji-waiting to discarded on riichi tile;
 	Check: 2013011902gm-0009-0000-085f75c9_19.png [has suji?]
+21. Dora count search (ura/aka/dora/all);
 
 completed:
 1. Report yaku, han/fu information in paifu;
@@ -36,3 +36,6 @@ completed:
 9. forms search [2334, 34455 etc]
 11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
 17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit);
+
+bug:
+Naki field "FromWho" is incorrect!

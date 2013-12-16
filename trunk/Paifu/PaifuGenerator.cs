@@ -107,7 +107,6 @@ namespace TenhouViewer.Paifu
             B.Save(FileName);
         }
 
-
         private void CalcTileDimensions()
         {
             PaifuTileImage Img = new PaifuTileImage(-1, Scale, Red);

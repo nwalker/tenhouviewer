@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentParser.cs" />
+    <Compile Include="Discarder\Discard.cs" />
     <Compile Include="Paifu\PaifuGenerator.cs" />
     <Compile Include="Paifu\PaifuTileImage.cs" />
     <Compile Include="Search\GameFinder.cs" />

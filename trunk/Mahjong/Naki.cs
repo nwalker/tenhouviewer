@@ -19,7 +19,7 @@ namespace TenhouViewer.Mahjong
 
     class Naki
     {
-        public int FromWho = -1;
+        public int FromWho = -1; // 1 - kamicha, 2 - toimen, 3 - shimocha
         public NakiType Type = NakiType.NOTYPE;
         public List<int> Tiles = null;
 
