@@ -19,11 +19,14 @@
   - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
   - list of interesting events (yaku, cost, ...);
 16. parsed logs from different files (for example, log.txt, tournier.txt) in different folders: parsed/log/..., parsed/tournier/... [specified by option folder=]?
-Search should be repetiable with using generated files (without parsing logs many times)
-17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit); 
+Search should be repetiable with using generated files (without parsing logs many times) 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 19. Agari on aka / defined by user tile;
-20. Suji waiting [waiting is suji of discard]
+21. Dora count search (ura/aka/dora/all);
+
+in process:
+20. Suji waiting [waiting is suji of discard], suji-waiting to discarded on riichi tile;
+	Check: 2013011902gm-0009-0000-085f75c9_19.png [has suji?]
 
 completed:
 1. Report yaku, han/fu information in paifu;
@@ -32,3 +35,4 @@ completed:
 8. Mark tempai [shanten number too]
 9. forms search [2334, 34455 etc]
 11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
+17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit);

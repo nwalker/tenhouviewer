@@ -447,7 +447,7 @@ namespace TenhouViewer
             {
                 Search.Result R = Results[i];
 
-                Console.Title = String.Format("Paifu creating {0:d}/{1:d}", i, Results.Count);
+                Console.Title = String.Format("Paifu creating {0:d}/{1:d}", i + 1, Results.Count);
 
                 for (int r = 0; r < R.Replay.Rounds.Count; r++)
                 {
@@ -1242,7 +1242,16 @@ namespace TenhouViewer
 
             for (int i = 0; i < Yaku.Count; i++)
             {
-                Text += Mahjong.YakuName.GetYakuName("en", Yaku[i].Index) + " ";
+                string Name = Mahjong.YakuName.GetYakuName("en", Yaku[i].Index);
+
+                if (Yaku[i].Index > 52) // Dora
+                {
+                    Text += String.Format("{0:s} {1:d}", Name, Yaku[i].Cost);
+                }
+                else
+                {
+                    Text += String.Format("{0:s} ", Name);
+                }
             }
 
             return Text;

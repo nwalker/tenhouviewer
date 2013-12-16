@@ -18,13 +18,16 @@ namespace TenhouViewer.Tenhou
 
             string[] lines = System.IO.File.ReadAllLines(FileName);
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Length; i++) 
             {
+                string line = lines[i];
                 const string url = "http://tenhou.net/0/?log=";
                 int Pos = line.IndexOf(url);
                 int PosEndTW = line.IndexOf("&tw=");
                 int PosEndTS = line.IndexOf("&ts=");
                 int PosEnd = PosEndTW;
+
+                Console.Title = String.Format("Parsing log {0:d}/{1:d}", i + 1, lines.Length);
 
                 if ((PosEndTW != -1) && (PosEndTS != -1)) PosEnd = (PosEndTW > PosEndTS) ? PosEndTS : PosEndTW;
 
