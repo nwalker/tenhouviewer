@@ -8,15 +8,15 @@ namespace TenhouViewer.Discarder
 {
     class Discard
     {
-        int Width = 300;
-        int Height = 300;
-
         const float Scale = 0.7f;
         const int PaddingV = 20;
         const int PaddingH = 20;
 
+        // Calculated values
         int TileWidth = 20;
         int TileHeight = 30;
+        int Width = 300;
+        int Height = 300;
 
         int X = 0;
         int Y = 0;
@@ -55,11 +55,6 @@ namespace TenhouViewer.Discarder
             G = Graphics.FromImage(B);
 
             Replay();
-        }
-
-        private int FromPlayer(int FromWho, int Player)
-        {
-            return (Player + FromWho) & 0x03;
         }
 
         private void CalcTileDimensions()
@@ -129,7 +124,7 @@ namespace TenhouViewer.Discarder
                 TileBitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
 
             int tX = PaddingH + X;
-            int tY = PaddingH + Y;
+            int tY = PaddingV + Y;
 
             if (Riichi)
             {
