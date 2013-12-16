@@ -153,9 +153,12 @@ namespace TenhouViewer.Search
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
-            foreach (string Hash in Hashes.Hashes)
+            for (int h = 0; h < Hashes.Hashes.Count; h++ )
             {
+                string Hash = Hashes.Hashes[h];
                 Mahjong.Replay R = new Mahjong.Replay();
+
+                Console.Title = String.Format("Loading {0:d}/{1:d}", h + 1, Hashes.Hashes.Count);
 
                 if (R.LoadXml(Hash))
                 {
@@ -213,7 +216,7 @@ namespace TenhouViewer.Search
             {
                 Result R = GameList[i];
 
-                Console.Title = String.Format("Finding {0:d}/{1:d}, found {2:d}", i, GameList.Count, ResultList.Count);
+                Console.Title = String.Format("Finding {0:d}/{1:d}, found {2:d}", i + 1, GameList.Count, ResultList.Count);
 
                 // filters
                 CheckHash(R);
