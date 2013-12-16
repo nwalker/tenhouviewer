@@ -67,7 +67,7 @@ namespace TenhouViewer
             Console.WriteLine(" steps=N - find all hands, who exist less (or equal) than N steps (0-60);");
             Console.WriteLine(" yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);");
             Console.WriteLine(" anyyaku=N,M,X - find all hands, which has any of N,M,X,... yaku (0-54 or name);");
-            Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);");
+            Console.WriteLine(" wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... ((1p,1p,2m,6z,...);");
             Console.WriteLine(" dealer=N - find all (not) dealer's hands (0-1);");
             Console.WriteLine(" winner=N - find all (not) completed hands (0-1);");
             Console.WriteLine(" loser=N - find all players (games), who (not) dealt into ron (0-1);");
@@ -1276,11 +1276,11 @@ namespace TenhouViewer
                         }
                         break;
                     case "wait":
-                        Finder.Waitings = DecompositeIntList(Value);
+                        Finder.Waitings = ParseTilesList(Value);
 
                         if (Finder.Waitings != null)
                         {
-                            Console.WriteLine(String.Format("Filter: only hands, which has at least one waiting from list: '{0:s}';", Value));
+                            Console.WriteLine(String.Format("Filter: only hands, which has at least one waiting from list: '{0:s}';", GetTilesListString(Finder.Waitings)));
                         }
                         break;
                     case "nickname":
@@ -1391,36 +1391,8 @@ namespace TenhouViewer
 
                         if(Finder.DrownTiles != null)
                         {
-                            if(Finder.DrownTiles.Length > 0)
-                            {
-                                List<string> StrDrownTiles = new List<string>();
-                                for(int k = 0; k < Finder.DrownTiles.Length; k++)
-                                {
-                                    int TileCount = Finder.DrownTiles[k];
-
-                                    if (TileCount == 0) continue;
-
-                                    int TileType = k / 10;
-                                    int TileValue = k % 10;
-
-                                    string StringName = "";
-                                    switch (TileType)
-                                    {
-                                        case 0: StringName = TileValue.ToString() + "m"; break;
-                                        case 1: StringName = TileValue.ToString() + "p"; break;
-                                        case 2: StringName = TileValue.ToString() + "s"; break;
-                                        case 3: StringName = TileValue.ToString() + "z"; break;
-                                    }
-
-                                    for (int l = 0; l < TileCount; l++) StrDrownTiles.Add(StringName);
-                                }
-
-                                string TilesList = String.Join(",", StrDrownTiles.ToArray());
-
-                                Console.WriteLine(String.Format("Filter: only hands with drown tiles '{0:s}';", Value));
-                            }
+                            Console.WriteLine(String.Format("Filter: only hands with drown tiles '{0:s}';", GetTilesListString(Finder.DrownTiles)));
                         }
-                        
                         break;
                     case "sex":
                         {
@@ -1464,6 +1436,35 @@ namespace TenhouViewer
             }
 
             return Finder.Find();
+        }
+
+        static string GetTilesListString(int[] Tiles)
+        {
+            if (Tiles.Length == 0) return "";
+
+            List<string> StrDrownTiles = new List<string>();
+            for (int k = 0; k < Tiles.Length; k++)
+            {
+                int TileCount = Tiles[k];
+
+                if (TileCount == 0) continue;
+
+                int TileType = k / 10;
+                int TileValue = k % 10;
+
+                string StringName = "";
+                switch (TileType)
+                {
+                    case 0: StringName = TileValue.ToString() + "m"; break;
+                    case 1: StringName = TileValue.ToString() + "p"; break;
+                    case 2: StringName = TileValue.ToString() + "s"; break;
+                    case 3: StringName = TileValue.ToString() + "z"; break;
+                }
+
+                for (int l = 0; l < TileCount; l++) StrDrownTiles.Add(StringName);
+            }
+
+            return String.Join(",", StrDrownTiles.ToArray());
         }
 
         static private string YakuList(List<Mahjong.Yaku> Yaku, string Lang)
