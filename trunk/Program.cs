@@ -317,6 +317,10 @@ namespace TenhouViewer
                         // Discard by hash
                         CreateDiscard(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
+                    case "T":
+                        // Analyze log as tournier games list
+                        
+                        break;
                 }
             }
 

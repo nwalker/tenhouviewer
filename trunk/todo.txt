@@ -18,10 +18,12 @@
   - build games table;
   - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
   - list of interesting events (yaku, cost, ...);
+  - adjustable uma?
 16. parsed logs from different files (for example, log.txt, tournier.txt) in different folders: parsed/log/..., parsed/tournier/... [specified by option folder=]?
 Search should be repetiable with using generated files (without parsing logs many times) 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 19. Agari on aka / defined by user tile;
+22. count of dead outs (placed to dead wall, i know at least 5)
 
 in process:
 20. Suji waiting [waiting is suji of discard], suji-waiting to discarded on riichi tile;
