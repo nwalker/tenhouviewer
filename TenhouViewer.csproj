@@ -84,6 +84,9 @@
     <Compile Include="Tenhou\WallGenerator.cs" />
     <Compile Include="Tenhou\Wind.cs" />
     <Compile Include="Tenhou\YakuNameParser.cs" />
+    <Compile Include="Tournier\Plotter.cs" />
+    <Compile Include="Tournier\Result.cs" />
+    <Compile Include="Tournier\Tournier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="todo.txt" />
