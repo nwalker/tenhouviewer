@@ -477,8 +477,8 @@ namespace TenhouViewer
 
                         Discarder.Discard D = new Discarder.Discard(R.Replay, r, p);
 
-                        string FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, R.Replay.Hash, r);
-                        string HandFileName = String.Format("./{0:s}/{1:s}_{2:d}_hand.png", Dir, R.Replay.Hash, r);
+                        string FileName = String.Format("./{0:s}/{1:s}_{2:d}_{3:d}.png", Dir, R.Replay.Hash, r, p);
+                        string HandFileName = String.Format("./{0:s}/{1:s}_{2:d}_{3:d}_hand.png", Dir, R.Replay.Hash, r, p);
 
                         D.RiichiLimit = RiichiLimit;
                         D.HighlightNaki = NakiHL;
