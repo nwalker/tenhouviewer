@@ -21,7 +21,7 @@ namespace TenhouViewer.Tournier
         public List<string> GamesGraph()
         {
             List<string> Output = new List<string>();
-            int PlayerIndex = 0;
+            int PlayerIndex = 1;
             int MaxGameCount = GetMaxGameCount();
 
             for (int i = 0; i < ResultList.Count; i++)
@@ -55,11 +55,61 @@ namespace TenhouViewer.Tournier
             return Output;
         }
 
+        public void Sort(string Parameter)
+        {
+            switch (Parameter)
+            {
+                case "place":
+                    ResultList = ResultList.OrderBy(o => o.AveragePlace).ToList();
+                    Console.WriteLine("Sort: by place;");
+                    break;
+                case "points": ResultList = ResultList.OrderBy(o => o.TotalPoints).ToList();
+                    Console.WriteLine("Sort: by points;");
+                    break;
+                case "balance": ResultList = ResultList.OrderBy(o => o.TotalBalance).ToList();
+                    Console.WriteLine("Sort: by balance;");
+                    break;
+                case "loss": ResultList = ResultList.OrderBy(o => o.TotalLosses).ToList();
+                    Console.WriteLine("Sort: by losses;");
+                    break;
+                case "acq": ResultList = ResultList.OrderBy(o => o.TotalAcquisitions).ToList();
+                    Console.WriteLine("Sort: by acquisions;");
+                    break;
+            }
+        }
+
+        public void SortDescending(string Parameter)
+        {
+            switch (Parameter)
+            {
+                case "place":
+                    ResultList = ResultList.OrderByDescending(o => o.AveragePlace).ToList();
+                    Console.WriteLine("Sort descending: by place;");
+                    break;
+                case "points":
+                    ResultList = ResultList.OrderByDescending(o => o.TotalPoints).ToList();
+                    Console.WriteLine("Sort descending: by points;");
+                    break;
+                case "balance":
+                    ResultList = ResultList.OrderByDescending(o => o.TotalBalance).ToList();
+                    Console.WriteLine("Sort descending: by balance;");
+                    break;
+                case "loss":
+                    ResultList = ResultList.OrderByDescending(o => o.TotalLosses).ToList();
+                    Console.WriteLine("Sort descending: by losses;");
+                    break;
+                case "acq":
+                    ResultList = ResultList.OrderByDescending(o => o.TotalAcquisitions).ToList();
+                    Console.WriteLine("Sort descending: by acquisions;");
+                    break;
+            }
+        }
+
         private bool SkipThisResult(Result R)
         {
             if (MinimalGamesCount != -1)
             {
-                if (R.Places.Count <= MinimalGamesCount) return true;
+                if (R.Places.Count < MinimalGamesCount) return true;
             }
 
             return false;
