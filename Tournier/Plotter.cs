@@ -33,6 +33,7 @@ namespace TenhouViewer.Tournier
                     {
                         case "index": Temp += "Index\t"; break;
                         case "nickname": Temp += "NickName\t"; break;
+                        case "games": Temp += "Games\t"; break;
                         case "placelist": Temp += "Places\t"; break;
                         case "place": Temp += "Avg. place\t"; break;
                         case "points": Temp += "Points\t"; break;
@@ -41,6 +42,10 @@ namespace TenhouViewer.Tournier
                         case "agari": Temp += "Hands\t"; break;
                         case "acq": Temp += "Acquisitions\t"; break;
                         case "loss": Temp += "Losses\t"; break;
+                        case "1st": Temp += "1st place %\t"; break;
+                        case "2nd": Temp += "2nd place %\t"; break;
+                        case "3rd": Temp += "3rd place %\t"; break;
+                        case "4th": Temp += "4th place %\t"; break;
                     }
                 }
 
@@ -60,6 +65,7 @@ namespace TenhouViewer.Tournier
                     {
                         case "index": Temp += String.Format("{0:d}\t", PlayerIndex); break;
                         case "nickname": Temp += String.Format("{0:s}\t", R.NickName); break;
+                        case "games": Temp += String.Format("{0:d}\t", R.Places.Count); break;
                         case "placelist": Temp += String.Format("{0:s}\t", R.GetPlaceList()); break;
                         case "place": Temp += String.Format("{0:f}\t", R.AveragePlace); break;
                         case "points": Temp += String.Format("{0:d}\t", R.TotalPoints); break;
@@ -68,6 +74,10 @@ namespace TenhouViewer.Tournier
                         case "agari": Temp += String.Format("{0:d}\t", R.AgariCount); break;
                         case "acq": Temp += String.Format("+{0:d}\t", R.TotalAcquisitions); break;
                         case "loss": Temp += String.Format("{0:d}\t", R.TotalLosses); break;
+                        case "1st": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 1)); break;
+                        case "2nd": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 2)); break;
+                        case "3rd": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 3)); break;
+                        case "4th": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 4)); break;
                     }
                 }
 
@@ -149,6 +159,20 @@ namespace TenhouViewer.Tournier
             }
 
             return MaxValue;
+        }
+
+        private float GetPlacePercent(Result R, int Place)
+        {
+            int Count = 0;
+
+            if (R.Places.Count == 0) return 0.0f;
+
+            for (int i = 0; i < R.Places.Count; i++)
+            {
+                if (R.Places[i] == Place) Count++;
+            }
+
+            return 100.0f * Count / R.Places.Count;
         }
     }
 }

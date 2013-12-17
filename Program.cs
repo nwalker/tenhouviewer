@@ -217,6 +217,7 @@ namespace TenhouViewer
             Console.WriteLine(" sortdesc=N - sort by parameter by descending (place,points,balance,loss,acq);");
             Console.WriteLine(" index - player's index (in table, from 1);");
             Console.WriteLine(" nickname - player's nickname;");
+            Console.WriteLine(" games - player's games count;");
             Console.WriteLine(" placelist - player's places as string (1123412);");
             Console.WriteLine(" place - player's average place;");
             Console.WriteLine(" points - player's total points;");
@@ -225,6 +226,10 @@ namespace TenhouViewer
             Console.WriteLine(" agari - player's completed hands count;");
             Console.WriteLine(" acq - player's total acquisitions;");
             Console.WriteLine(" loss - player's total losses;");
+            Console.WriteLine(" 1st - percent of first place;");
+            Console.WriteLine(" 2nd - percent of second place;");
+            Console.WriteLine(" 3rd - percent of third place;");
+            Console.WriteLine(" 4th - percent of fourth place;");
 
         }
 
