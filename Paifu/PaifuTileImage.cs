@@ -8,6 +8,8 @@ namespace TenhouViewer.Paifu
 {
     class PaifuTileImage
     {
+        public static string TilesDirectory = "tiles";
+
         Mahjong.Tile Tile;
         public Bitmap Bmp;
         public Bitmap Original;
@@ -32,10 +34,15 @@ namespace TenhouViewer.Paifu
                     break;
             }
 
-            string FileName = String.Format(".//tiles//{0:s}.gif", TileName);
+            string FileName = String.Format(".//{0:s}//{1:s}.gif", TilesDirectory, TileName);
 
             // Add png option
-            if (!File.Exists(FileName)) FileName = String.Format(".//tiles//{0:s}.png", TileName);
+            if (!File.Exists(FileName)) FileName = String.Format(".//{0:s}//{1:s}.png", TilesDirectory, TileName);
+            if (!File.Exists(FileName))
+            {
+                FileName = String.Format(".//tiles//{1:s}.gif", TilesDirectory, TileName);
+                if (!File.Exists(FileName)) FileName = String.Format(".//tiles//{0:s}.png", TileName);
+            }
 
             Bitmap B = new Bitmap(FileName);
             Original = B;// new Bitmap(B);

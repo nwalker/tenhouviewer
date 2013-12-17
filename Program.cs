@@ -180,6 +180,7 @@ namespace TenhouViewer
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
             Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
+            Console.WriteLine(" tileset=dir - alternate directory with tile images (folder name);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -u <params> - get paifu for all rounds, which was found before:");
@@ -190,6 +191,7 @@ namespace TenhouViewer
             Console.WriteLine(" danger - highlight danger tiles (0-[1]);");
             Console.WriteLine(" color - mark shanten number by colorized rectangle (0-[1]);");
             Console.WriteLine(" sex - mark player's sex by color ([0]-1);");
+            Console.WriteLine(" tileset=dir - alternate directory with tile images (folder name);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -I<hash> <params> - get discard:");
@@ -201,14 +203,16 @@ namespace TenhouViewer
             Console.WriteLine(" naki - highlight tiles got other players;");
             Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
             Console.WriteLine(" hand - output hand image for this discard;");
+            Console.WriteLine(" tileset=dir - alternate directory with tile images (folder name);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -i <params> - get discards for all rounds, which was found before:");
             Console.WriteLine(" dir - directory to save result (for all rounds);");
             Console.WriteLine(" riichi - limit discard to riichi declaration;");
-            Console.WriteLine(" naki - highlight tiles got other players;");
+            Console.WriteLine(" naki - highlight tiles got by other players;");
             Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
             Console.WriteLine(" hand - output hand image for this discard;");
+            Console.WriteLine(" tileset=dir - alternate directory with tile images (folder name);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -t <params> - get results table for all rounds, which was found before (tournier mode):");
@@ -416,6 +420,9 @@ namespace TenhouViewer
             {
                 switch (A.Name)
                 {
+                    case "tileset":
+                        Paifu.PaifuTileImage.TilesDirectory = A.Value;
+                        break;
                     case "dir":
                         Dir = A.Value;
                         break;
@@ -500,6 +507,9 @@ namespace TenhouViewer
             {
                 switch (A.Name)
                 {
+                    case "tileset":
+                        Paifu.PaifuTileImage.TilesDirectory = A.Value;
+                        break;
                     case "dir":
                         Dir = A.Value;
                         if (!Directory.Exists(Dir))
@@ -586,6 +596,9 @@ namespace TenhouViewer
             {
                 switch (A.Name)
                 {
+                    case "tileset":
+                        Paifu.PaifuTileImage.TilesDirectory = A.Value;
+                        break;
                     case "dir":
                         Dir = A.Value;
                         break;
@@ -691,6 +704,9 @@ namespace TenhouViewer
             {
                 switch (A.Name)
                 {
+                    case "tileset":
+                        Paifu.PaifuTileImage.TilesDirectory = A.Value;
+                        break;
                     case "dir":
                         Dir = A.Value;
                         if (!Directory.Exists(Dir))
