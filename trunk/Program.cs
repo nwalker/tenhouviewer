@@ -210,6 +210,9 @@ namespace TenhouViewer
             Console.WriteLine(" tsumogiri - highlight tiles discarded from wall;");
             Console.WriteLine(" hand - output hand image for this discard;");
 
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -t <params> - get results table for all rounds, which was found before (tournier mode):");
+            Console.WriteLine(" mingames=N - only players, who has at least N games;");
         }
 
         static void ParseArgs(string[] args)
@@ -341,6 +344,24 @@ namespace TenhouViewer
 
             // Fields analyze
             for (int i = 0; i < ArgList.Count; i++) Plotter.Fields.Add(ArgList[i].Name);
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                int TempValue;
+
+                switch (A.Name)
+                {
+                    case "mingames":
+                        TempValue = ParseIntArg(A.Value, 0, 1000, "mingames");
+                        if (TempValue != -1)
+                        {
+                            Plotter.MinimalGamesCount = TempValue;
+                            Console.WriteLine(String.Format("Filter: players, who has at least {0:d} games;", TempValue));
+                        }
+                        break;
+                }
+            }
 
             return Plotter.GamesGraph();
         }
