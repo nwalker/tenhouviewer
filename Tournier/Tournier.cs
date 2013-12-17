@@ -29,8 +29,25 @@ namespace TenhouViewer.Tournier
                     {
                         Result Res = GetPlayerResult(R.Players[p].NickName);
 
-                        Res.AddResult(R.Place[p], R.Balance[p]);
+                        Res.AddResult(R.Place[p], R.Result[p], R.Balance[p]);
                         Res.Replays.Add(R);
+
+                        for (int r = 0; r < R.Rounds.Count; r++)
+                        {
+                            Mahjong.Round Rnd = R.Rounds[r];
+
+                            if (Rnd.Winner[p]) Res.AgariCount++;
+                            if (Rnd.Loser[p]) Res.RonCount++;
+
+                            if (Rnd.Pay[p] >= 0)
+                            {
+                                Res.TotalAcquisitions += Rnd.Pay[p];
+                            }
+                            else
+                            {
+                                Res.TotalLosses += Rnd.Pay[p];
+                            }
+                        }
                     }
                 }
             }
