@@ -37,6 +37,12 @@ namespace TenhouViewer.Tournier
         // Player's nickname
         public string NickName = null;
 
+        // Player's rank
+        public int Rank = 0;
+
+        // Player's rating
+        public int Rating = 0;
+
         public Result(string Name)
         {
             NickName = Name;

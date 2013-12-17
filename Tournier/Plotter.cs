@@ -33,6 +33,8 @@ namespace TenhouViewer.Tournier
                     {
                         case "index": Temp += "Index\t"; break;
                         case "nickname": Temp += "NickName\t"; break;
+                        case "rank": Temp += "Rank\t"; break;
+                        case "rating": Temp += "Rating\t"; break;
                         case "games": Temp += "Games\t"; break;
                         case "placelist": Temp += "Places\t"; break;
                         case "place": Temp += "Avg. place\t"; break;
@@ -65,6 +67,8 @@ namespace TenhouViewer.Tournier
                     {
                         case "index": Temp += String.Format("{0:d}\t", PlayerIndex); break;
                         case "nickname": Temp += String.Format("{0:s}\t", R.NickName); break;
+                        case "rank": Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Rank)); break;
+                        case "rating": Temp += String.Format("{0:d}R\t", R.Rating); break;
                         case "games": Temp += String.Format("{0:d}\t", R.Places.Count); break;
                         case "placelist": Temp += String.Format("{0:s}\t", R.GetPlaceList()); break;
                         case "place": Temp += String.Format("{0:f}\t", R.AveragePlace); break;
@@ -105,8 +109,17 @@ namespace TenhouViewer.Tournier
                 case "loss": ResultList = ResultList.OrderBy(o => o.TotalLosses).ToList();
                     Console.WriteLine("Sort: by losses;");
                     break;
-                case "acq": ResultList = ResultList.OrderBy(o => o.TotalAcquisitions).ToList();
+                case "acq":
+                    ResultList = ResultList.OrderBy(o => o.TotalAcquisitions).ToList();
                     Console.WriteLine("Sort: by acquisions;");
+                    break;
+                case "rank":
+                    ResultList = ResultList.OrderBy(o => o.Rank).ToList();
+                    Console.WriteLine("Sort: by rank;");
+                    break;
+                case "rating":
+                    ResultList = ResultList.OrderBy(o => o.Rating).ToList();
+                    Console.WriteLine("Sort: by rating;");
                     break;
             }
         }
@@ -134,6 +147,14 @@ namespace TenhouViewer.Tournier
                 case "acq":
                     ResultList = ResultList.OrderByDescending(o => o.TotalAcquisitions).ToList();
                     Console.WriteLine("Sort descending: by acquisions;");
+                    break;
+                case "rank":
+                    ResultList = ResultList.OrderByDescending(o => o.Rank).ToList();
+                    Console.WriteLine("Sort descending: by rank;");
+                    break;
+                case "rating":
+                    ResultList = ResultList.OrderByDescending(o => o.Rating).ToList();
+                    Console.WriteLine("Sort descending: by rating;");
                     break;
             }
         }

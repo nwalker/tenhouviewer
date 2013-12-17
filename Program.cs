@@ -213,10 +213,12 @@ namespace TenhouViewer
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -t <params> - get results table for all rounds, which was found before (tournier mode):");
             Console.WriteLine(" mingames=N - only players, who has at least N games;");
-            Console.WriteLine(" sort=N - sort by parameter (place,points,balance,loss,acq);");
-            Console.WriteLine(" sortdesc=N - sort by parameter by descending (place,points,balance,loss,acq);");
+            Console.WriteLine(" sort=N - sort by parameter (place,points,balance,loss,acq,rank,rating);");
+            Console.WriteLine(" sortdesc=N - sort by parameter by descending (place,points,balance,loss,acq,rank,rating);");
             Console.WriteLine(" index - player's index (in table, from 1);");
             Console.WriteLine(" nickname - player's nickname;");
+            Console.WriteLine(" rank - player's rank;");
+            Console.WriteLine(" rating - player's rating;");
             Console.WriteLine(" games - player's games count;");
             Console.WriteLine(" placelist - player's places as string (1123412);");
             Console.WriteLine(" place - player's average place;");
@@ -230,7 +232,6 @@ namespace TenhouViewer
             Console.WriteLine(" 2nd - percent of second place;");
             Console.WriteLine(" 3rd - percent of third place;");
             Console.WriteLine(" 4th - percent of fourth place;");
-
         }
 
         static void ParseArgs(string[] args)

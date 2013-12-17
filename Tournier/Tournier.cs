@@ -32,6 +32,9 @@ namespace TenhouViewer.Tournier
                         Res.AddResult(R.Place[p], R.Result[p], R.Balance[p]);
                         Res.Replays.Add(R);
 
+                        Res.Rank = R.Players[p].Rank;
+                        Res.Rating = R.Players[p].Rating;
+
                         for (int r = 0; r < R.Rounds.Count; r++)
                         {
                             Mahjong.Round Rnd = R.Rounds[r];
