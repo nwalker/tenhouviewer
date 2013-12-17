@@ -213,6 +213,19 @@ namespace TenhouViewer
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -t <params> - get results table for all rounds, which was found before (tournier mode):");
             Console.WriteLine(" mingames=N - only players, who has at least N games;");
+            Console.WriteLine(" sort=N - sort by parameter (place,points,balance,loss,acq);");
+            Console.WriteLine(" sortdesc=N - sort by parameter by descending (place,points,balance,loss,acq);");
+            Console.WriteLine(" index - player's index (in table, from 1);");
+            Console.WriteLine(" nickname - player's nickname;");
+            Console.WriteLine(" placelist - player's places as string (1123412);");
+            Console.WriteLine(" place - player's average place;");
+            Console.WriteLine(" points - player's total points;");
+            Console.WriteLine(" balance - player's balance (+uma);");
+            Console.WriteLine(" ron - how many times player dealt in ron;");
+            Console.WriteLine(" agari - player's completed hands count;");
+            Console.WriteLine(" acq - player's total acquisitions;");
+            Console.WriteLine(" loss - player's total losses;");
+
         }
 
         static void ParseArgs(string[] args)
@@ -359,6 +372,12 @@ namespace TenhouViewer
                             Plotter.MinimalGamesCount = TempValue;
                             Console.WriteLine(String.Format("Filter: players, who has at least {0:d} games;", TempValue));
                         }
+                        break;
+                    case "sort":
+                        Plotter.Sort(A.Value);
+                        break;
+                    case "sortdesc":
+                        Plotter.SortDescending(A.Value);
                         break;
                 }
             }
