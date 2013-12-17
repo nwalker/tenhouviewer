@@ -24,6 +24,29 @@ namespace TenhouViewer.Tournier
             int PlayerIndex = 1;
             int MaxGameCount = GetMaxGameCount();
 
+            // Add fields name
+            {
+                string Temp = "";
+                for (int i = 0; i < Fields.Count; i++)
+                {
+                    switch (Fields[i])
+                    {
+                        case "index": Temp += "Index\t"; break;
+                        case "nickname": Temp += "NickName\t"; break;
+                        case "placelist": Temp += "Places\t"; break;
+                        case "place": Temp += "Avg. place\t"; break;
+                        case "points": Temp += "Points\t"; break;
+                        case "balance": Temp += "Balance\t"; break;
+                        case "ron": Temp += "Dealt to ron\t"; break;
+                        case "agari": Temp += "Hands\t"; break;
+                        case "acq": Temp += "Acquisitions\t"; break;
+                        case "loss": Temp += "Losses\t"; break;
+                    }
+                }
+
+                Output.Add(Temp);
+            }
+
             for (int i = 0; i < ResultList.Count; i++)
             {
                 Result R = ResultList[i];
