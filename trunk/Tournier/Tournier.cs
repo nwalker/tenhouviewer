@@ -7,40 +7,35 @@ namespace TenhouViewer.Tournier
 {
     class Tournier
     {
-        private List<Mahjong.Replay> Replays = new List<Mahjong.Replay>();
+        List<Search.Result> GamesList;
         private List<Result> Results = new List<Result>();
 
-        public Tournier(Tenhou.TenhouHashList Hashes)
+        public Tournier(List<Search.Result> Games)
         {
-            // Build result list
-            for (int h = 0; h < Hashes.Hashes.Count; h++)
-            {
-                string Hash = Hashes.Hashes[h];
-                Mahjong.Replay R = new Mahjong.Replay();
-
-                Console.Title = String.Format("Loading {0:d}/{1:d}", h + 1, Hashes.Hashes.Count);
-
-                if (R.LoadXml(Hash))
-                {
-                    Replays.Add(R);
-                }
-            }
+            GamesList = Games;
         }
 
-        public void Analyze()
+        public List<Result> Analyze()
         {
-            // Analyze player's results
-            for (int i = 0; i < Replays.Count; i++)
+            if (GamesList != null)
             {
-                Mahjong.Replay R = Replays[i];
-
-                for (int p = 0; p < R.PlayerCount; p++)
+                Results.Clear();
+                // Analyze player's results
+                for (int i = 0; i < GamesList.Count; i++)
                 {
-                    Result Res = GetPlayerResult(R.Players[p].NickName);
+                    Mahjong.Replay R = GamesList[i].Replay;
 
-                    Res.AddResult(R.Place[p], R.Balance[p]);
+                    for (int p = 0; p < R.PlayerCount; p++)
+                    {
+                        Result Res = GetPlayerResult(R.Players[p].NickName);
+
+                        Res.AddResult(R.Place[p], R.Balance[p]);
+                        Res.Replays.Add(R);
+                    }
                 }
             }
+
+            return Results;
         }
 
         private Result GetPlayerResult(string Name)

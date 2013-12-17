@@ -317,9 +317,9 @@ namespace TenhouViewer
                         // Discard by hash
                         CreateDiscard(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
-                    case "T":
-                        // Analyze log as tournier games list
-                        
+                    case "t":
+                        // Analyze find results as tournier games list
+                        FindResult = AnalyzeTournier(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                 }
             }
@@ -330,6 +330,19 @@ namespace TenhouViewer
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 foreach(string Line in FindResult) Console.WriteLine(Line);
             }
+        }
+
+        static List<string> AnalyzeTournier(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            Tournier.Tournier T = new Tournier.Tournier(Results);
+            List<Tournier.Result> ResultList = T.Analyze();
+
+            Tournier.Plotter Plotter = new Tournier.Plotter(ResultList);
+
+            // Fields analyze
+            for (int i = 0; i < ArgList.Count; i++) Plotter.Fields.Add(ArgList[i].Name);
+
+            return Plotter.GamesGraph();
         }
 
         static void CreateDiscard(string Hash, List<Argument> ArgList, List<Search.Result> Results)
@@ -850,6 +863,8 @@ namespace TenhouViewer
         static List<string> ConvertResultsToString(List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
+
+            if (Results == null) return Output;
 
             for (int i = 0; i < Results.Count; i++)
             {
