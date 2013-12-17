@@ -7,6 +7,9 @@ namespace TenhouViewer.Tournier
 {
     class Result
     {
+        // Replay
+        public List<Mahjong.Replay> Replays = new List<TenhouViewer.Mahjong.Replay>();
+
         // Player's places
         public List<int> Places = new List<int>();
 

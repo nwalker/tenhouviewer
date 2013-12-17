@@ -8,7 +8,6 @@ namespace TenhouViewer.Tournier
     class Plotter
     {
         public List<string> Fields = new List<string>();
-
         private List<Result> ResultList = null;
 
         public Plotter(List<Result> Results)
