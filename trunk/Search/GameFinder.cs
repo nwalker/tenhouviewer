@@ -104,6 +104,10 @@ namespace TenhouViewer.Search
         public int DoraMax = -1;
         public int DoraMin = -1;
 
+        // Outs in dead wall
+        public int DeadOutsMax = -1;
+        public int DeadOutsMin = -1;
+
         // Lobby
         public int Lobby = -1;
 
@@ -254,6 +258,7 @@ namespace TenhouViewer.Search
                 CheckColor(R);
                 CheckSuji(R);
                 CheckDora(R);
+                CheckDeadOuts(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -1176,8 +1181,54 @@ namespace TenhouViewer.Search
             }
         }
 
+        private int GetDeadWaitCount(Mahjong.Round Rnd, int KanCount, int[] Waiting)
+        {
+            int Count = 0;
+            for (int i = KanCount; i < 14 + KanCount; i++)
+            {
+                Mahjong.Tile T = new Mahjong.Tile(Rnd.Wall.Tiles[i]);
+
+                if (Waiting.Contains(T.TileId)) Count++;
+            }
+
+            return Count;
+        }
+
+        private void CheckDeadOuts(Result R)
+        {
+            if ((DeadOutsMin == -1) && (DeadOutsMax != -1)) return;
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                for (int p = 0; p < R.Replay.PlayerCount; p++)
+                {
+                    int KanCount = 0;
+                    int MaxOuts = 0;
+                    for (int j = 0; j < Rnd.Steps.Count; j++)
+                    {
+                        Mahjong.Step S = Rnd.Steps[j];
+                        if(S.Type == Mahjong.StepType.STEP_NEWDORA) KanCount++;
+                        if (S.Player != p) continue;
+
+                        if (S.Waiting != null)
+                        {
+                            int Outs = GetDeadWaitCount(Rnd, KanCount, S.Waiting);
+
+                            if (Outs > MaxOuts) MaxOuts = Outs;
+                        }
+                    }
+
+                    if ((DeadOutsMax != -1) && (DeadOutsMax < MaxOuts)) R.HandMark[i][p] = false;
+                    if ((DeadOutsMin != -1) && (DeadOutsMin > MaxOuts)) R.HandMark[i][p] = false;
+                }
+            }
+        }
+
         private void CheckDangerSteps(Result R)
         {
+            if ((DangerMin == -1) && (DangerMax != -1)) return;
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];

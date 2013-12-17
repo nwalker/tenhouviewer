@@ -59,6 +59,8 @@ namespace TenhouViewer
             Console.WriteLine(" fumax=N - find all hands which has fu count less (or equal) than N (1-120);");
             Console.WriteLine(" dangermin=N - find all hands which has danger tiles count greater (or equal) than N (0-14);");
             Console.WriteLine(" dangermax=N - find all hands which has danger tiles  count less (or equal) than N (0-14);");
+            Console.WriteLine(" deadoutsmin=N - find all hands which has count of outs in dead wall greater (or equal) than N (1-14);");
+            Console.WriteLine(" deadoutsmax=N - find all hands which has count of outs in dead wall less (or equal) than N (1-14);");
             Console.WriteLine(" place=N - find all players, who took N place (1-4);");
             Console.WriteLine(" rank=N - find all players, who has rank N (0-20);");
             Console.WriteLine(" nickname=N - find player, who has nickname N (string);");
@@ -1256,6 +1258,18 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.DoraMax = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only hands, which has dora count less (or equal) than {0:d};", TempValue));
+                        break;
+                    case "deadoutsmin":
+                        TempValue = ParseIntArg(Value, 0, 14, "deadoutsmin");
+                        if (TempValue != -1) Finder.DeadOutsMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has count of outs in dead wall greater (or equal) than {0:d};", TempValue));
+                        break;
+                    case "deadoutsmax":
+                        TempValue = ParseIntArg(Value, 0, 14, "deadoutsmax");
+                        if (TempValue != -1) Finder.DeadOutsMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has count of outs in dead wall less (or equal) than {0:d};", TempValue));
                         break;
                     case "furiten":
                         Finder.Furiten = ParseBoolArg(Value, "furiten");
