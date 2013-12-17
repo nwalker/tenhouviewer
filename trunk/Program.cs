@@ -264,7 +264,7 @@ namespace TenhouViewer
                     case "d":
                         // Download games by log
                         // -dLog.txt
-                        DownloadLog(ArgList[i].Value);
+                        DownloadLog(ArgList[i].Value, ArgList[i].Arguments);
                         break;
                     case "P":
                         // Parse game by hash
@@ -274,7 +274,7 @@ namespace TenhouViewer
                     case "p":
                         // Parse games by log
                         // -pLog.txt
-                        ParseLog(ArgList[i].Value);
+                        ParseLog(ArgList[i].Value, ArgList[i].Arguments);
                         break;
                     case "f":
                         // Parse games by log (can be iterative)
@@ -984,8 +984,23 @@ namespace TenhouViewer
             Console.WriteLine(" - ok!");
         }
 
-        static void DownloadLog(string FileName)
+        static void DownloadLog(string FileName, List<Argument> ArgList)
         {
+            string Dir = LogDir;
+
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value + "/" + LogDir;
+                        if (!Directory.Exists(Dir))
+                            Directory.CreateDirectory(Dir);
+                        break;
+
+                }
+            }
+
             Console.WriteLine("Downloading games from log: " + FileName);
 
             if (!File.Exists(FileName))
@@ -995,7 +1010,7 @@ namespace TenhouViewer
             }
 
             Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
-            Log.DownloadAll(LogDir);
+            Log.DownloadAll(Dir);
         }
 
         static void ParseHash(string Hash)
@@ -1022,8 +1037,23 @@ namespace TenhouViewer
             Console.WriteLine(" - ok!");
         }
 
-        static void ParseLog(string FileName)
+        static void ParseLog(string FileName, List<Argument> ArgList)
         {
+            string Dir = LogDir;
+
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        Dir = A.Value + "/" + LogDir;
+                        if (!Directory.Exists(Dir))
+                            Directory.CreateDirectory(Dir);
+                        break;
+
+                }
+            }
+
             Console.WriteLine("Parsing games from log: " + FileName);
 
             if (!File.Exists(FileName))
@@ -1037,7 +1067,7 @@ namespace TenhouViewer
 
             foreach (string Hash in Hashes)
             {
-                string ReplayFileName = Log.GetFileName(Hash, LogDir);
+                string ReplayFileName = Log.GetFileName(Hash, Dir);
 
                 Console.Write(Hash);
 

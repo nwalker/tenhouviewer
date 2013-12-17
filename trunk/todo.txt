@@ -14,9 +14,7 @@
   - extended: analyze level of dangerous [http://osamuko.com/basic-defense-techniques-in-mahjong/]
 13. waiting type: ryanmen, sanmenchan, kanchan, penchan, tanki, syanpon, etc
 14. sliding forms
-15. tournier mode?
-  - build games table;
-  - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
+15. tournier mode? v
   - list of interesting events (yaku, cost, ...);
   - adjustable uma?
 16. parsed logs from different files (for example, log.txt, tournier.txt) in different folders: parsed/log/..., parsed/tournier/... [specified by option folder=]?
@@ -38,6 +36,10 @@ completed:
 9. forms search [2334, 34455 etc]
 11. options for paifu generation [shanten, yaku, nicknames (or A, B, C, D)]
 17. detect and search by suit of color hands (unify discard examples for color hands to one suit), search forced-to-suit hands (>80% tiles in hand in one suit);
+15. tournier mode?
+  - build games table;
+  - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
 
+  
 bug:
 Naki field "FromWho" is incorrect!
