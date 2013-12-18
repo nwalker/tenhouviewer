@@ -249,10 +249,7 @@ namespace TenhouViewer.Mahjong
             // Count valuable naki
             for (i = 0; i < Hand.Naki.Count; i++)
             {
-                if (Hand.Naki[i].Type == NakiType.NUKI) continue;
-                if (Hand.Naki[i].Type == NakiType.CHAKAN) continue;
-                    
-                Mentsu++;
+                if (Hand.Naki[i].Type != NakiType.NUKI) Mentsu++;
             }
 
             for (i = 1; i < 38; i++)
