@@ -526,7 +526,6 @@ namespace TenhouViewer.Mahjong
                             X.WriteTag("waiting", "value", WaitingList[k]);
                         }
                         X.EndTag();
-                        break;
                     }
                     X.EndTag();
                 }
