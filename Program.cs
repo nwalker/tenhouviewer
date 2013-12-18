@@ -94,11 +94,13 @@ namespace TenhouViewer
             Console.WriteLine(" senkisuji=N - find all hands which has (not) senki-suji waiting to discard (0-1);");
             Console.WriteLine(" urasuji=N - find all hands which has (not) ura-suji waiting to discard (0-1);");
             Console.WriteLine(" matagisuji=N - find all hands which has (not) matagi-suji waiting to discard (0-1);");
+            Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" index - round index in list;");
+            Console.WriteLine(" players - player count;");
             Console.WriteLine(" initshanten - shanten in start hand in round;");
             Console.WriteLine(" pay - payment in round;");
             Console.WriteLine(" tempai - is hand was tempai (1 or 0);");
@@ -119,7 +121,6 @@ namespace TenhouViewer
             Console.WriteLine(" playerwind - player's wind;");
             Console.WriteLine(" players - count of players in round;");
             Console.WriteLine(" draw - round ended in draw;");
-            Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -G<nickname> <fields> - graph games (which found by -f flag) with fields:");
@@ -1300,12 +1301,12 @@ namespace TenhouViewer
                     case "ron":
                         Finder.Ron = ParseBoolArg(Value, "ron");
 
-                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron agari;", (Finder.Riichi == 0) ? "without" : "with"));
+                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron agari;", (Finder.Ron == 0) ? "without" : "with"));
                         break;
                     case "tsumo":
                         Finder.Tsumo = ParseBoolArg(Value, "tsumo");
 
-                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} tsumo agari;", (Finder.Riichi == 0) ? "without" : "with"));
+                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} tsumo agari;", (Finder.Tsumo == 0) ? "without" : "with"));
                         break;
                     case "riichicount":
                         TempValue = ParseIntArg(Value, 0, 4, "riichicount");
