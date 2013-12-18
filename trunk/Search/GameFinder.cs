@@ -818,7 +818,7 @@ namespace TenhouViewer.Search
                     bool RonAgari = (Rnd.Loser.Contains(true));
                     bool Winner = (Rnd.Winner.Contains(true));
 
-                    if ((!Winner) && (RonAgari != IsRon)) R.RoundMark[i] = false;
+                    if ((!Winner) || (RonAgari != IsRon)) R.RoundMark[i] = false;
                 }
             }
 
@@ -833,7 +833,7 @@ namespace TenhouViewer.Search
                     bool RonAgari = (Rnd.Loser.Contains(true));
                     bool Winner = (Rnd.Winner.Contains(true));
 
-                    if ((!Winner) && (RonAgari == IsTsumo)) R.RoundMark[i] = false;
+                    if ((!Winner) || (RonAgari == IsTsumo)) R.RoundMark[i] = false;
                 }
             }
         }
