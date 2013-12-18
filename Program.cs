@@ -34,6 +34,7 @@ namespace TenhouViewer
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
+            Console.WriteLine(" force - force parsing (don't skip exists files);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
@@ -645,7 +646,7 @@ namespace TenhouViewer
                 if (FN == null)
                 {
                     if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
-                    FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, Round);
+                    FileName = String.Format("./{0:s}/{1:s}_{2:d}.png", Dir, Hash, i);
                 }
                 else
                 {
@@ -1059,6 +1060,8 @@ namespace TenhouViewer
         static void ParseLog(string FileName, List<Argument> ArgList)
         {
             string Dir = LogDir;
+            bool Forced = false;
+            bool Rewrited;
 
             foreach (Argument A in ArgList)
             {
@@ -1069,7 +1072,9 @@ namespace TenhouViewer
                         if (!Directory.Exists(Dir))
                             Directory.CreateDirectory(Dir);
                         break;
-
+                    case "force":
+                        Forced = true;
+                        break;
                 }
             }
 
@@ -1084,11 +1089,15 @@ namespace TenhouViewer
             Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
             List<string> Hashes = Log.HashList.Hashes;
 
-            foreach (string Hash in Hashes)
+            for (int i = 0; i < Hashes.Count; i++)
             {
+                string Hash = Hashes[i];
                 string ReplayFileName = Log.GetFileName(Hash, Dir);
 
+                Console.Title = String.Format("Parsing {0:d}/{1:d}", i + 1, Hashes.Count);
                 Console.Write(Hash);
+
+                Rewrited = false;
 
                 if (!File.Exists(ReplayFileName))
                 {
@@ -1098,8 +1107,15 @@ namespace TenhouViewer
 
                 if (Mahjong.Replay.IsReplayExist(Hash))
                 {
-                    Console.WriteLine(" - exists, skip!");
-                    continue;
+                    if (!Forced)
+                    {
+                        Console.WriteLine(" - exists, skip!");
+                        continue;
+                    }
+                    else
+                    {
+                        Rewrited = true;
+                    }
                 }
 
                 if (new FileInfo(ReplayFileName).Length == 0)
@@ -1117,7 +1133,7 @@ namespace TenhouViewer
                 Replay.ReplayGame();
                 Replay.Save();
 
-                Console.WriteLine(" - ok!");
+                Console.WriteLine(Rewrited ? " - replaced, ok!" : " - ok!");
             }
         }
 
