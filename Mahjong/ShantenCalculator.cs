@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TenhouViewer.Mahjong
@@ -19,9 +20,10 @@ namespace TenhouViewer.Mahjong
     {
         private Hand Hand;
         private uint[] Tehai = new uint[38]; // Для анализа руки
+        private uint[] BasicTehai = new uint[38]; // Неизменённая версия для анализа
 
         private int WaitingCount = -1; // количество сторон в выигрышном ожидании
-        private uint[] Waitings = new uint[38]; // Выигрышные ожидания
+        private int[] Waitings = new int[38]; // Выигрышные ожидания
 
         // Completed and uncompleted forms in hand
         private Stack Forms = new Stack();
@@ -57,6 +59,7 @@ namespace TenhouViewer.Mahjong
             {
                 Waitings[i] = 0;
                 Tehai[i] = 0;
+                BasicTehai[i] = 0;
             }
 
             for (i = 0; i < 14; i++)
@@ -66,6 +69,7 @@ namespace TenhouViewer.Mahjong
                     Tile T = new Tile(Hand.Tiles[i]);
 
                     Tehai[T.TileId]++;
+                    BasicTehai[T.TileId]++;
                 }
             }
         }
@@ -99,6 +103,7 @@ namespace TenhouViewer.Mahjong
 
             Stack Temp = (Stack)Forms.Clone();
             bool IsSyanpon = false;
+            int SyanponAlternativeWait = -1;
 
             for (i = 0; i < Forms.Count; i++)
             {
@@ -114,11 +119,21 @@ namespace TenhouViewer.Mahjong
                 {
                     case FormType.Toitsu:
                         if (!IsSyanpon) break;
-                        if (Waitings[Tile1] == 0) { Waitings[Tile1] = 1; WaitingCount++; }
 
+                        if (SyanponAlternativeWait == Tile1)
+                        {
+                            // Wait on similar tile?
+                            if (Waitings[Tile1] > 0) Waitings[Tile1] = 0;
+                        }
+                        else
+                        {
+                            // Wait on different tile
+                            if (Waitings[Tile1] == 0) { Waitings[Tile1] = 1; WaitingCount++; }
+                        }
                         break;
                     case FormType.ToitsuWait:
                         IsSyanpon = true;
+                        SyanponAlternativeWait = Tile1;
                         if (Waitings[Tile1] == 0) { Waitings[Tile1] = 1; WaitingCount++; }
                         break;
                     case FormType.Ryanmen:
@@ -203,6 +218,7 @@ namespace TenhouViewer.Mahjong
             // Waiting calculation
             if (TempShanten == 0)
             {
+                // Terminals?
                 for (i = 1; i < 30; i++)
                 {
                     if ((i % 10 == 1) || (i % 10 == 9))
@@ -214,6 +230,7 @@ namespace TenhouViewer.Mahjong
                     }
                 }
 
+                // Jihai?
                 for (i = 31; i < 38; i++)
                 {
                     if (Tehai[i] == 0)
@@ -329,7 +346,8 @@ namespace TenhouViewer.Mahjong
                             // Ожидание танки!
                             for (int j = 0; j < Tehai.Length; j++)
                             {
-                                if (Tehai[j] > 0)
+                                // Cannot wait on fifth tile!
+                                if ((Tehai[j] > 0) && (BasicTehai[j] != 4))
                                 {
                                     if (Waitings[j] == 0) { Waitings[j] = 1; WaitingCount++; }
                                 }
@@ -347,6 +365,9 @@ namespace TenhouViewer.Mahjong
                         }
                     }
 
+                    // If no actual waitings and tempai - ishanten!
+                    if (!Waitings.Contains(1) && (Temp == 0)) Temp = 1;
+                    
                     TempShantenNormal = Temp;
                 }
                 return;

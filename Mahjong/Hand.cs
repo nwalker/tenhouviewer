@@ -25,7 +25,7 @@ namespace TenhouViewer.Mahjong
 
         public void SetArray(int[] Tiles)
         {
-            for (int i = 0; i < 13; i++) this.Tiles[i] = Tiles[i];
+            for (int i = 0; i < Tiles.Length; i++) this.Tiles[i] = Tiles[i];
 
             Array.Sort(this.Tiles);
         }
