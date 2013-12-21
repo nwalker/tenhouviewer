@@ -50,8 +50,8 @@
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="Discarder\Discard.cs" />
     <Compile Include="Discarder\HandOutput.cs" />
-    <Compile Include="Paifu\PaifuGenerator.cs" />
-    <Compile Include="Paifu\PaifuTileImage.cs" />
+    <Compile Include="Mahjong\Paifu\PaifuGenerator.cs" />
+    <Compile Include="Mahjong\Paifu\PaifuTileImage.cs" />
     <Compile Include="Search\GameFinder.cs" />
     <Compile Include="Mahjong\Hand.cs" />
     <Compile Include="Mahjong\Naki.cs" />

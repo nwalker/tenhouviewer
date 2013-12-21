@@ -1241,32 +1241,39 @@ namespace TenhouViewer.Search
 
         private void CheckDeadOuts(Result R)
         {
-            if ((DeadOutsMin == -1) && (DeadOutsMax != -1)) return;
+            if ((DeadOutsMin == -1) && (DeadOutsMax == -1)) return;
 
             for (int i = 0; i < R.Replay.Rounds.Count; i++)
             {
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                for (int p = 0; p < R.Replay.PlayerCount; p++)
+                if (Rnd.Wall != null)
                 {
-                    int KanCount = 0;
-                    int MaxOuts = 0;
-                    for (int j = 0; j < Rnd.Steps.Count; j++)
+                    for (int p = 0; p < R.Replay.PlayerCount; p++)
                     {
-                        Mahjong.Step S = Rnd.Steps[j];
-                        if(S.Type == Mahjong.StepType.STEP_NEWDORA) KanCount++;
-                        if (S.Player != p) continue;
-
-                        if (S.Waiting != null)
+                        int KanCount = 0;
+                        int MaxOuts = 0;
+                        for (int j = 0; j < Rnd.Steps.Count; j++)
                         {
-                            int Outs = GetDeadWaitCount(Rnd, KanCount, S.Waiting);
+                            Mahjong.Step S = Rnd.Steps[j];
+                            if (S.Type == Mahjong.StepType.STEP_NEWDORA) KanCount++;
+                            if (S.Player != p) continue;
 
-                            if (Outs > MaxOuts) MaxOuts = Outs;
+                            if (S.Waiting != null)
+                            {
+                                int Outs = GetDeadWaitCount(Rnd, KanCount, S.Waiting);
+
+                                if (Outs > MaxOuts) MaxOuts = Outs;
+                            }
                         }
-                    }
 
-                    if ((DeadOutsMax != -1) && (DeadOutsMax < MaxOuts)) R.HandMark[i][p] = false;
-                    if ((DeadOutsMin != -1) && (DeadOutsMin > MaxOuts)) R.HandMark[i][p] = false;
+                        if ((DeadOutsMax != -1) && (DeadOutsMax < MaxOuts)) R.HandMark[i][p] = false;
+                        if ((DeadOutsMin != -1) && (DeadOutsMin > MaxOuts)) R.HandMark[i][p] = false;
+                    }
+                }
+                else
+                {
+                    R.RoundMark[i] = false;
                 }
             }
         }
