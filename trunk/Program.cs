@@ -35,6 +35,7 @@ namespace TenhouViewer
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -pLog.txt - parse all games from log Log.txt;");
             Console.WriteLine(" force - force parsing (don't skip exists files);");
+            Console.WriteLine(" mjlog=D - check replays .mjlog in specified folder if exists (if not - from download folder);");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
@@ -242,6 +243,9 @@ namespace TenhouViewer
             Console.WriteLine(" 2nd - percent of second place;");
             Console.WriteLine(" 3rd - percent of third place;");
             Console.WriteLine(" 4th - percent of fourth place;");
+
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -b<directory> - build log from directory's content with mjlog files;");
         }
 
         static void ParseArgs(string[] args)
@@ -353,6 +357,10 @@ namespace TenhouViewer
                         // Analyze find results as tournier games list
                         FindResult = AnalyzeTournier(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
+                    case "b":
+                        // Build log from directory's content with mjlog files
+                        FindResult = BuildLogFromMjlogFiles(ArgList[i].Value, ArgList[i].Arguments);
+                        break;
                 }
             }
 
@@ -362,6 +370,35 @@ namespace TenhouViewer
                 Console.WriteLine(String.Format("Found: {0:d}", ResultList.Count));
                 foreach(string Line in FindResult) Console.WriteLine(Line);
             }
+        }
+
+        static List<string> BuildLogFromMjlogFiles(string Argument, List<Argument> ArgList)
+        {
+            string Dir = Argument;
+            List<string> Result = new List<string>();
+
+            if (!Directory.Exists(Dir))
+            {
+                Console.WriteLine(String.Format("Error: directory '{0:s}' not found", Dir));
+                return null;
+            }
+
+            string[] FileList = Directory.GetFiles(Dir);
+
+            for (int i = 0; i < FileList.Length; i++)
+            {
+                string FileName = FileList[i];
+
+                if (FileName.IndexOf(".mjlog") >= 0)
+                {
+                    // This is mjlog file
+
+                    string Link = String.Format("http://tenhou.net/0/?log={0:s}", Path.GetFileNameWithoutExtension(FileName));
+                    Result.Add(Link);
+                }
+            }
+
+            return Result;
         }
 
         static List<string> AnalyzeTournier(string Argument, List<Argument> ArgList, List<Search.Result> Results)
@@ -1060,9 +1097,23 @@ namespace TenhouViewer
             Console.WriteLine(" - ok!");
         }
 
+        static string GetMjlogFilename(string[] Files, string Hash)
+        {
+            if (Files == null) return null;
+
+            foreach (string FileName in Files)
+            {
+                if (FileName.IndexOf(Hash) >= 0) return FileName;
+            }
+
+            return null;
+        }
+
         static void ParseLog(string FileName, List<Argument> ArgList)
         {
             string Dir = LogDir;
+            string[] MjlogDir = null;
+            string Mjlog = null;
             bool Forced = false;
             bool Rewrited;
 
@@ -1077,6 +1128,12 @@ namespace TenhouViewer
                         break;
                     case "force":
                         Forced = true;
+                        break;
+                    case "mjlog":
+                        {
+                            Mjlog = A.Value;
+                            if(Directory.Exists(Mjlog)) MjlogDir = Directory.GetFiles(Mjlog);
+                        }
                         break;
                 }
             }
@@ -1102,12 +1159,6 @@ namespace TenhouViewer
 
                 Rewrited = false;
 
-                if (!File.Exists(ReplayFileName))
-                {
-                    Console.WriteLine(" - file not found!");
-                    continue;
-                }
-
                 if (Mahjong.Replay.IsReplayExist(Hash))
                 {
                     if (!Forced)
@@ -1121,16 +1172,31 @@ namespace TenhouViewer
                     }
                 }
 
-                if (new FileInfo(ReplayFileName).Length == 0)
-                {
-                    File.Delete(ReplayFileName);
-                    Console.WriteLine(" - zero size, removed!");
-                    continue;
-                }
 
+                string MjLogFile = GetMjlogFilename(MjlogDir, Hash);
                 Tenhou.ReplayDecoder R = new Tenhou.ReplayDecoder();
-                R.OpenPlainText(ReplayFileName, Hash);
 
+                if (MjLogFile != null)
+                {
+                    R.OpenGZ(MjLogFile, Hash);
+                }
+                else
+                {
+                    if (!File.Exists(ReplayFileName))
+                    {
+                        Console.WriteLine(" - file not found!");
+                        continue;
+                    }
+
+                    if (new FileInfo(ReplayFileName).Length == 0)
+                    {
+                        File.Delete(ReplayFileName);
+                        Console.WriteLine(" - zero size, removed!");
+                        continue;
+                    }
+
+                    R.OpenPlainText(ReplayFileName, Hash);
+                }
                 // replay (calc shanten, waitings and other) and save result
                 Mahjong.Replay Replay = R.R;
                 Replay.ReplayGame();

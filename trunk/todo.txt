@@ -21,6 +21,7 @@
 Search should be repetiable with using generated files (without parsing logs many times) 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 19. Agari on aka / defined by user tile;
+23. Create log file by directory with .mjlog, parse from directory ("mjlog=<dir>" option for -p argument)
 
 in process:
 20. Suji waiting [waiting is suji of discard], suji-waiting to discarded on riichi tile;
@@ -42,4 +43,4 @@ completed:
 
   
 bug:
-Naki field "FromWho" is incorrect!
+Naki field "FromWho" is incorrect! - not bug, fromwho - is relative field, not index.
