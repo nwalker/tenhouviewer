@@ -1486,19 +1486,19 @@ namespace TenhouViewer
                         TempValue = ParseIntArg(Value, 0, 3, "roundwind");
                         if (TempValue != -1) Finder.RoundWind = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only games with round wind {0:d};", Tenhou.Wind.GetText(TempValue)));
+                        Console.WriteLine(String.Format("Filter: only games with round wind {0:s};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "playerwind":
                         TempValue = ParseIntArg(Value, 0, 3, "playerwind");
                         if (TempValue != -1) Finder.PlayerWind = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only hands with player wind {0:d};", Tenhou.Wind.GetText(TempValue)));
+                        Console.WriteLine(String.Format("Filter: only hands with player wind {0:s};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "round":
                         TempValue = ParseIntArg(Value, 0, 15, "round");
                         if (TempValue != -1) Finder.RoundIndex = TempValue;
 
-                        Console.WriteLine(String.Format("Filter: only games with round index {0:d};", Tenhou.Wind.GetText(TempValue)));
+                        Console.WriteLine(String.Format("Filter: only games with round index {0:s};", Tenhou.Wind.GetText(TempValue)));
                         break;
                     case "draw":
                         {
@@ -1569,6 +1569,18 @@ namespace TenhouViewer
 
                             Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
                         }
+                        break;
+                    case "last":
+                        TempValue = ParseIntArg(Value, 0, 10000000, "last");
+                        if (TempValue != -1) Finder.Last = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only in {0:d} last games;", TempValue));
+                        break;
+                    case "limit":
+                        TempValue = ParseIntArg(Value, 0, 10000000, "limit");
+                        if (TempValue != -1) Finder.Limit = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: return maximum {0:d} games;", TempValue));
                         break;
                 }
             }
