@@ -45,7 +45,7 @@ namespace TenhouViewer.Tenhou
             }
         }
 
-        public string GetFileName(string Hash, string Dir)
+        public static string GetFileName(string Hash, string Dir)
         {
             return Dir + "/" + Hash + ".xml";
         }
