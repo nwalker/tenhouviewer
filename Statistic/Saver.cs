@@ -12,6 +12,7 @@ namespace TenhouViewer.Statistic
         {
             if (FileName == null) return;
             if (Data == null) return;
+            if (FileName.CompareTo("") == 0) return;
 
             string FilePath = Path.GetDirectoryName(Path.GetFullPath(FileName));
             
