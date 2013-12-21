@@ -158,6 +158,9 @@ namespace TenhouViewer.Search
         // Has matagi-suji to win waiting in discard?
         public int MatagiSujiWait = -1;
 
+        // Karaten noten hand
+        public int KaratenNoten = -1;
+
         // Limit results, return last n results
         public int Last = -1;
 
@@ -769,6 +772,33 @@ namespace TenhouViewer.Search
                     for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
                         if (IsTempai != Rnd.Shanten[j].Contains(0)) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (KaratenNoten != -1)
+            {
+                bool IsKaraten = (KaratenNoten != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    // Restore hands
+                    Rnd.ReplayGame();
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        bool Karaten = false;
+                        for (int k = 0; k < Rnd.Hands[j].Count; k++)
+                        {
+                            Mahjong.Hand H = Rnd.Hands[j][k];
+                            
+                            bool K = new Mahjong.ShantenCalculator(H).KaratenNotenHand;
+                            if (K) Karaten = true;
+                        }
+
+                        if (IsKaraten != Karaten) R.HandMark[i][j] = false;
                     }
                 }
             }
