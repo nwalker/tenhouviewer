@@ -158,6 +158,13 @@ namespace TenhouViewer.Search
         // Has matagi-suji to win waiting in discard?
         public int MatagiSujiWait = -1;
 
+        // Limit results, return last n results
+        public int Last = -1;
+
+        // Limit results, by count
+        public int Limit = -1;
+
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -219,12 +226,15 @@ namespace TenhouViewer.Search
         public List<Result> Find()
         {
             List<Result> ResultList = new List<Result>();
+            int FoundGames = 0;
 
             for (int i = 0; i < GameList.Count; i++)
             {
                 Result R = GameList[i];
 
                 Console.Title = String.Format("Finding {0:d}/{1:d}, found {2:d}", i + 1, GameList.Count, ResultList.Count);
+
+                if (Last != -1) if (i < GameList.Count - Last) continue;
 
                 // filters
                 CheckHash(R);
@@ -264,6 +274,11 @@ namespace TenhouViewer.Search
                 EmbedMarksToHandMark(R);
                 if (!IsQueryOk(R)) continue;
 
+                if (Limit != -1)
+                {
+                    if (FoundGames >= Limit) break;
+                    FoundGames++;
+                }
                 ResultList.Add(R);
             }
 

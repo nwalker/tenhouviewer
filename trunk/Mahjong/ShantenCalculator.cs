@@ -97,6 +97,15 @@ namespace TenhouViewer.Mahjong
             return TempList;
         }
 
+        private void AddWaiting(int Index)
+        {
+            if ((Waitings[Index] == 0) && (BasicTehai[Index] < 4))
+            {
+                Waitings[Index] = 1;
+                WaitingCount++;
+            }
+        }
+
         private void CalcWaitings()
         {
             int i;
@@ -140,16 +149,16 @@ namespace TenhouViewer.Mahjong
                         // Wait from lower numbers
                         if (Tile1 % 10 != 1)
                         {
-                            if (Waitings[Tile1 - 1] == 0) { Waitings[Tile1 - 1] = 1; WaitingCount++; }
+                            AddWaiting(Tile1 - 1);
                         }
                         // Wait from higher numbers
                         if (Tile2 % 10 != 9)
                         {
-                            if (Waitings[Tile2 + 1] == 0) { Waitings[Tile2 + 1] = 1; WaitingCount++; }
+                            AddWaiting(Tile2 + 1);
                         }
                         break;
                     case FormType.Kanchan:
-                        if (Waitings[Tile1 + 1] == 0) { Waitings[Tile1 + 1] = 1; WaitingCount++; }
+                        AddWaiting(Tile1 + 1);
                         break;
                 }
             }
@@ -187,6 +196,7 @@ namespace TenhouViewer.Mahjong
 
             return TempShanten;
         }
+
 
         private int CalcShantenKokushi()
         {
@@ -347,10 +357,7 @@ namespace TenhouViewer.Mahjong
                             for (int j = 0; j < Tehai.Length; j++)
                             {
                                 // Cannot wait on fifth tile!
-                                if ((Tehai[j] > 0) && (BasicTehai[j] != 4))
-                                {
-                                    if (Waitings[j] == 0) { Waitings[j] = 1; WaitingCount++; }
-                                }
+                                if (Tehai[j] > 0) AddWaiting(j);
                             }
                         }
                         if ((Kouho == 0) && (Toitsu == 1))
