@@ -95,6 +95,8 @@ namespace TenhouViewer
             Console.WriteLine(" urasuji=N - find all hands which has (not) ura-suji waiting to discard (0-1);");
             Console.WriteLine(" matagisuji=N - find all hands which has (not) matagi-suji waiting to discard (0-1);");
             Console.WriteLine(" draw=N - round ended in draw with reason (yao9,reach4,ron3,kan4,kaze4,nm);");
+            Console.WriteLine(" last=N - find only last N games;");
+            Console.WriteLine(" limit=N - find omaximum N games;");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -g<nickname> <fields> - graph rounds (which found by -f flag) with fields:");
@@ -1454,27 +1456,32 @@ namespace TenhouViewer
                     case "omotesuji":
                         Finder.OmoteSujiWait = ParseBoolArg(Value, "omotesuji");
 
-                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had omote-suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s}omote-suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not " : ""));
                         break;
                     case "suji":
                         Finder.OmoteSujiWait = ParseBoolArg(Value, "suji");
 
-                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had (omote)suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s}(omote)suji wait to discarded tile;", (Finder.OmoteSujiWait == 0) ? "not " : ""));
                         break;
                     case "senkisuji":
                         Finder.SenkiSujiWait = ParseBoolArg(Value, "senkisuji");
 
-                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had senki-suji wait to discarded tile;", (Finder.SenkiSujiWait == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s}senki-suji wait to discarded tile;", (Finder.SenkiSujiWait == 0) ? "not " : ""));
                         break;
                     case "urasuji":
                         Finder.UraSujiWait = ParseBoolArg(Value, "urasuji");
 
-                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had ura-suji wait to discarded tile;", (Finder.UraSujiWait == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s}ura-suji wait to discarded tile;", (Finder.UraSujiWait == 0) ? "not " : ""));
                         break;
                     case "matagisuji":
                         Finder.MatagiSujiWait = ParseBoolArg(Value, "matagisuji");
 
-                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had matagi-suji wait to discarded tile;", (Finder.MatagiSujiWait == 0) ? "not" : ""));
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s}matagi-suji wait to discarded tile;", (Finder.MatagiSujiWait == 0) ? "not " : ""));
+                        break;
+                    case "karatennoten":
+                        Finder.KaratenNoten = ParseBoolArg(Value, "karatennoten");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which had {0:s} only waiting, all tiles of that type already in hand;", (Finder.KaratenNoten == 0) ? "not" : ""));
                         break;
                     case "players":
                         TempValue = ParseIntArg(Value, 3, 4, "players");

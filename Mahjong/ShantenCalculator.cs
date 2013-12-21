@@ -20,7 +20,7 @@ namespace TenhouViewer.Mahjong
     {
         private Hand Hand;
         private uint[] Tehai = new uint[38]; // Для анализа руки
-        private uint[] BasicTehai = new uint[38]; // Неизменённая версия для анализа
+        private uint[] TehaiUsage = new uint[38]; // Неизменённая версия для анализа
 
         private int WaitingCount = -1; // количество сторон в выигрышном ожидании
         private int[] Waitings = new int[38]; // Выигрышные ожидания
@@ -42,6 +42,9 @@ namespace TenhouViewer.Mahjong
 
         public bool CompletedHand = false;
 
+        private bool WaitOnExtraTile = false; // Need 5th
+        public bool KaratenNotenHand = false; // Waiting only on 5th tile
+
         public ShantenCalculator(Hand Hand)
         {
             this.Hand = Hand;
@@ -59,7 +62,7 @@ namespace TenhouViewer.Mahjong
             {
                 Waitings[i] = 0;
                 Tehai[i] = 0;
-                BasicTehai[i] = 0;
+                TehaiUsage[i] = 0;
             }
 
             for (i = 0; i < 14; i++)
@@ -69,7 +72,20 @@ namespace TenhouViewer.Mahjong
                     Tile T = new Tile(Hand.Tiles[i]);
 
                     Tehai[T.TileId]++;
-                    BasicTehai[T.TileId]++;
+                    TehaiUsage[T.TileId]++;
+                }
+            }
+
+            // Count naki's tiles usage
+            for (i = 0; i < Hand.Naki.Count; i++)
+            {
+                Mahjong.Naki N = Hand.Naki[i];
+                if (N.Type == NakiType.NUKI) continue;
+
+                for (int j = 0; j < N.Tiles.Count; j++)
+                {
+                    Tile T = new Tile(N.Tiles[j]);
+                    TehaiUsage[T.TileId]++;
                 }
             }
         }
@@ -99,10 +115,15 @@ namespace TenhouViewer.Mahjong
 
         private void AddWaiting(int Index)
         {
-            if ((Waitings[Index] == 0) && (BasicTehai[Index] < 4))
+            if (Waitings[Index] == 0)
             {
-                Waitings[Index] = 1;
-                WaitingCount++;
+                if (TehaiUsage[Index] < 4)
+                {
+                    Waitings[Index] = 1;
+                    WaitingCount++;
+                }
+                else
+                    WaitOnExtraTile = true;
             }
         }
 
@@ -373,7 +394,13 @@ namespace TenhouViewer.Mahjong
                     }
 
                     // If no actual waitings and tempai - ishanten!
-                    if (!Waitings.Contains(1) && (Temp == 0)) Temp = 1;
+                    if (!Waitings.Contains(1) && (Temp == 0))
+                    {
+                        Temp = 1;
+
+                        // If it only waiting - noten
+                        if (WaitOnExtraTile) KaratenNotenHand = true;
+                    }
                     
                     TempShantenNormal = Temp;
                 }
