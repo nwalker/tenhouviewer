@@ -246,6 +246,10 @@ namespace TenhouViewer
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -b<directory> - build log from directory's content with mjlog files;");
+
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -c<directory> <options> - convert to mjlog from log;");
+            Console.WriteLine(" dir - directory to save result (for all replays);");
         }
 
         static void ParseArgs(string[] args)
@@ -263,8 +267,8 @@ namespace TenhouViewer
                 {
                     case "c":
                         // Convert to mjlog from log
-                        // -cLog.txt
-                        //ConvertLogToMJLog(ArgList[i].Value);
+                        // -c<dir>
+                        ConvertFoundedToMJLog(ArgList[i].Value, ArgList[i].Arguments, ResultList);
                         break;
                     case "C":
                         // Convert to mjlog by hash
@@ -399,6 +403,64 @@ namespace TenhouViewer
             }
 
             return Result;
+        }
+
+        static void ConvertFoundedToMJLog(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            string TargetDir = Argument;
+            string Dir = LogDir;
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "dir":
+                        if(Directory.Exists(A.Value))
+                            Dir = A.Value;
+                        break;
+                }
+
+            }
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+                Console.Title = String.Format("Mjlog creating {0:d}/{1:d}", i + 1, Results.Count);
+
+                if (!R.ReplayMark) continue;
+
+                string ReplayFileName = Tenhou.LogParser.GetFileName(R.Replay.Hash, Dir);
+                string TargetFileName = TargetDir + "/" + R.Replay.Hash + ".mjlog";
+
+                if (!File.Exists(ReplayFileName))
+                {
+                    Console.WriteLine(" - file not found!");
+                    continue;
+                }
+
+                if (new FileInfo(ReplayFileName).Length == 0)
+                {
+                    Console.WriteLine(" - zero size, ignored!");
+                    continue;
+                }
+
+                using (FileStream inFile = new FileStream(ReplayFileName, FileMode.Open))
+                {
+                    using (FileStream outFile = File.Create(TargetFileName))
+                    {
+                        using (GZipStream Compress = new GZipStream(outFile, CompressionMode.Compress))
+                        {
+                            byte[] buffer = new byte[4096];
+                            int numRead;
+
+                            while ((numRead = inFile.Read(buffer, 0, buffer.Length)) != 0)
+                            {
+                                Compress.Write(buffer, 0, numRead);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         static List<string> AnalyzeTournier(string Argument, List<Argument> ArgList, List<Search.Result> Results)
@@ -1152,7 +1214,7 @@ namespace TenhouViewer
             for (int i = 0; i < Hashes.Count; i++)
             {
                 string Hash = Hashes[i];
-                string ReplayFileName = Log.GetFileName(Hash, Dir);
+                string ReplayFileName = Tenhou.LogParser.GetFileName(Hash, Dir);
 
                 Console.Title = String.Format("Parsing {0:d}/{1:d}", i + 1, Hashes.Count);
                 Console.Write(Hash);
