@@ -39,6 +39,7 @@ namespace TenhouViewer
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -fLog.txt - find games from log Log.txt with query:");
+            Console.WriteLine(" reset - reset game list to default state (if previous search results are used);");
             Console.WriteLine(" lobby=N - find all games from specified lobby (0-6);");
             Console.WriteLine(" aka=N - only games with aka-dora nashi/ari (0-1);");
             Console.WriteLine(" kuitan=N - only games with aka-dora nashi/ari (0-1);");
@@ -898,10 +899,30 @@ namespace TenhouViewer
         static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
+            bool ReplayOnce = false;
+            bool PlayerOnce = false;
+
+            bool[] PlayerFlag = new bool[4];
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "replayonce":
+                        ReplayOnce = true;
+                        break;
+                    case "playeronce":
+                        PlayerOnce = true;
+                        break;
+                }
+            }
 
             for (int i = 0; i < Results.Count; i++)
             {
                 Search.Result R = Results[i];
+
+                for (int k = 0; k < 4; k++) PlayerFlag[k] = false;
 
                 for (int r = 0; r < R.Replay.Rounds.Count; r++)
                 {
@@ -913,6 +934,8 @@ namespace TenhouViewer
                         {
                             // Format this result:
                             string Temp = "";
+
+                            if (PlayerOnce && PlayerFlag[k]) continue;
 
                             for(int o = 0; o < ArgList.Count; o++)
                             {
@@ -1019,6 +1042,11 @@ namespace TenhouViewer
                             }
 
                             Output.Add(Temp);
+
+                            // If need onnly one result per replay, skip other
+                            if (ReplayOnce) break;
+
+                            PlayerFlag[k] = true;
                         }
                     }
                 }
@@ -1272,7 +1300,7 @@ namespace TenhouViewer
         {
             Search.GameFinder Finder;
 
-            if (Results != null)
+            if ((Results != null) && (FileName.CompareTo("") == 0))
             {
                 Console.WriteLine("Finding games from previous search result.");
 
@@ -1290,6 +1318,17 @@ namespace TenhouViewer
 
                 Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
                 Finder = new Search.GameFinder(Log.HashList);
+            }
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "reset":
+                        Finder.ResetFlags();
+                        break;
+                }
             }
 
             for (int i = 0; i < ArgList.Count; i++)
@@ -1418,6 +1457,18 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands, which has count of outs in dead wall less (or equal) than {0:d};", TempValue));
                         break;
+                    case "rankmin":
+                        TempValue = ParseIntArg(Value, 0, 20, "rankmin");
+                        if (TempValue != -1) Finder.RankMin = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who has rank greater or equal that '{0:d}';", Tenhou.Rank.GetName(TempValue)));
+                        break;
+                    case "rankmax":
+                        TempValue = ParseIntArg(Value, 0, 20, "rankmax");
+                        if (TempValue != -1) Finder.RankMax = TempValue;
+
+                        Console.WriteLine(String.Format("Filter: only players, who has rank less or equal that '{0:d}';", Tenhou.Rank.GetName(TempValue)));
+                        break;
                     case "furiten":
                         Finder.Furiten = ParseBoolArg(Value, "furiten");
 
@@ -1507,12 +1558,6 @@ namespace TenhouViewer
                         if (TempValue != -1) Finder.Place = TempValue;
 
                         Console.WriteLine(String.Format("Filter: only players, who took {0:d} place;", TempValue));
-                        break;
-                    case "rank":
-                        TempValue = ParseIntArg(Value, 0, 20, "rank");
-                        if (TempValue != -1) Finder.Rank = TempValue;
-
-                        Console.WriteLine(String.Format("Filter: only players, who has rank '{0:d}';", TempValue));
                         break;
                     case "steps":
                         TempValue = ParseIntArg(Value, 0, 60, "steps");
