@@ -33,9 +33,6 @@ namespace TenhouViewer.Search
         // Player place
         public int Place = -1;
 
-        // Rank (1 = 1ku, 10 = 1dan, 11 = 2dan, ...)
-        public int Rank = -1;
-
         // Is player dealer?
         public int Dealer = -1;
 
@@ -83,6 +80,11 @@ namespace TenhouViewer.Search
         // Player rating
         public int RatingMin = -1;
         public int RatingMax = -1;
+
+        // Player rank
+        // Rank (1 = 1ku, 10 = 1dan, 11 = 2dan, ...)
+        public int RankMin = -1;
+        public int RankMax = -1;
 
         // Shanten of start hand
         public int ShantenMax = -1;
@@ -161,6 +163,10 @@ namespace TenhouViewer.Search
         // Karaten noten hand
         public int KaratenNoten = -1;
 
+        // How much dealt
+        public int DealtMin = -1;
+        public int DealtMax = -1;
+
         // Limit results, return last n results
         public int Last = -1;
 
@@ -221,8 +227,24 @@ namespace TenhouViewer.Search
                 }
 
                 for (int i = 0; i < R.Replay.PlayerCount; i++) R.PlayerMark[i] = true;
-
                 GameList.Add(R);
+            }
+        }
+
+        public void ResetFlags()
+        {
+            // Reset marks 
+            foreach (Result R in GameList)
+            {
+                R.ReplayMark = true;
+
+                for (int i = 0; i < R.RoundMark.Count; i++)
+                {
+                    R.RoundMark[i] = true;
+                    for (int j = 0; j < R.Replay.PlayerCount; j++) R.HandMark[i][j] = true;
+                }
+
+                for (int i = 0; i < R.Replay.PlayerCount; i++) R.PlayerMark[i] = true;
             }
         }
 
@@ -673,12 +695,12 @@ namespace TenhouViewer.Search
 
         private void CheckRank(Result R)
         {
-            if (Rank == -1) return;
+            if ((RankMin == -1) && (RankMax == -1)) return;
 
             for (int i = 0; i < R.Replay.PlayerCount; i++)
             {
-                if (R.Replay.Players[i].Rank != Rank)
-                    R.PlayerMark[i] = false;
+                if (RankMin != -1) if(R.Replay.Players[i].Rank < RankMin) R.PlayerMark[i] = false;
+                if (RankMax != -1) if (R.Replay.Players[i].Rank > RankMax) R.PlayerMark[i] = false;
             }
         }
 
