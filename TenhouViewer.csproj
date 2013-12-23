@@ -48,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentParser.cs" />
+    <Compile Include="Dependence\Dependence.cs" />
+    <Compile Include="Dependence\Value.cs" />
     <Compile Include="Discarder\Discard.cs" />
     <Compile Include="Discarder\HandOutput.cs" />
     <Compile Include="Mahjong\Paifu\PaifuGenerator.cs" />
