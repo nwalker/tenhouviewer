@@ -152,6 +152,8 @@ namespace TenhouViewer
             Console.WriteLine(" jrank - rank of the player (四段);");
             Console.WriteLine(" place - place (result) in game;");
             Console.WriteLine(" pay - player payment in round;");
+            Console.WriteLine(" resbalance - result balance;");
+            Console.WriteLine(" result - result (+uma/oka);");
             Console.WriteLine(" dealer - is player dealer;");
             Console.WriteLine(" winner - is player complete hand;");
             Console.WriteLine(" loser - is player dealt in other player's hand;");
@@ -968,6 +970,12 @@ namespace TenhouViewer
                                         break;
                                     case "dealer":
                                         Temp += String.Format("{0:d}\t", Rnd.Dealer[k] ? 1 : 0);
+                                        break;
+                                    case "resbalance":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Result[k]);
+                                        break;
+                                    case "result":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Balance[k]);
                                         break;
                                     case "tsumo":
                                         Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) == -1)) ? 1 : 0);

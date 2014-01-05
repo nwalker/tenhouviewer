@@ -40,7 +40,8 @@ namespace TenhouViewer.Tenhou
                     string Hash = line.Substring(Pos, PosEnd - Pos);
                     TenhouHash H = new TenhouHash(Hash);
 
-                    HashList.Hashes.Add(H.DecodedHash);
+                    if(!HashList.Hashes.Contains(H.DecodedHash))
+                        HashList.Hashes.Add(H.DecodedHash);
                 }
             }
         }
