@@ -72,6 +72,7 @@ namespace TenhouViewer.Tournier
                         case "riichi": Temp += "Riichi count\t"; break;
                         case "riichiwin": Temp += "Riichi win count\t"; break;
                         case "ippatsu": Temp += "Ippatsu count\t"; break;
+                        case "opened": Temp += "Opened sets count\t"; break;
                     }
                 }
 
@@ -129,6 +130,7 @@ namespace TenhouViewer.Tournier
                         case "ippatsu": Temp += String.Format("{0:d}\t", R.IppatsuCount); break;
                         case "riichiwin": Temp += String.Format("{0:d}\t", R.RiichiWinCount); break;
                         case "lossriichi": Temp += String.Format("{0:d}\t", -1000 * (R.RiichiCount - R.RiichiWinCount)); break;
+                        case "opened": Temp += String.Format("{0:d}\t", R.OpenedSetsCount); break;
                     }
                 }
 

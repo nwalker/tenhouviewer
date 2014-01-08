@@ -40,6 +40,9 @@ namespace TenhouViewer.Tournier
         // Ippatsu count
         public int IppatsuCount = 0;
 
+        // Opened sets count
+        public int OpenedSetsCount = 0;
+
         // Player's losses
         public int TotalLosses = 0;
 

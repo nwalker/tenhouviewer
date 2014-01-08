@@ -152,6 +152,8 @@ namespace TenhouViewer
             Console.WriteLine(" rank - rank of the player (number);");
             Console.WriteLine(" jrating - rating of the player (1256R);");
             Console.WriteLine(" jrank - rank of the player (四段);");
+            Console.WriteLine(" tablerating - average rating of players (number);");
+            Console.WriteLine(" jtablerating - average rating of players (1256R);");
             Console.WriteLine(" place - place (result) in game;");
             Console.WriteLine(" pay - player payment in round;");
             Console.WriteLine(" resbalance - result balance;");
@@ -266,6 +268,7 @@ namespace TenhouViewer
             Console.WriteLine(" riichi - how many times player declared riichi;");
             Console.WriteLine(" riichiwin - how many times player win by riichi;");
             Console.WriteLine(" ippatsu - how many times player got ippatsu;");
+            Console.WriteLine(" opened - round count where player has opened sets;");
 
             Console.WriteLine(" 1st - percent of first place;");
             Console.WriteLine(" 2nd - percent of second place;");
@@ -1042,6 +1045,17 @@ namespace TenhouViewer
             return false;
         }
 
+        static int AverageTableRating(Mahjong.Replay R)
+        {
+            int Rating = 0;
+            for (int p = 0; p < R.PlayerCount; p++)
+            {
+                Rating += R.Players[p].Rating;
+            }
+
+            return Rating / R.PlayerCount;
+        }
+
         static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
@@ -1105,6 +1119,12 @@ namespace TenhouViewer
                                         break;
                                     case "jrating":
                                         Temp += String.Format("{0:d}R\t", R.Replay.Players[k].Rating);
+                                        break;
+                                    case "tablerating":
+                                        Temp += String.Format("{0:d}\t", AverageTableRating(R.Replay));
+                                        break;
+                                    case "jtablerating":
+                                        Temp += String.Format("{0:d}R\t", AverageTableRating(R.Replay));
                                         break;
                                     case "jrank":
                                         Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Replay.Players[k].Rank));
