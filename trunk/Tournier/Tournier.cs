@@ -39,16 +39,65 @@ namespace TenhouViewer.Tournier
                         {
                             Mahjong.Round Rnd = R.Rounds[r];
 
-                            if (Rnd.Winner[p]) Res.AgariCount++;
+                            Res.RoundCount++;
+
+                            if (Rnd.Winner[p])
+                            {
+                                // Calc yaku
+                                for (int j = 0; j < Rnd.Yaku[p].Count; j++)
+                                {
+                                    Mahjong.Yaku Y = Rnd.Yaku[p][j];
+
+                                    if (Y.Index > 51) // Dora
+                                    {
+                                        Res.Yaku[Y.Index] += Y.Cost;
+                                    }
+                                    else
+                                    {
+                                        Res.Yaku[Y.Index]++;
+                                    }
+                                }
+
+                                Res.AgariCount++;
+                            }
                             if (Rnd.Loser[p]) Res.RonCount++;
 
                             if (Rnd.Pay[p] >= 0)
                             {
+                                if (Rnd.Result == Mahjong.RoundResult.Ron) Res.RonAcquisitions += Rnd.Pay[p];
+                                else if (Rnd.Result == Mahjong.RoundResult.Draw) Res.DrawAcquisitions += Rnd.Pay[p];
+                                else if (Rnd.Result == Mahjong.RoundResult.Tsumo) Res.TsumoAcquisitions += Rnd.Pay[p];
+
                                 Res.TotalAcquisitions += Rnd.Pay[p];
                             }
                             else
                             {
+                                if (Rnd.Loser[p]) Res.RonLosses += Rnd.Pay[p];
+                                else if (Rnd.Result == Mahjong.RoundResult.Draw) Res.DrawLosses += Rnd.Pay[p];
+                                else if (Rnd.Result == Mahjong.RoundResult.Tsumo) Res.TsumoLosses += Rnd.Pay[p];
                                 Res.TotalLosses += Rnd.Pay[p];
+                            }
+
+                            if (HasFuriten(Rnd, p)) Res.Furiten++;
+                            if (HasTempai(Rnd, p)) Res.Tempai++;
+
+                            if (Rnd.Riichi[p] > -1)
+                            {
+                                Res.RiichiCount++;
+
+                                if (Rnd.Winner[p])
+                                {
+                                    Res.RiichiWinCount++;
+
+                                    for (int j = 0; j < Rnd.Yaku[p].Count; j++)
+                                    {
+                                        if (Rnd.Yaku[p][j].Index == 2)
+                                        {
+                                            Res.IppatsuCount++;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -56,6 +105,30 @@ namespace TenhouViewer.Tournier
             }
 
             return Results;
+        }
+
+        bool HasFuriten(Mahjong.Round Rnd, int Player)
+        {
+            for (int j = 0; j < Rnd.Steps.Count; j++)
+            {
+                if (Rnd.Steps[j].Player != Player) continue;
+
+                if (Rnd.Steps[j].Furiten) return true;
+            }
+
+            return false;
+        }
+
+        bool HasTempai(Mahjong.Round Rnd, int Player)
+        {
+            for (int j = 0; j < Rnd.Steps.Count; j++)
+            {
+                if (Rnd.Steps[j].Player != Player) continue;
+
+                if (Rnd.Steps[j].Shanten == 0) return true;
+            }
+
+            return false;
         }
 
         private Result GetPlayerResult(string Name)

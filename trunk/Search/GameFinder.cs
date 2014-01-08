@@ -173,7 +173,6 @@ namespace TenhouViewer.Search
         // Limit results, by count
         public int Limit = -1;
 
-
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table

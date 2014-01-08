@@ -22,17 +22,53 @@ namespace TenhouViewer.Tournier
         // Player's average place
         public float AveragePlace = 0.0f;
 
+        // Round count
+        public int RoundCount = 0;
+
         // Player's to ron dealing count
         public int RonCount = 0;
 
         // Player's agari count
         public int AgariCount = 0;
 
+        // Riichi count
+        public int RiichiCount = 0;
+
+        // Riichi win count
+        public int RiichiWinCount = 0;
+
+        // Ippatsu count
+        public int IppatsuCount = 0;
+
         // Player's losses
         public int TotalLosses = 0;
 
+        // Player's ron losses
+        public int RonLosses = 0;
+
+        // Player's draw losses
+        public int DrawLosses = 0;
+
+        // Player's tsumo losses
+        public int TsumoLosses = 0;
+
         // Player's acquisition
         public int TotalAcquisitions = 0;
+
+        // Player's ron acquisition
+        public int RonAcquisitions = 0;
+
+        // Player's draw acquisition
+        public int DrawAcquisitions = 0;
+
+        // Player's tsumo acquisition
+        public int TsumoAcquisitions = 0;
+
+        // Furiten count
+        public int Furiten = 0;
+
+        // Tempai count
+        public int Tempai = 0;
 
         // Player's nickname
         public string NickName = null;
@@ -42,6 +78,8 @@ namespace TenhouViewer.Tournier
 
         // Player's rating
         public int Rating = 0;
+
+        public int[] Yaku = new int[55];
 
         public Result(string Name)
         {
