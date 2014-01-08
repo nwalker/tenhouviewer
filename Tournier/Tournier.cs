@@ -99,6 +99,8 @@ namespace TenhouViewer.Tournier
                                     }
                                 }
                             }
+
+                            if (Rnd.OpenedSets[p] > 0) Res.OpenedSetsCount++;
                         }
                     }
                 }
