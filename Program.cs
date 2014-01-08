@@ -19,6 +19,8 @@ namespace TenhouViewer
 
             ParseArgs(args);
             if (args.Length == 0) ShowHelp();
+
+            Tenhou.TenhouHash H = new Tenhou.TenhouHash("2014010418gm-0009-8908-xb5b1fabcf715");
         }
 
         static void ShowHelp()
@@ -177,6 +179,12 @@ namespace TenhouViewer
             Console.WriteLine(" draw - round ended in draw;");
 
             Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -l - list all games;");
+
+            Console.WriteLine("");
+            Console.WriteLine("TenhouViewer -y - yaku statistics [tournier mode];");
+
+            Console.WriteLine("");
             Console.WriteLine("TenhouViewer -s<filename> - save find or graph result to specified file;");
 
             Console.WriteLine("");
@@ -240,8 +248,25 @@ namespace TenhouViewer
             Console.WriteLine(" balance - player's balance (+uma);");
             Console.WriteLine(" ron - how many times player dealt in ron;");
             Console.WriteLine(" agari - player's completed hands count;");
+            Console.WriteLine(" rounds - how many rounds was played;");
+            Console.WriteLine(" ronperc - dealt in ron percent;");
+            Console.WriteLine(" agariperc - player's completed hands percent;");
+
             Console.WriteLine(" acq - player's total acquisitions;");
+            Console.WriteLine(" acqron - player's acquisitions by ron;");
+            Console.WriteLine(" acqtsumo - player's acquisitions by tsumo;");
+            Console.WriteLine(" acqdraw - player's acquisitions by draw;");
+
             Console.WriteLine(" loss - player's total losses;");
+            Console.WriteLine(" lossron - player's losses by ron;");
+            Console.WriteLine(" losstsumo - player's losses by tsumo;");
+            Console.WriteLine(" lossdraw - player's losses by draw;");
+            Console.WriteLine(" lossriichi - player's losses by riichi declaration;");
+
+            Console.WriteLine(" riichi - how many times player declared riichi;");
+            Console.WriteLine(" riichiwin - how many times player win by riichi;");
+            Console.WriteLine(" ippatsu - how many times player got ippatsu;");
+
             Console.WriteLine(" 1st - percent of first place;");
             Console.WriteLine(" 2nd - percent of second place;");
             Console.WriteLine(" 3rd - percent of third place;");
@@ -368,6 +393,17 @@ namespace TenhouViewer
                         // Build log from directory's content with mjlog files
                         FindResult = BuildLogFromMjlogFiles(ArgList[i].Value, ArgList[i].Arguments);
                         break;
+                    case "l":
+                        // List all games
+                        FindResult = null;
+                        GraphResult = CreateList(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
+                    case "y":
+                        // List all yaku statistics
+                        FindResult = null;
+                        GraphResult = YakuList(ArgList[i].Value, ArgList[i].Arguments, ResultList);
+                        break;
+
                 }
             }
 
@@ -406,6 +442,68 @@ namespace TenhouViewer
             }
 
             return Result;
+        }
+
+        static List<string> CreateList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            List<string> OutputList = new List<string>();
+
+            if (Results == null)
+            {
+                Console.WriteLine("No results");
+                return null;
+            }
+
+            for (int i = 0; i < Results.Count; i++)
+            {
+                Search.Result R = Results[i];
+                Console.Title = String.Format("List creating {0:d}/{1:d}", i + 1, Results.Count);
+
+                if (!R.ReplayMark) continue;
+
+                int FirstPlaceIndex = -1;
+                for (int j = 0; j < R.Replay.PlayerCount; j++) if (R.Replay.Place[j] == 1) FirstPlaceIndex = j;
+
+                // Players
+                {
+                    string Players = "";
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++) 
+                    {
+                        for (int p = 0; p < R.Replay.PlayerCount; p++)
+                        {
+                            if (R.Replay.Place[p] != j + 1) continue;
+
+                            Mahjong.Player P = R.Replay.Players[p];
+                            string PlayerInfo = String.Format("{0:s} ({1:s}/R{2:d}){3:s}", P.NickName, Tenhou.Rank.GetName(P.Rank), P.Rating,
+                                (j != R.Replay.PlayerCount) ? ", " : "");
+
+                            Players += PlayerInfo;
+                        }
+                    }
+
+                    OutputList.Add(Players);
+                }
+
+                // Lobby
+                {
+                    string Lobby = String.Format("Lobby {0:d}", R.Replay.Lobby);
+
+                    OutputList.Add(Lobby);
+                }
+
+                // Link
+                {
+                    string Link = String.Format("http://tenhou.net/0/?log={0:s}&tw={1:d}\t", R.Replay.Hash, FirstPlaceIndex);
+
+                    OutputList.Add(Link);
+                }
+
+                // Delimiter
+                OutputList.Add("");
+            }
+
+            return OutputList;
         }
 
         static void ConvertFoundedToMJLog(string Argument, List<Argument> ArgList, List<Search.Result> Results)
@@ -464,6 +562,52 @@ namespace TenhouViewer
                     }
                 }
             }
+        }
+
+        static List<string> YakuList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
+        {
+            string Lang = "en";
+
+            Tournier.Tournier T = new Tournier.Tournier(Results);
+            List<Tournier.Result> ResultList = T.Analyze();
+
+            List<string> Output = new List<string>();
+
+            int[] Yaku = new int[55];
+            for(int j = 0; j < 55; j++) Yaku[j] = 0;
+
+            // Calc yaku
+            for (int i = 0; i < ResultList.Count; i++)
+            {
+                Tournier.Result R = ResultList[i];
+
+                for (int j = 0; j < 55; j++) Yaku[j] += R.Yaku[j];
+            }
+
+            // Parse options
+            foreach (Argument A in ArgList)
+            {
+                switch (A.Name)
+                {
+                    case "lang":
+                        Lang = A.Value;
+                        break;
+                }
+
+            }
+
+            // Print
+            for (int j = 0; j < 55; j++)
+            {
+                if (Yaku[j] == 0) continue;
+
+                string Name = Mahjong.YakuName.GetYakuName(Lang, j);
+
+                string Line = String.Format("{0:s}\t{1:d}", Name, Yaku[j]);
+                Output.Add(Line);
+            }
+
+            return Output;
         }
 
         static List<string> AnalyzeTournier(string Argument, List<Argument> ArgList, List<Search.Result> Results)

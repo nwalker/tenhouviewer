@@ -40,14 +40,38 @@ namespace TenhouViewer.Tournier
                         case "place": Temp += "Avg. place\t"; break;
                         case "points": Temp += "Points\t"; break;
                         case "balance": Temp += "Balance\t"; break;
+                        case "rounds": Temp += "Rounds\t"; break;
+
                         case "ron": Temp += "Dealt to ron\t"; break;
                         case "agari": Temp += "Hands\t"; break;
+
+                        case "ronperc": Temp += "Dealt to ron perc\t"; break;
+                        case "agariperc": Temp += "Completed perc\t"; break;
+
                         case "acq": Temp += "Acquisitions\t"; break;
+
+                        case "acqron": Temp += "Acquisitions ron\t"; break;
+                        case "acqdraw": Temp += "Acquisitions draw\t"; break;
+                        case "acqtsumo": Temp += "Acquisitions tsumo\t"; break;
+
                         case "loss": Temp += "Losses\t"; break;
+
+                        case "lossron": Temp += "Losses ron\t"; break;
+                        case "lossdraw": Temp += "Losses draw\t"; break;
+                        case "losstsumo": Temp += "Losses tsumo\t"; break;
+                        case "lossriichi": Temp += "Losses riichi\t"; break;
+
                         case "1st": Temp += "1st place %\t"; break;
                         case "2nd": Temp += "2nd place %\t"; break;
                         case "3rd": Temp += "3rd place %\t"; break;
                         case "4th": Temp += "4th place %\t"; break;
+
+                        case "furiten": Temp += "Furiten count\t"; break;
+                        case "tempai": Temp += "Tempai count\t"; break;
+
+                        case "riichi": Temp += "Riichi count\t"; break;
+                        case "riichiwin": Temp += "Riichi win count\t"; break;
+                        case "ippatsu": Temp += "Ippatsu count\t"; break;
                     }
                 }
 
@@ -76,12 +100,35 @@ namespace TenhouViewer.Tournier
                         case "balance": Temp += String.Format("{0:d}\t", R.TotalBalance); break;
                         case "ron": Temp += String.Format("{0:d}\t", R.RonCount); break;
                         case "agari": Temp += String.Format("{0:d}\t", R.AgariCount); break;
+                        case "rounds": Temp += String.Format("{0:d}\t", R.RoundCount); break;
+
+                        case "ronperc": Temp += String.Format("{0:f}\t", (R.RoundCount > 0) ? (100.0f * R.RonCount / R.RoundCount) : 0.0f); break;
+                        case "agariperc": Temp += String.Format("{0:f}\t", (R.RoundCount > 0) ? (100.0f * R.AgariCount / R.RoundCount) : 0.0f); break;
+
                         case "acq": Temp += String.Format("+{0:d}\t", R.TotalAcquisitions); break;
+
+                        case "acqron": Temp += String.Format("{0:d}\t", R.RonAcquisitions); break;
+                        case "acqdraw": Temp += String.Format("{0:d}\t", R.DrawAcquisitions); break;
+                        case "acqtsumo": Temp += String.Format("{0:d}\t", R.TsumoAcquisitions); break;
+
                         case "loss": Temp += String.Format("{0:d}\t", R.TotalLosses); break;
+
+                        case "lossron": Temp += String.Format("{0:d}\t", R.RonLosses); break;
+                        case "lossdraw": Temp += String.Format("{0:d}\t", R.DrawLosses); break;
+                        case "losstsumo": Temp += String.Format("{0:d}\t", R.TsumoLosses); break;
+
                         case "1st": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 1)); break;
                         case "2nd": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 2)); break;
                         case "3rd": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 3)); break;
                         case "4th": Temp += String.Format("{0:f}%\t", GetPlacePercent(R, 4)); break;
+
+                        case "furiten": Temp += String.Format("{0:d}\t", R.Furiten); break;
+                        case "tempai": Temp += String.Format("{0:d}\t", R.Tempai); break;
+
+                        case "riichi": Temp += String.Format("{0:d}\t", R.RiichiCount); break;
+                        case "ippatsu": Temp += String.Format("{0:d}\t", R.IppatsuCount); break;
+                        case "riichiwin": Temp += String.Format("{0:d}\t", R.RiichiWinCount); break;
+                        case "lossriichi": Temp += String.Format("{0:d}\t", -1000 * (R.RiichiCount - R.RiichiWinCount)); break;
                     }
                 }
 

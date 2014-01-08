@@ -36,9 +36,9 @@ namespace TenhouViewer.Tenhou
             if (main[0] == 'x')
             {
                 // Coded hash
-                int A = Convert.ToInt16(main.Substring(1, 4), 16);
-                int B = Convert.ToInt16(main.Substring(5, 4), 16);
-                int C = Convert.ToInt16(main.Substring(9, 4), 16);
+                int A = Convert.ToUInt16(main.Substring(1, 4), 16);
+                int B = Convert.ToUInt16(main.Substring(5, 4), 16);
+                int C = Convert.ToUInt16(main.Substring(9, 4), 16);
 
                 // Key from table
                 int Index = 0;
