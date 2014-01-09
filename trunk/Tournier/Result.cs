@@ -89,15 +89,15 @@ namespace TenhouViewer.Tournier
             NickName = Name;
         }
 
-        public void AddResult(int Place, int Points, int Balance)
+        public void AddResult(int Place, int Balance, int Res)
         {
             this.Places.Add(Place);
 
             float TempPlace = 0;
             for (int i = 0; i < this.Places.Count; i++) TempPlace += Places[i];
 
-            TotalPoints += Points;
-            TotalBalance += Balance * 100;
+            TotalPoints += Balance;
+            TotalBalance += Res * 100;
             AveragePlace = TempPlace / this.Places.Count;
         }
 

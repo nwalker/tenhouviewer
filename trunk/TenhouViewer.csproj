@@ -75,6 +75,7 @@
     <Compile Include="Statistic\Graph.cs" />
     <Compile Include="Statistic\Saver.cs" />
     <Compile Include="Tenhou\Downloader.cs" />
+    <Compile Include="Tenhou\DrawReasonName.cs" />
     <Compile Include="Tenhou\LobbyType.cs" />
     <Compile Include="Tenhou\Rank.cs" />
     <Compile Include="Tenhou\TenhouHash.cs" />

@@ -1339,40 +1339,45 @@ namespace TenhouViewer.Search
                 Mahjong.Round Rnd = R.Replay.Rounds[i];
                 if (Rnd.Result == Mahjong.RoundResult.Draw)
                 {
-                    if (DrawReason == Rnd.DrawReason)
+                    if (DrawReason >= 0)
                     {
-                        switch (DrawReason)
+                        if ((DrawReason - 1) == Rnd.DrawReason)
                         {
-                            case -1: continue; // normal;
-                            case 0:            // 9 hai
-                                int LastTsumoIndex = -1;
-                                for (int j = 0; j < Rnd.Steps.Count; j++)
-                                {
-                                    if (Rnd.Steps[j].Type == Mahjong.StepType.STEP_DRAWTILE) LastTsumoIndex = j;
-                                }
+                            switch (Rnd.DrawReason)
+                            {
+                                case -1: continue; // normal;
+                                case 0:            // 9 hai
+                                    int LastTsumoIndex = -1;
+                                    for (int j = 0; j < Rnd.Steps.Count; j++)
+                                    {
+                                        if (Rnd.Steps[j].Type == Mahjong.StepType.STEP_DRAWTILE) LastTsumoIndex = j;
+                                    }
 
-                                if (LastTsumoIndex >= 0)
-                                {
-                                    int Player = Rnd.Steps[LastTsumoIndex].Player;
+                                    if (LastTsumoIndex >= 0)
+                                    {
+                                        int Player = Rnd.Steps[LastTsumoIndex].Player;
 
+                                        for (int j = 0; j < R.Replay.PlayerCount; j++)
+                                        {
+                                            if (j != Player) R.HandMark[i][j] = false;
+                                        }
+                                    }
+                                    continue;
+                                case 1: continue;  // reach 4
+                                case 2: continue;  // ron 3
+                                case 3: continue;  // kan 4
+                                case 4: continue;  // kaze 4
+                                case 5:            // nm
                                     for (int j = 0; j < R.Replay.PlayerCount; j++)
                                     {
-                                        if (j != Player) R.HandMark[i][j] = false;
+                                        if (Rnd.Pay[j] < 0) R.HandMark[i][j] = false;
                                     }
-                                }
-                                continue;
-                            case 1: continue;  // reach 4
-                            case 2: continue;  // ron 3
-                            case 3: continue;  // kan 4
-                            case 4: continue;  // kaze 4
-                            case 5:            // nm
-                                for (int j = 0; j < R.Replay.PlayerCount; j++)
-                                {
-                                    if (Rnd.Pay[j] < 0) R.HandMark[i][j] = false;
-                                }
-                                continue;
+                                    continue;
+                            }
                         }
                     }
+                    else
+                        continue;
                 }
 
                 R.RoundMark[i] = false;
