@@ -21,7 +21,7 @@
 Search should be repetiable with using generated files (without parsing logs many times) 
 18. output discard as image? (+hand, +waiting, m.b. for questions and quizzes): "all", "riichi", "n%", "n";
 19. Agari on aka / defined by user tile;
-
+24. Mobile link output: http://tenhou.net/4/log=2008112618gm-0061-0000-6613cf48&tw=1&ts=5.swf
 
 in process:
 20. Suji waiting [waiting is suji of discard], suji-waiting to discarded on riichi tile;
@@ -41,3 +41,7 @@ completed:
   - calc tournier results table - calc games, calc results (with/without uma), sorting by place;
 22. count of dead outs (placed to dead wall, i know at least 5)
 23. Create log file by directory with .mjlog, parse from directory ("mjlog=<dir>" option for -p argument)
+
+WTF "sce" logs?
+http://tenhou.net/0/?log=2013121600gm-0841-0000-076460cd
+

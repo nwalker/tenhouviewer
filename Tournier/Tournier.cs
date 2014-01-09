@@ -29,7 +29,7 @@ namespace TenhouViewer.Tournier
                     {
                         Result Res = GetPlayerResult(R.Players[p].NickName);
 
-                        Res.AddResult(R.Place[p], R.Result[p], R.Balance[p]);
+                        Res.AddResult(R.Place[p], R.Balance[p], R.Result[p]);
                         Res.Replays.Add(R);
 
                         Res.Rank = R.Players[p].Rank;

@@ -416,14 +416,14 @@ namespace TenhouViewer.Tenhou
 
             for (int i = 0; i < R.PlayerCount; i++)
             {
-                R.Balance[i] = Temp[i * 2 + 1];
-                R.Result[i] = Temp[i * 2] * 100;
+                R.Balance[i] = Temp[i * 2] * 100;
+                R.Result[i] = Temp[i * 2 + 1];
             }
 
             // Calculate places
             int[] ListOrder = new int[R.PlayerCount];
 
-            for (int i = 0; i < R.PlayerCount; i++) ListOrder[i] = R.Balance[i];
+            for (int i = 0; i < R.PlayerCount; i++) ListOrder[i] = R.Result[i];
 
             Array.Sort(ListOrder);
             Array.Reverse(ListOrder);
@@ -431,7 +431,7 @@ namespace TenhouViewer.Tenhou
             for (int i = 0; i < R.PlayerCount; i++)
             {
                 int Index = 0;
-                for (int j = 0; j < R.PlayerCount; j++) if (ListOrder[i] == R.Balance[j]) Index = j;
+                for (int j = 0; j < R.PlayerCount; j++) if (ListOrder[i] == R.Result[j]) Index = j;
 
                 R.Place[Index] = i + 1;
             }

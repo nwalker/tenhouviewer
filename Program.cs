@@ -447,6 +447,86 @@ namespace TenhouViewer
             return Result;
         }
 
+        // NickName (Rank/Rating) ...
+        // Lobby
+        // Link
+        static void AddReplayInfoTournier(Mahjong.Replay R, List<string> Output)
+        {
+            int FirstPlaceIndex = -1;
+            for (int j = 0; j < R.PlayerCount; j++) if (R.Place[j] == 1) FirstPlaceIndex = j;
+
+            // Players
+            {
+                string Players = "";
+
+                for (int j = 0; j < R.PlayerCount; j++)
+                {
+                    for (int p = 0; p < R.PlayerCount; p++)
+                    {
+                        if (R.Place[p] != j + 1) continue;
+
+                        Mahjong.Player P = R.Players[p];
+                        string PlayerInfo = String.Format("{0:s} ({1:s}/R{2:d}){3:s}", P.NickName, Tenhou.Rank.GetName(P.Rank), P.Rating,
+                            (j != R.PlayerCount) ? ", " : "");
+
+                        Players += PlayerInfo;
+                    }
+                }
+
+                Output.Add(Players);
+            }
+
+            // Lobby
+            {
+                string Lobby = String.Format("Lobby {0:d}", R.Lobby);
+
+                Output.Add(Lobby);
+            }
+
+            // Link
+            {
+                string Link = String.Format("http://tenhou.net/0/?log={0:s}&tw={1:d}\t", R.Hash, FirstPlaceIndex);
+
+                Output.Add(Link);
+            }
+
+            // Delimiter
+            Output.Add("");
+
+        }
+
+
+        // MM/DD | 牌譜 | type | link
+        // place位 A:nickname(result) B:
+        static void AddReplayInfoTenhou(Mahjong.Replay R, List<string> Output)
+        {
+            // Game type
+            {
+                string Link = String.Format("http://tenhou.net/0/?log={0:s}&tw={1:d}\t", R.Hash, 0);
+                string Info = String.Format("{0:00}/{1:00} | 牌譜 | {2:s} | {3:s}", R.Date.Month, R.Date.Day,
+                                                                                   Tenhou.LobbyType.GetText(R.LobbyType),
+                                                                                   Link);
+                Output.Add(Info);
+            }
+
+            // Players
+            {
+                string Players = "";
+
+                for (int p = 0; p < R.PlayerCount; p++)
+                {
+                    Mahjong.Player P = R.Players[p];
+                    string Position = "" + Convert.ToChar('A' + p);
+                    string Result = (R.Result[p] > 0) ? "+" + R.Result[p].ToString() : R.Result[p].ToString();
+                    string PlayerInfo = String.Format("{0:s}:{1:s}({2:s}.0) ", Position, P.NickName, Result);
+
+                    Players += PlayerInfo;
+                }
+
+                Output.Add(Players);
+            }
+        }
+
         static List<string> CreateList(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> OutputList = new List<string>();
@@ -464,46 +544,8 @@ namespace TenhouViewer
 
                 if (!R.ReplayMark) continue;
 
-                int FirstPlaceIndex = -1;
-                for (int j = 0; j < R.Replay.PlayerCount; j++) if (R.Replay.Place[j] == 1) FirstPlaceIndex = j;
-
-                // Players
-                {
-                    string Players = "";
-
-                    for (int j = 0; j < R.Replay.PlayerCount; j++) 
-                    {
-                        for (int p = 0; p < R.Replay.PlayerCount; p++)
-                        {
-                            if (R.Replay.Place[p] != j + 1) continue;
-
-                            Mahjong.Player P = R.Replay.Players[p];
-                            string PlayerInfo = String.Format("{0:s} ({1:s}/R{2:d}){3:s}", P.NickName, Tenhou.Rank.GetName(P.Rank), P.Rating,
-                                (j != R.Replay.PlayerCount) ? ", " : "");
-
-                            Players += PlayerInfo;
-                        }
-                    }
-
-                    OutputList.Add(Players);
-                }
-
-                // Lobby
-                {
-                    string Lobby = String.Format("Lobby {0:d}", R.Replay.Lobby);
-
-                    OutputList.Add(Lobby);
-                }
-
-                // Link
-                {
-                    string Link = String.Format("http://tenhou.net/0/?log={0:s}&tw={1:d}\t", R.Replay.Hash, FirstPlaceIndex);
-
-                    OutputList.Add(Link);
-                }
-
-                // Delimiter
-                OutputList.Add("");
+                AddReplayInfoTenhou(R.Replay, OutputList);
+              
             }
 
             return OutputList;
@@ -1136,10 +1178,10 @@ namespace TenhouViewer
                                         Temp += String.Format("{0:d}\t", Rnd.Dealer[k] ? 1 : 0);
                                         break;
                                     case "resbalance":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Result[k]);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Balance[k]);
                                         break;
                                     case "result":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Balance[k]);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Result[k]);
                                         break;
                                     case "tsumo":
                                         Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) == -1)) ? 1 : 0);
@@ -1209,6 +1251,29 @@ namespace TenhouViewer
                                         break;
                                     case "draw":
                                         Temp += String.Format("{0:d}\t", (Rnd.Result == Mahjong.RoundResult.Draw) ? 1 : 0);
+                                        break;
+                                    case "drawreason":
+                                        if (Rnd.Result == Mahjong.RoundResult.Draw)
+                                        {
+                                            // Name
+                                            Temp += String.Format("{0:s}\t", Tenhou.DrawReasonName.Name[Rnd.DrawReason + 1]);
+                                        }
+                                        else
+                                        {
+                                            Temp += "\t";
+                                        }
+                                        break;
+                                    case "n0":
+                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 0) ? R.Replay.Players[0].NickName : "");
+                                        break;
+                                    case "n1":
+                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 1) ? R.Replay.Players[1].NickName : "");
+                                        break;
+                                    case "n2":
+                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 2) ? R.Replay.Players[2].NickName : "");
+                                        break;
+                                    case "n3":
+                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 3) ? R.Replay.Players[3].NickName : "");
                                         break;
                                 }
                             }
@@ -1859,13 +1924,14 @@ namespace TenhouViewer
                             Finder.Draw = true;
                             switch (Value)
                             {
-                                case "yao9": Finder.DrawReason = 0; Comment = "only games which ended in a draw because of kyushu kyuhai"; break;
-                                case "reach4": Finder.DrawReason = 1; Comment = "only games which ended in a draw because of 4 reach"; break;
-                                case "ron3": Finder.DrawReason = 2; Comment = "only games which ended in a draw because of triple ron"; break; 
-                                case "kan4": Finder.DrawReason = 3; Comment = "only games which ended in a draw because of 4 kans"; break;
-                                case "kaze4": Finder.DrawReason = 4; Comment = "only games which ended in a draw because of 4 winds"; break;
-                                case "nm": Finder.DrawReason = 5; Comment = "only games which ended in a draw with nagashi mangan"; break;
-                                default: Finder.DrawReason = -1; Comment = "only games which ended in a draw (no agari)"; break;
+                                case "yao9": Finder.DrawReason = 1; Comment = "only games which ended in a draw because of kyushu kyuhai"; break;
+                                case "reach4": Finder.DrawReason = 2; Comment = "only games which ended in a draw because of 4 reach"; break;
+                                case "ron3": Finder.DrawReason = 3; Comment = "only games which ended in a draw because of triple ron"; break; 
+                                case "kan4": Finder.DrawReason = 4; Comment = "only games which ended in a draw because of 4 kans"; break;
+                                case "kaze4": Finder.DrawReason = 5; Comment = "only games which ended in a draw because of 4 winds"; break;
+                                case "nm": Finder.DrawReason = 6; Comment = "only games which ended in a draw with nagashi mangan"; break;
+                                case "normal": Finder.DrawReason = 0; Comment = "only games which ended in a draw (no agari)"; break;
+                                default: Finder.DrawReason = -1; Comment = "only games ended in a draw with any reason"; break;
                             }
 
                             Console.WriteLine(String.Format("Filter: {0:s} ;", Comment));
