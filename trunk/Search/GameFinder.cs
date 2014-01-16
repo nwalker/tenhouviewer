@@ -173,6 +173,12 @@ namespace TenhouViewer.Search
         // Limit results, by count
         public int Limit = -1;
 
+        // Riichi declared before any another player
+        public int FirstRiichi = -1;
+
+        // Ron on riichi
+        public int RonOnRiichi = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -983,6 +989,60 @@ namespace TenhouViewer.Search
                         bool PlayerRiichi = Rnd.Riichi[j] > 0;
 
                         if (IsRiichi != PlayerRiichi) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (FirstRiichi != -1)
+            {
+                bool IsFirstRiichi = (FirstRiichi != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    int MinRiichi = -1;
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if(Rnd.Riichi[j] >= 0) 
+                        {
+                            if((MinRiichi > Rnd.Riichi[j]) || (MinRiichi == -1)) MinRiichi = Rnd.Riichi[j];
+                        }
+                    }
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        bool First = (Rnd.Riichi[j] == MinRiichi);
+
+                        if (Rnd.Riichi[j] == -1) R.HandMark[i][j] = false;
+                        if (IsFirstRiichi != First) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (RonOnRiichi != -1)
+            {
+                bool IsRonOnRiichi = (RonOnRiichi != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+                    int[] RiichiStep = new int[R.Replay.PlayerCount];
+
+                    for (int j = 0; j < Rnd.Steps.Count; j++)
+                    {
+                        Mahjong.Step S = Rnd.Steps[j];
+
+                        if (S.Type == Mahjong.StepType.STEP_RIICHI) RiichiStep[S.Player]++;
+                        if (S.Type == Mahjong.StepType.STEP_RIICHI1000) RiichiStep[S.Player]++;
+                    }
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        bool Ron = RiichiStep[j] == 1;
+
+                        if (Ron != IsRonOnRiichi) R.HandMark[i][j] = false;
                     }
                 }
             }
