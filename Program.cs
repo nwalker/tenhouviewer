@@ -19,8 +19,6 @@ namespace TenhouViewer
 
             ParseArgs(args);
             if (args.Length == 0) ShowHelp();
-
-            Tenhou.TenhouHash H = new Tenhou.TenhouHash("2014010418gm-0009-8908-xb5b1fabcf715");
         }
 
         static void ShowHelp()
@@ -79,6 +77,7 @@ namespace TenhouViewer
             Console.WriteLine(" winner=N - find all (not) completed hands (0-1);");
             Console.WriteLine(" loser=N - find all players (games), who (not) dealt into ron (0-1);");
             Console.WriteLine(" riichi=N - find all hands with declared (or not) riichi (0-1);");
+            Console.WriteLine(" firstriichi=N - find all players who declared riichi (not) first (0-1);");
             Console.WriteLine(" furiten=N - find all players (games), who has (has not) furiten (0-1);");
             Console.WriteLine(" ron=N - find all rounds ended with ron (0-1);");
             Console.WriteLine(" tsumo=N - find all rounds ended with tsumo (0-1);");
@@ -1716,10 +1715,20 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only hands {0:s} riichi;", (Finder.Riichi == 0) ? "without" : "with"));
                         break;
+                    case "firstriichi":
+                        Finder.FirstRiichi = ParseBoolArg(Value, "firstriichi");
+
+                        Console.WriteLine(String.Format("Filter: only players who declared riichi {0:s}first;", (Finder.Riichi == 0) ? "not " : ""));
+                        break;
                     case "ron":
                         Finder.Ron = ParseBoolArg(Value, "ron");
 
                         Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron agari;", (Finder.Ron == 0) ? "without" : "with"));
+                        break;
+                    case "rononriichi":
+                        Finder.RonOnRiichi = ParseBoolArg(Value, "rononriichi");
+
+                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron on riichi agari;", (Finder.Ron == 0) ? "without" : "with"));
                         break;
                     case "tsumo":
                         Finder.Tsumo = ParseBoolArg(Value, "tsumo");
