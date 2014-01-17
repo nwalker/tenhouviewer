@@ -32,9 +32,9 @@ namespace TenhouViewer.Mahjong
         private int Kouho;  // Kouho  = Incomplete set
         private int Toitsu; // Toitsu = Pair
 
-        private int ShantenChiitoi; // Shanten to chiitoi hand (seven pairs)
-        private int ShantenKokushi; // Shanten to kokushi hand (thirtheen orphans)
-        private int ShantenNormal;  // Shanten to normal hand (four sets + pair)
+        public int ShantenChiitoi; // Shanten to chiitoi hand (seven pairs)
+        public int ShantenKokushi; // Shanten to kokushi hand (thirtheen orphans)
+        public int ShantenNormal;  // Shanten to normal hand (four sets + pair)
 
         private int TempShantenNormal;
 

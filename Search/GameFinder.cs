@@ -179,6 +179,12 @@ namespace TenhouViewer.Search
         // Ron on riichi
         public int RonOnRiichi = -1;
 
+        // Chiitoi hand
+        public int Chiitoi = -1;
+
+        // Dora wait
+        public int DoraWait = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -299,6 +305,7 @@ namespace TenhouViewer.Search
                 CheckSuji(R);
                 CheckDora(R);
                 CheckDeadOuts(R);
+                CheckChiitoi(R);
 
                 // Check mark
                 EmbedMarksToHandMark(R);
@@ -386,6 +393,44 @@ namespace TenhouViewer.Search
         }
 
         // filters
+        private bool CheckChiitoiHand(Mahjong.Hand H)
+        {
+            if(H.Shanten != 0) return false;
+
+            Mahjong.ShantenCalculator Sh = new Mahjong.ShantenCalculator(H);
+
+            Sh.GetShanten();
+
+            return (Sh.ShantenChiitoi == 0);
+        }
+
+        private void CheckChiitoi(Result R)
+        {
+            if (Chiitoi == -1) return;
+            bool IsChiitoi = (Chiitoi != 0);
+
+            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Replay.Rounds[i];
+                Rnd.ReplayGame();
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                {
+                    bool Mark = false;
+                    for (int k = 0; k < Rnd.Hands[j].Count; k++)
+                    {
+                        if (CheckChiitoiHand(Rnd.Hands[j][k]))
+                        {
+                            Mark = true;
+                            break;
+                        }
+                    }
+
+                    if (IsChiitoi != Mark) R.HandMark[i][j] = false;
+                }
+            }
+        }
+
         private void CheckForm(Result R)
         {
             if (Form == null) return;
@@ -1277,32 +1322,44 @@ namespace TenhouViewer.Search
 
         private void CheckDora(Result R)
         {
-            if ((DoraMax == -1) && (DoraMin == -1)) return;
-
-            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            if ((DoraMax != -1) || (DoraMin != -1))
             {
-                Mahjong.Round Rnd = R.Replay.Rounds[i];
-
-                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
                 {
-                    bool Ok = true;
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
 
-                    if (Rnd.Winner[j])
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
-                        int Count = 0;
+                        bool Ok = true;
 
-                        for (int y = 0; y < Rnd.Yaku[j].Count; y++)
+                        if (Rnd.Winner[j])
                         {
-                            if (Rnd.Yaku[j][y].Index >= 52) Count += Rnd.Yaku[j][y].Cost;
+                            int Count = 0;
+
+                            for (int y = 0; y < Rnd.Yaku[j].Count; y++)
+                            {
+                                if (Rnd.Yaku[j][y].Index >= 52) Count += Rnd.Yaku[j][y].Cost;
+                            }
+
+                            if (DoraMin != -1) if (Count < DoraMin) Ok = false;
+                            if (DoraMax != -1) if (Count > DoraMax) Ok = false;
                         }
+                        else
+                            Ok = false;
 
-                        if(DoraMin != -1) if(Count < DoraMin) Ok = false;
-                        if(DoraMax != -1) if(Count > DoraMax) Ok = false;
+                        if (!Ok) R.HandMark[i][j] = false;
                     }
-                    else
-                        Ok = false;
+                }
+            }
 
-                    if (!Ok) R.HandMark[i][j] = false;
+            if (DoraWait != -1)
+            {
+                bool IsDoraWait = (DoraWait != 0);
+
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
                 }
             }
         }
