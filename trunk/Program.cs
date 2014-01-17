@@ -1718,7 +1718,7 @@ namespace TenhouViewer
                     case "firstriichi":
                         Finder.FirstRiichi = ParseBoolArg(Value, "firstriichi");
 
-                        Console.WriteLine(String.Format("Filter: only players who declared riichi {0:s}first;", (Finder.Riichi == 0) ? "not " : ""));
+                        Console.WriteLine(String.Format("Filter: only players who declared riichi {0:s}first;", (Finder.FirstRiichi == 0) ? "not " : ""));
                         break;
                     case "ron":
                         Finder.Ron = ParseBoolArg(Value, "ron");
@@ -1871,6 +1871,11 @@ namespace TenhouViewer
                         Finder.Tempai = ParseBoolArg(Value, "tempai");
 
                         Console.WriteLine(String.Format("Filter: only hands, which {0:s} had tempai;", (Finder.Tempai == 0) ? "not" : ""));
+                        break;
+                    case "chiitoi":
+                        Finder.Chiitoi = ParseBoolArg(Value, "chiitoi");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which {0:s} had tempai on chiitoi;", (Finder.Chiitoi == 0) ? "not" : ""));
                         break;
                     case "omotesuji":
                         Finder.OmoteSujiWait = ParseBoolArg(Value, "omotesuji");

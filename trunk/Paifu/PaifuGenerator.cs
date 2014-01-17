@@ -60,7 +60,7 @@ namespace TenhouViewer.Paifu
 
         Color FuritenColor = Color.FromArgb(200, 204, 119, 0);
 
-        Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red};
+        Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red, Color.DarkRed};
 
         public int ShowShanten = 0;  // show shanten info: false
         public int ShowDanger = 1;   // show danger tiles: true
