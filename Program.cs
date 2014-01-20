@@ -1735,6 +1735,11 @@ namespace TenhouViewer
 
                         Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} tsumo agari;", (Finder.Tsumo == 0) ? "without" : "with"));
                         break;
+                    case "oneside":
+                        Finder.Oneside = ParseBoolArg(Value, "oneside");
+
+                        Console.WriteLine(String.Format("Filter: only  players who was{0:s} won all rounds (except draws);", (Finder.Oneside == 0) ? " not" : ""));
+                        break;
                     case "riichicount":
                         TempValue = ParseIntArg(Value, 0, 4, "riichicount");
                         if (TempValue != -1) Finder.RiichiCount = TempValue;
