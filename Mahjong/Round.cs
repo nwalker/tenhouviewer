@@ -68,6 +68,8 @@ namespace TenhouViewer.Mahjong
         public int Lobby = -1;
         public int LobbyType = -1;
 
+        public int FirstDora = -1;
+
         public Round()
         {
             Result = RoundResult.Unknown;
@@ -175,6 +177,7 @@ namespace TenhouViewer.Mahjong
                     case "tempai": Tempai = X.ReadBoolArray(); break;
                     case "wind": Wind = X.ReadIntArray(); break;
                     case "stepcount": StepCount = X.ReadIntArray(); break;
+                    case "firstdora": FirstDora = X.GetIntAttribute("pointer"); break;
                     case "wall":
                     {
                         if (Wall == null) Wall = new Mahjong.Wall();
@@ -334,7 +337,7 @@ namespace TenhouViewer.Mahjong
                                 switch (Doras.ElementName)
                                 {
                                     case "dora":
-                                        Dora.Add(Doras.GetIntAttribute("value"));
+                                        Dora.Add(Doras.GetIntAttribute("pointer"));
                                         break;
                                 }
                             }
@@ -353,7 +356,7 @@ namespace TenhouViewer.Mahjong
                                 switch (Doras.ElementName)
                                 {
                                     case "dora":
-                                        UraDora.Add(Doras.GetIntAttribute("value"));
+                                        UraDora.Add(Doras.GetIntAttribute("pointer"));
                                         break;
                                 }
                             }
@@ -377,7 +380,7 @@ namespace TenhouViewer.Mahjong
 
             X.StartXML("mjround");
 
-            // Что это за раздача?
+            X.WriteTag("version", "value", 175);
             X.WriteTag("hash", "value", Hash);
             X.WriteTag("game", "index", Index);
             X.WriteTag("playercount", "value", PlayerCount);
@@ -400,6 +403,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("dealer", Dealer);
             X.WriteTag("stepcount", StepCount);
             X.WriteTag("tempai", Tempai);
+            X.WriteTag("firstdora", "pointer", FirstDora);
 
             // Wall
             if(Wall != null)
@@ -421,7 +425,7 @@ namespace TenhouViewer.Mahjong
 
                 for (int j = 0; j < Dora.Count; j++)
                 {
-                    X.WriteTag("dora", "value", Dora[j]);
+                    X.WriteTag("dora", "pointer", Dora[j]);
                 }
 
                 X.EndTag();
@@ -434,7 +438,7 @@ namespace TenhouViewer.Mahjong
 
                 for (int j = 0; j < UraDora.Count; j++)
                 {
-                    X.WriteTag("dora", "value", UraDora[j]);
+                    X.WriteTag("dora", "pointer", UraDora[j]);
                 }
 
                 X.EndTag();

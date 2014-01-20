@@ -215,6 +215,19 @@ namespace TenhouViewer.Tenhou
                 CurrentRound.BalanceBefore[i] = Balance[i] * 100;
             }
 
+            int[] Seed = DecompositeIntList(Reader.GetAttribute("seed"));
+
+            {
+                if (Seed != null)
+                {
+                    // Seed:
+                    // 0: unk 3: unk
+                    // 1: unk 4: unk
+                    // 2: unk 5: dora pointer
+                    if(Seed.Length >= 6) CurrentRound.FirstDora = Seed[5];
+                }
+            }
+
             CurrentRound.PlayerCount = R.PlayerCount;
 
             FirstStep = true;

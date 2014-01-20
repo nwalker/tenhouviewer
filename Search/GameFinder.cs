@@ -1399,6 +1399,31 @@ namespace TenhouViewer.Search
                 {
                     Mahjong.Round Rnd = R.Replay.Rounds[i];
 
+                    bool[] HasDoraInWaiting = new bool[R.Replay.PlayerCount];
+                    List<int> DoraTypes = new List<int>();
+                    DoraTypes.Add(new Mahjong.Tile(Rnd.FirstDora).DoraType);
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++) HasDoraInWaiting[j] = false;
+
+                    for (int j = 0; j < Rnd.Steps.Count; j++)
+                    {
+                        Mahjong.Step S = Rnd.Steps[j];
+
+                        if (S.Type == Mahjong.StepType.STEP_NEWDORA) DoraTypes.Add(new Mahjong.Tile(S.Tile).DoraType);
+
+                        if (S.Waiting != null)
+                        {
+                            for (int k = 0; k < S.Waiting.Length; k++)
+                            {
+                                if(DoraTypes.Contains(S.Waiting[k])) HasDoraInWaiting[S.Player] = true;
+                            }
+                        }
+                    }
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (IsDoraWait != HasDoraInWaiting[j]) R.HandMark[i][j] = false;
+                    }
                 }
             }
         }

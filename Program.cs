@@ -78,6 +78,9 @@ namespace TenhouViewer
             Console.WriteLine(" loser=N - find all players (games), who (not) dealt into ron (0-1);");
             Console.WriteLine(" riichi=N - find all hands with declared (or not) riichi (0-1);");
             Console.WriteLine(" firstriichi=N - find all players who declared riichi (not) first (0-1);");
+            Console.WriteLine(" rononriichi=N - find all players who (not) drawn to ron on riichi declaration (0-1);");
+            Console.WriteLine(" oneside=N - find all lucker players who (not) won in all rounds (except draws) (0-1);");
+            Console.WriteLine(" dorawait=N - find all lucker players who has (not) dora in waiting  (0-1);");
             Console.WriteLine(" furiten=N - find all players (games), who has (has not) furiten (0-1);");
             Console.WriteLine(" ron=N - find all rounds ended with ron (0-1);");
             Console.WriteLine(" tsumo=N - find all rounds ended with tsumo (0-1);");
@@ -1728,7 +1731,12 @@ namespace TenhouViewer
                     case "rononriichi":
                         Finder.RonOnRiichi = ParseBoolArg(Value, "rononriichi");
 
-                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron on riichi agari;", (Finder.Ron == 0) ? "without" : "with"));
+                        Console.WriteLine(String.Format("Filter: only rounds, which ended {0:s} ron on riichi agari;", (Finder.RonOnRiichi == 0) ? "without" : "with"));
+                        break;
+                    case "dorawait":
+                        Finder.DoraWait = ParseBoolArg(Value, "dorawait");
+
+                        Console.WriteLine(String.Format("Filter: only hands, which has {0:s}dora in waiting;", (Finder.DoraWait == 0) ? "not " : ""));
                         break;
                     case "tsumo":
                         Finder.Tsumo = ParseBoolArg(Value, "tsumo");
