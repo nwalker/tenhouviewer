@@ -185,6 +185,9 @@ namespace TenhouViewer.Search
         // Dora wait
         public int DoraWait = -1;
 
+        // Oneside
+        public int Oneside = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -957,17 +960,53 @@ namespace TenhouViewer.Search
 
         private void CheckWinner(Result R)
         {
-            if (Winner == -1) return;
-
-            bool IsWinner = (Winner != 0);
-            for (int i = 0; i < R.Replay.Rounds.Count; i++)
+            if (Winner != -1)
             {
-                Mahjong.Round Rnd = R.Replay.Rounds[i];
-
-                for (int j = 0; j < R.Replay.PlayerCount; j++)
+                bool IsWinner = (Winner != 0);
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
                 {
-                    if (Rnd.Winner[j] != IsWinner) R.HandMark[i][j] = false;
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.Winner[j] != IsWinner) R.HandMark[i][j] = false;
+                    }
                 }
+            }
+
+            if (Oneside != -1)
+            {
+                bool IsOneside = (Oneside != 0);
+
+                bool[] WinnerFlag = new bool[R.Replay.PlayerCount];
+                int Count = 0;
+
+                for (int j = 0; j < R.Replay.PlayerCount; j++) WinnerFlag[j] = false;
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+                    for (int j = 0; j < R.Replay.PlayerCount; j++)
+                    {
+                        if (Rnd.Winner[j])
+                        {
+                            if (!WinnerFlag[j]) Count++;
+                            WinnerFlag[j] = true;
+                        }
+                    }
+
+                    if (Count == 1)
+                    {
+                        for (int j = 0; j < R.Replay.PlayerCount; j++)
+                        {
+                            if (WinnerFlag[j] != IsOneside) R.PlayerMark[j] = false;
+                        }
+                    }
+                    else
+                    {
+                        R.ReplayMark = !IsOneside;
+                    }
+                }
+
             }
         }
 
