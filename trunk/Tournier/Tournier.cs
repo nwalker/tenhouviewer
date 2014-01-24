@@ -27,8 +27,10 @@ namespace TenhouViewer.Tournier
 
                     for (int p = 0; p < R.PlayerCount; p++)
                     {
-                        Result Res = GetPlayerResult(R.Players[p].NickName);
+                        if (!GamesList[i].PlayerMark[p]) continue;
 
+                        Result Res = GetPlayerResult(R.Players[p].NickName);
+                        
                         Res.AddResult(R.Place[p], R.Balance[p], R.Result[p]);
                         Res.Replays.Add(R);
 
@@ -38,6 +40,9 @@ namespace TenhouViewer.Tournier
                         for (int r = 0; r < R.Rounds.Count; r++)
                         {
                             Mahjong.Round Rnd = R.Rounds[r];
+
+                            if (!GamesList[i].RoundMark[r]) continue;
+                            if (!GamesList[i].HandMark[r][p]) continue;
 
                             Res.RoundCount++;
 
