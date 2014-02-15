@@ -146,6 +146,7 @@ namespace TenhouViewer
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -o<nickname> <fields> - format output results:");
+            Console.WriteLine("Any field can be specified for any player. Sample: rank=0 rank=1 rank=2 rank=3 for table building");
             Console.WriteLine(" link - link to the round;");
             Console.WriteLine(" lobby - lobby index;");
             Console.WriteLine(" type - lobby type (aka,kui,nan,dan,...);");
@@ -181,7 +182,9 @@ namespace TenhouViewer
             Console.WriteLine(" from - nickname of player who p[layed into ron;");
             Console.WriteLine(" furiten - furiten hand;");
             Console.WriteLine(" draw - round ended in draw;");
-
+            Console.WriteLine(" tempaicount - how many tempai;");
+            Console.WriteLine(" agaricount - how many agari;");
+            Console.WriteLine(" tsumocount - how many tsumo;");
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -l - list all games;");
 
@@ -1100,11 +1103,57 @@ namespace TenhouViewer
             return Rating / R.PlayerCount;
         }
 
+        static int AgariCount(Mahjong.Replay R, int Player)
+        {
+            if (Player >= R.PlayerCount) return 0;
+
+            int Count = 0;
+            for (int i = 0; i < R.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Rounds[i];
+
+                if (Rnd.Winner[Player]) Count++;
+            }
+
+            return Count;
+        }
+
+        static int TsumoCount(Mahjong.Replay R, int Player)
+        {
+            if(Player >= R.PlayerCount) return 0;
+
+            int Count = 0;
+            for (int i = 0; i < R.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Rounds[i];
+
+                if (Rnd.Winner[Player] && Rnd.Result == Mahjong.RoundResult.Tsumo) Count++;
+            }
+
+            return Count;
+        }
+
+        static int TempaiCount(Mahjong.Replay R, int Player)
+        {
+            if (Player >= R.PlayerCount) return 0;
+
+            int Count = 0;
+            for (int i = 0; i < R.Rounds.Count; i++)
+            {
+                Mahjong.Round Rnd = R.Rounds[i];
+
+                if (Rnd.Tempai[Player]) Count++;
+            }
+
+            return Count;
+        }
+
         static List<string> ConvertResultsToString(string Argument, List<Argument> ArgList, List<Search.Result> Results)
         {
             List<string> Output = new List<string>();
             bool ReplayOnce = false;
             bool PlayerOnce = false;
+            bool MarkPlayer = false;
 
             bool[] PlayerFlag = new bool[4];
 
@@ -1118,6 +1167,9 @@ namespace TenhouViewer
                         break;
                     case "playeronce":
                         PlayerOnce = true;
+                        break;
+                    case "markplayer":
+                        MarkPlayer = true;
                         break;
                 }
             }
@@ -1143,26 +1195,46 @@ namespace TenhouViewer
 
                             for(int o = 0; o < ArgList.Count; o++)
                             {
+                                int Player = k;
+
+                                if (ArgList[o].Value != null)
+                                {
+                                    try
+                                    {
+                                        int TempPlayer = Convert.ToInt32(ArgList[o].Value);
+
+                                        if ((TempPlayer >= 0) && (TempPlayer <= 3))
+                                        {
+                                            Player = TempPlayer;
+
+                                            if ((Player == k) && MarkPlayer) Temp += "'";
+                                        }
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                }
                                 switch(ArgList[o].Name)
                                 {
                                     case "link":
                                         Temp += String.Format("http://tenhou.net/0/?log={0:s}&ts={1:d}&tw={2:d}\t",
-                                                              R.Replay.Hash, r, k);
+                                                              R.Replay.Hash, r, Player);
                                         break;
                                     case "nickname":
-                                        Temp += String.Format("{0:s}\t", R.Replay.Players[k].NickName);
+                                        Temp += String.Format("{0:s}\t", R.Replay.Players[Player].NickName);
                                         break;
                                     case "rating":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Players[k].Rating);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Players[Player].Rating);
                                         break;
                                     case "place":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Place[k]);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Place[Player]);
                                         break;
                                     case "rank":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Players[k].Rank);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Players[Player].Rank);
                                         break;
                                     case "jrating":
-                                        Temp += String.Format("{0:d}R\t", R.Replay.Players[k].Rating);
+                                        Temp += String.Format("{0:d}R\t", R.Replay.Players[Player].Rating);
                                         break;
                                     case "tablerating":
                                         Temp += String.Format("{0:d}\t", AverageTableRating(R.Replay));
@@ -1171,61 +1243,73 @@ namespace TenhouViewer
                                         Temp += String.Format("{0:d}R\t", AverageTableRating(R.Replay));
                                         break;
                                     case "jrank":
-                                        Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Replay.Players[k].Rank));
+                                        Temp += String.Format("{0:s}\t", Tenhou.Rank.GetName(R.Replay.Players[Player].Rank));
                                         break;
                                     case "pay":
-                                        Temp += String.Format("{0:d}\t", Rnd.Pay[k]);
+                                        Temp += String.Format("{0:d}\t", Rnd.Pay[Player]);
                                         break;
                                     case "dealer":
-                                        Temp += String.Format("{0:d}\t", Rnd.Dealer[k] ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", Rnd.Dealer[Player] ? 1 : 0);
                                         break;
                                     case "resbalance":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Balance[k]);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Balance[Player]);
                                         break;
                                     case "result":
-                                        Temp += String.Format("{0:d}\t", R.Replay.Result[k]);
+                                        Temp += String.Format("{0:d}\t", R.Replay.Result[Player]);
                                         break;
                                     case "tsumo":
-                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) == -1)) ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[Player] && (GetFirstNotNullIndex(Rnd.Loser) == -1)) ? 1 : 0);
                                         break;
                                     case "ron":
-                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", (Rnd.Winner[Player] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? 1 : 0);
+                                        break;
+                                    case "tempaicount":
+                                        Temp += String.Format("{0:d}\t", TempaiCount(R.Replay, Player));
+                                        break;
+                                    case "agaricount":
+                                        Temp += String.Format("{0:d}\t", AgariCount(R.Replay, Player));
+                                        break;
+                                    case "tsumocount":
+                                        Temp += String.Format("{0:d}\t", TsumoCount(R.Replay, Player));
                                         break;
                                     case "from":
-                                        Temp += String.Format("{0:s}\t", (Rnd.Winner[k] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? R.Replay.Players[GetFirstNotNullIndex(Rnd.Loser)].NickName : "");
+                                        Temp += String.Format("{0:s}\t", (Rnd.Winner[Player] && (GetFirstNotNullIndex(Rnd.Loser) != -1)) ? R.Replay.Players[GetFirstNotNullIndex(Rnd.Loser)].NickName : "");
                                         break;
                                     case "winner":
-                                        Temp += String.Format("{0:d}\t", Rnd.Winner[k] ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", Rnd.Winner[Player] ? 1 : 0);
                                         break;
                                     case "loser":
-                                        Temp += String.Format("{0:d}\t", Rnd.Loser[k] ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", Rnd.Loser[Player] ? 1 : 0);
                                         break;
                                     case "concealed":
-                                        Temp += String.Format("{0:d}\t", (Rnd.OpenedSets[k] == 0) ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", (Rnd.OpenedSets[Player] == 0) ? 1 : 0);
                                         break;
                                     case "cost":
-                                        Temp += String.Format("{0:d}\t", Rnd.Cost[k]);
+                                        Temp += String.Format("{0:d}\t", Rnd.Cost[Player]);
                                         break;
                                     case "han":
-                                        Temp += String.Format("{0:d}\t", Rnd.HanCount[k]);
+                                        Temp += String.Format("{0:d}\t", Rnd.HanCount[Player]);
                                         break;
                                     case "fu":
-                                        Temp += String.Format("{0:d}\t", Rnd.FuCount[k]);
+                                        Temp += String.Format("{0:d}\t", Rnd.FuCount[Player]);
                                         break;
                                     case "waiting":
-                                        Temp += String.Format("{0:d}\t", Rnd.WinWaiting[k].Count);
+                                        Temp += String.Format("{0:d}\t", Rnd.WinWaiting[Player].Count);
                                         break;
                                     case "step":
-                                        Temp += String.Format("{0:d}\t", Rnd.StepCount[k]);
+                                        Temp += String.Format("{0:d}\t", Rnd.StepCount[Player]);
                                         break;
                                     case "yaku":
-                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k], "en"));
+                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[Player], "en"));
                                         break;
                                     case "jyaku":
-                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[k], "jp"));
+                                        Temp += String.Format("{0:s}\t", YakuList(Rnd.Yaku[Player], "jp"));
                                         break;
                                     case "round":
                                         Temp += String.Format("{0:d}\t", Rnd.CurrentRound);
+                                        break;
+                                    case "roundcount":
+                                        Temp += String.Format("{0:d}\t", R.Replay.Rounds.Count);
                                         break;
                                     case "lobby":
                                         Temp += String.Format("{0:d}\t", Rnd.Lobby);
@@ -1240,16 +1324,16 @@ namespace TenhouViewer
                                         Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.CurrentRound / 4));
                                         break;
                                     case "playerwind":
-                                        Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.Wind[k]));
+                                        Temp += String.Format("{0:s}\t", Tenhou.Wind.GetText(Rnd.Wind[Player]));
                                         break;
                                     case "players":
                                         Temp += String.Format("{0:d}\t", Rnd.PlayerCount);
                                         break;
                                     case "danger":
-                                        Temp += String.Format("{0:d}\t", CountDangerous(Rnd, k));
+                                        Temp += String.Format("{0:d}\t", CountDangerous(Rnd, Player));
                                         break;
                                     case "furiten":
-                                        Temp += String.Format("{0:d}\t", HasFuriten(Rnd, k) ? 1 : 0);
+                                        Temp += String.Format("{0:d}\t", HasFuriten(Rnd, Player) ? 1 : 0);
                                         break;
                                     case "draw":
                                         Temp += String.Format("{0:d}\t", (Rnd.Result == Mahjong.RoundResult.Draw) ? 1 : 0);
@@ -1265,29 +1349,18 @@ namespace TenhouViewer
                                             Temp += "\t";
                                         }
                                         break;
-                                    case "n0":
-                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 0) ? R.Replay.Players[0].NickName : "");
-                                        break;
-                                    case "n1":
-                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 1) ? R.Replay.Players[1].NickName : "");
-                                        break;
-                                    case "n2":
-                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 2) ? R.Replay.Players[2].NickName : "");
-                                        break;
-                                    case "n3":
-                                        Temp += String.Format("{0:s}\t", (R.Replay.PlayerCount > 3) ? R.Replay.Players[3].NickName : "");
-                                        break;
                                 }
                             }
 
                             Output.Add(Temp);
 
-                            // If need onnly one result per replay, skip other
-                            if (ReplayOnce) break;
-
                             PlayerFlag[k] = true;
                         }
                     }
+
+                    // If need onnly one result per replay, skip other
+                    if (ReplayOnce)
+                        break;
                 }
             }
 
