@@ -286,6 +286,7 @@ namespace TenhouViewer
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -c<directory> <options> - convert to mjlog from log;");
             Console.WriteLine(" dir - directory to save result (for all replays);");
+
         }
 
         static void ParseArgs(string[] args)
@@ -1449,6 +1450,8 @@ namespace TenhouViewer
         static void DownloadLog(string FileName, List<Argument> ArgList)
         {
             string Dir = LogDir;
+            string Mjlog = null;
+            string[] MjlogDir = null;
 
             foreach (Argument A in ArgList)
             {
@@ -1459,7 +1462,12 @@ namespace TenhouViewer
                         if (!Directory.Exists(Dir))
                             Directory.CreateDirectory(Dir);
                         break;
-
+                    case "mjlog":
+                        {
+                            Mjlog = A.Value;
+                            if (Directory.Exists(Mjlog)) MjlogDir = Directory.GetFiles(Mjlog, "*.mjlog");
+                        }
+                        break;
                 }
             }
 
@@ -1472,7 +1480,10 @@ namespace TenhouViewer
             }
 
             Tenhou.LogParser Log = new Tenhou.LogParser(FileName);
-            Log.DownloadAll(Dir);
+            if (Mjlog != null)
+                Log.DownloadAllFromMjlog(Dir, MjlogDir);
+            else
+                Log.DownloadAll(Dir);
         }
 
         static void ParseHash(string Hash)
@@ -1534,7 +1545,7 @@ namespace TenhouViewer
                     case "mjlog":
                         {
                             Mjlog = A.Value;
-                            if(Directory.Exists(Mjlog)) MjlogDir = Directory.GetFiles(Mjlog);
+                            if(Directory.Exists(Mjlog)) MjlogDir = Directory.GetFiles(Mjlog, "*.mjlog");
                         }
                         break;
                 }
@@ -1556,7 +1567,7 @@ namespace TenhouViewer
                 string Hash = Hashes[i];
                 string ReplayFileName = Tenhou.LogParser.GetFileName(Hash, Dir);
 
-                Console.Title = String.Format("Parsing {0:d}/{1:d}", i + 1, Hashes.Count);
+                Console.Title = String.Format("Parsing {0:d}/{1:d}: {2:s}", i + 1, Hashes.Count, Hash);
                 Console.Write(Hash);
 
                 Rewrited = false;
