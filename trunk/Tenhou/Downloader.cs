@@ -24,7 +24,7 @@ namespace TenhouViewer.Tenhou
 
         private bool TryEEServer(string FileName)
         {
-            string Url = "http://ee.mjv.jp/0/log_/?" + Hash;
+            string Url = "http://ee.mjv.jp/0/log/?" + Hash;
 
             return DownloadFile(Url, FileName);
         }
@@ -46,7 +46,7 @@ namespace TenhouViewer.Tenhou
                 {
                     webClient.DownloadFile(Url, FileName);
                 }
-                catch (Exception)
+                catch (Exception E)
                 {
                     return false;
                 }

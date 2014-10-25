@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace TenhouViewer.Tenhou
@@ -73,13 +74,61 @@ namespace TenhouViewer.Tenhou
             {
                 string Hash = HashList.Hashes[i];
 
+                Console.Title = String.Format("Downloading {0:d}/{1:d}: {2:s}", i, HashList.Hashes.Count, Hash);
                 if (Download(Hash, Dir))
-                {
                     Console.WriteLine(Hash + ": ok");
-                }
+                else
+                    Console.WriteLine(Hash + ": fail");
+            }
+        }
+
+        private string GetMjlogFilename(string Hash, string[] Files)
+        {
+            // find in directory
+            foreach (string F in Files)
+            {
+                if (F.Contains(Hash))
+                    return F;
+            }
+
+            return null;
+        }
+
+        public void DownloadAllFromMjlog(string Dir, string[] Files)
+        {
+            if (!Directory.Exists(Dir)) Directory.CreateDirectory(Dir);
+            for (int i = 0; i < HashList.Hashes.Count; i++)
+            {
+                string Hash = HashList.Hashes[i];
+                Console.Title = String.Format("Loading {0:d}/{1:d}: {2:s}", i, HashList.Hashes.Count, Hash);
+
+                string FileName = GetFileName(Hash, Dir);
+
+                if (File.Exists(FileName))
+                    Console.WriteLine(Hash + ": exists");
                 else
                 {
-                    Console.WriteLine(Hash + ": fail");
+                    string F = GetMjlogFilename(Hash, Files);
+                    if(F != null)
+                    {
+                        try
+                        {
+                            FileStream GzFile = new FileStream(F, FileMode.Open, FileAccess.Read);
+                            GZipStream Stream = new GZipStream(GzFile, CompressionMode.Decompress);
+
+                            using (var fileStream = File.Create(FileName))
+                            {
+                                Stream.CopyTo(fileStream);
+                            }
+                            Console.WriteLine(Hash + ": ok");
+                        }
+                        catch(Exception E)
+                        {
+                            Console.WriteLine(Hash + ": fail [" + E.Message + "]");
+                        }
+                    }
+                    else
+                       Console.WriteLine(Hash + ": file not found");
                 }
             }
         }
