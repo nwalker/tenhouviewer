@@ -188,6 +188,9 @@ namespace TenhouViewer.Search
         // Oneside
         public int Oneside = -1;
 
+        // Naki type
+        public int NakiType = -1;
+
         public GameFinder(Tenhou.TenhouHashList Hashes)
         {
             // Create blank ResultList from hash table
@@ -1156,6 +1159,24 @@ namespace TenhouViewer.Search
                     for (int j = 0; j < R.Replay.PlayerCount; j++)
                     {
                         if (Rnd.OpenedSets[j] != OpenedSets) R.HandMark[i][j] = false;
+                    }
+                }
+            }
+
+            if (NakiType != -1)
+            {
+                for (int i = 0; i < R.Replay.Rounds.Count; i++)
+                {
+                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+
+                    for (int s = 0; s < Rnd.Steps.Count; s++)
+                    {
+                        Mahjong.Step S = Rnd.Steps[s];
+
+                        if (S.Type== Mahjong.StepType.STEP_NAKI) 
+                        {
+                            if(Convert.ToInt32(S.NakiData.Type) != NakiType) R.HandMark[i][S.Player] = false;
+                        }
                     }
                 }
             }
