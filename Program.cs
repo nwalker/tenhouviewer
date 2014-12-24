@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using TenhouViewer.Mahjong;
 
 namespace TenhouViewer
 {
@@ -28,6 +29,7 @@ namespace TenhouViewer
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -dLog.txt - download all games from log Log.txt;");
+            Console.WriteLine(" mjlog=D - load .mjlog from specified folder if exists");
 
             Console.WriteLine("");
             Console.WriteLine("TenhouViewer -PHash - parse game;");
@@ -2052,6 +2054,15 @@ namespace TenhouViewer
                         Finder.Form = ParseForm(Value);
 
                         Console.WriteLine(String.Format("Filter: only hands with form '{0:s}';", Value));
+                        break;
+                    case "naki":
+                        int N = ParseIntArg(Value, 1, 6, "naki");
+
+                        if ((N >= 1) && (N <= 6))
+                        {
+                            Finder.NakiType = N;
+                            Console.WriteLine(String.Format("Filter: only hands with naki {0:d}: '{1:s}';", N, ((NakiType)N).ToString()));
+                        }
                         break;
                     case "drowntiles":
                         Finder.DrownTiles = ParseTilesList(Value);
