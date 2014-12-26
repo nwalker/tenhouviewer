@@ -113,7 +113,7 @@ namespace TenhouViewer.Tenhou
         private void GO(XmlReader Reader)
         {
             R.Lobby = Convert.ToInt32(Reader.GetAttribute("lobby"));
-            R.LobbyType = Convert.ToInt32(Reader.GetAttribute("type"));
+            R.LobbyType = (Mahjong.LobbyType)Convert.ToInt32(Reader.GetAttribute("type"));
         }
 
         // Player info
@@ -221,10 +221,12 @@ namespace TenhouViewer.Tenhou
                 if (Seed != null)
                 {
                     // Seed:
-                    // 0: unk 3: unk
-                    // 1: unk 4: unk
-                    // 2: unk 5: dora pointer
-                    if(Seed.Length >= 6) CurrentRound.FirstDora = Seed[5];
+                    // 0: unk           3: unk
+                    // 1: renchan stick 4: unk
+                    // 2: riichi stick  5: dora pointer
+                    CurrentRound.RenchanStick = Seed[1];
+                    CurrentRound.RiichiStick = Seed[2];
+                    CurrentRound.FirstDora = Seed[5];
                 }
             }
 
@@ -341,8 +343,8 @@ namespace TenhouViewer.Tenhou
             {
                 int[] Ba = DecompositeIntList(Reader.GetAttribute("ba"));
 
-                CurrentRound.RenchanStick = Ba[0];
-                CurrentRound.RiichiStick = Ba[1];
+               // CurrentRound.RenchanStick = Ba[0];
+               // CurrentRound.RiichiStick = Ba[1];
             }
 
             // Hand and waiting

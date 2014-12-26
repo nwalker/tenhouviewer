@@ -66,7 +66,7 @@ namespace TenhouViewer.Mahjong
         public int RiichiStick = 0;
 
         public int Lobby = -1;
-        public int LobbyType = -1;
+        public LobbyType LobbyType = 0;
 
         public int FirstDora = -1;
 
@@ -158,7 +158,7 @@ namespace TenhouViewer.Mahjong
                     case "hash": Hash = X.GetAttribute("value"); break;
                     case "playercount": PlayerCount = X.GetIntAttribute("value"); break;
                     case "lobby": Lobby = X.GetIntAttribute("value"); break;
-                    case "lobbytype": LobbyType = X.GetIntAttribute("value"); break;
+                    case "lobbytype": LobbyType = (LobbyType)X.GetIntAttribute("value"); break;
                     case "game": Index = X.GetIntAttribute("index"); break;
                     case "round": CurrentRound = X.GetIntAttribute("index"); break;
                     case "result": StringResult = X.GetAttribute("value"); break;
@@ -385,7 +385,7 @@ namespace TenhouViewer.Mahjong
             X.WriteTag("game", "index", Index);
             X.WriteTag("playercount", "value", PlayerCount);
             X.WriteTag("lobby", "value", Lobby);
-            X.WriteTag("lobbytype", "value", LobbyType);
+            X.WriteTag("lobbytype", "value", Convert.ToInt32(LobbyType));
             X.WriteTag("round", "index", CurrentRound);
             X.WriteTag("result", "value", StringResult);
             X.WriteTag("drawreason", "value", DrawReason);

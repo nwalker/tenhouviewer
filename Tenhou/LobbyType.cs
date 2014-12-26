@@ -7,20 +7,21 @@ namespace TenhouViewer.Tenhou
 {
     static class LobbyType
     {
-        public static string GetText(int Flags)
+        public static string GetText(Mahjong.LobbyType Flags)
         {
             string Temp = "";
-            int LobbyLevel = ((Flags & 0x0020) >> 4) | ((Flags & 0x0080) >> 7);
+            int F = Convert.ToInt32(Flags);
+            int LobbyLevel = ((F & 0x0020) >> 4) | ((F & 0x0080) >> 7);
 
-            bool Aka = (Flags & 0x0002) == 0;
-            bool Kuitan = (Flags & 0x0004) == 0;
-            bool Nan = (Flags & 0x0008) != 0;
-            bool Sanma = (Flags & 0x0010) != 0;
-            bool Saku = (Flags & 0x0040) != 0;
-            bool Gray = (Flags & 0x0100) != 0;
-            bool Chip = (Flags & 0x0200) != 0;
-            bool Jans = (Flags & 0x0400) != 0;
-            bool Tech = (Flags & 0x0800) != 0;
+            bool Aka = !Flags.HasFlag(Mahjong.LobbyType.NOAKA);
+            bool Kuitan = !Flags.HasFlag(Mahjong.LobbyType.NOKUI);
+            bool Nan = Flags.HasFlag(Mahjong.LobbyType.NAN);
+            bool Sanma = Flags.HasFlag(Mahjong.LobbyType.SANMA);
+            bool Saku = Flags.HasFlag(Mahjong.LobbyType.SAKU);
+            bool Gray = Flags.HasFlag(Mahjong.LobbyType.GRAY);
+            bool Chip = Flags.HasFlag(Mahjong.LobbyType.CHIP);
+            bool Jans = Flags.HasFlag(Mahjong.LobbyType.JANS);
+            bool Tech = Flags.HasFlag(Mahjong.LobbyType.TECH);
 
             // Sanma
             if (Sanma) Temp += "三";

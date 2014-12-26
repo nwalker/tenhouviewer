@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using TenhouViewer.Mahjong;
 
 namespace TenhouViewer.Paifu
 {
@@ -74,7 +75,7 @@ namespace TenhouViewer.Paifu
             R = Replay;
             Rnd = R.Rounds[Round];
 
-            Red = ((Replay.LobbyType & 0x0002) == 0x0002);
+            Red = !Replay.LobbyType.HasFlag(LobbyType.NOAKA);
 
             // Replay only one game, if it need
             if (Rnd.Hands[0].Count == 0) Rnd.ReplayGame();
