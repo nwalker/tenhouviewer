@@ -52,6 +52,7 @@
     <Compile Include="Dependence\Value.cs" />
     <Compile Include="Discarder\Discard.cs" />
     <Compile Include="Discarder\HandOutput.cs" />
+    <Compile Include="Mahjong\LobbyType.cs" />
     <Compile Include="Search\GameFinder.cs" />
     <Compile Include="Mahjong\Hand.cs" />
     <Compile Include="Mahjong\Naki.cs" />
@@ -93,9 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="todo.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

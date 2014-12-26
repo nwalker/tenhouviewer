@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TenhouViewer.Mahjong;
 
 namespace TenhouViewer.Search
 {
@@ -767,37 +768,37 @@ namespace TenhouViewer.Search
             if(Aka != -1)
             {
                 // Check aka-dora setting
-                if (!((Aka == 0) && ((R.Replay.LobbyType & 0x0002) == 0x0002))) R.ReplayMark = false;
+                if ((Aka == 0) != !R.Replay.LobbyType.HasFlag(LobbyType.NOAKA)) R.ReplayMark = false;
             }
 
             if (Kuitan != -1)
             {
                 // Check open tanyao setting
-                if (!((Kuitan == 0) && ((R.Replay.LobbyType & 0x0004) == 0x0004))) R.ReplayMark = false;
+                if ((Kuitan == 0) != !R.Replay.LobbyType.HasFlag(LobbyType.NOKUI)) R.ReplayMark = false;
             }
 
             if (Nan != -1)
             {
-                // Check game length setting (
-                if (!((Nan != 0) && ((R.Replay.LobbyType & 0x0008) == 0x0008))) R.ReplayMark = false;
+                // Check game length setting 
+                if ((Nan == 0) != R.Replay.LobbyType.HasFlag(LobbyType.NAN)) R.ReplayMark = false;
             }
 
             if (Toku != -1)
             {
                 // Check lobby level
-                if (!((Toku != 0) && ((R.Replay.LobbyType & 0x0020) == 0x0020))) R.ReplayMark = false;
+                if ((Toku == 0) != R.Replay.LobbyType.HasFlag(LobbyType.TOKU)) R.ReplayMark = false;
             }
 
             if (Saku != -1)
             {
                 // Check game speed
-                if (!((Saku != 0) && ((R.Replay.LobbyType & 0x0040) == 0x0040))) R.ReplayMark = false;
+                if ((Saku == 0) != R.Replay.LobbyType.HasFlag(LobbyType.SAKU)) R.ReplayMark = false;
             }
 
             if (High != -1)
             {
                 // Check lobby level
-                if (!((High != 0) && ((R.Replay.LobbyType & 0x0080) == 0x0080))) R.ReplayMark = false;
+                if ((High == 0) != R.Replay.LobbyType.HasFlag(LobbyType.HIGH)) R.ReplayMark = false;
             }
         }
 

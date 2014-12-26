@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using TenhouViewer.Mahjong;
 
 namespace TenhouViewer.Discarder
 {
@@ -33,7 +34,7 @@ namespace TenhouViewer.Discarder
             Rnd = R.Rounds[Round];
             this.Player = Player;
 
-            Red = ((Replay.LobbyType & 0x0002) == 0x0002);
+            Red = !Replay.LobbyType.HasFlag(LobbyType.NOAKA);
         }
 
         public void Generate()
