@@ -638,7 +638,7 @@ namespace TenhouViewer.Mahjong
             {
                 Step S = Steps[i];
 
-                switch (Steps[i].Type)
+                switch (S.Type)
                 {
                     case StepType.STEP_NEWDORA:
                         {

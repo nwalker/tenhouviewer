@@ -6,15 +6,10 @@ using TenhouViewer.Mahjong;
 
 namespace TenhouViewer.Search
 {
-    class GameFinder
+    class GameFinder : BasicGameFinder
     {
-        private List<Result> GameList = new List<Result>();
-
         // Find queries
         // Fields use if they has not default values
-
-        // Hash
-        public string Hash = null;
 
         // NickName
         public string NickName = null;
@@ -168,12 +163,6 @@ namespace TenhouViewer.Search
         public int DealtMin = -1;
         public int DealtMax = -1;
 
-        // Limit results, return last n results
-        public int Last = -1;
-
-        // Limit results, by count
-        public int Limit = -1;
-
         // Riichi declared before any another player
         public int FirstRiichi = -1;
 
@@ -192,62 +181,12 @@ namespace TenhouViewer.Search
         // Naki type
         public int NakiType = -1;
 
-        public GameFinder(Tenhou.TenhouHashList Hashes)
-        {
-            // Create blank ResultList from hash table
-            for (int h = 0; h < Hashes.Hashes.Count; h++ )
-            {
-                string Hash = Hashes.Hashes[h];
-                Mahjong.Replay R = new Mahjong.Replay();
-
-                Console.Title = String.Format("Loading {0:d}/{1:d}", h + 1, Hashes.Hashes.Count);
-
-                if (R.LoadXml(Hash))
-                {
-                    Result Res = new Result();
-                    Res.Replay = R;
-                    Res.ReplayMark = true;
-
-                    for (int i = 0; i < 4; i++) Res.PlayerMark[i] = true;
-                    // Exclude 4th player in 3man game
-                    if (R.PlayerCount == 3) Res.PlayerMark[3] = false;
-
-                    for (int i = 0; i < R.Rounds.Count; i++)
-                    {
-                        bool[] Marks = new bool[4];
-                        for (int j = 0; j < Res.Replay.PlayerCount; j++) Marks[j] = true;
-
-                        Res.RoundMark.Add(true);
-                        Res.HandMark.Add(Marks);
-                    }
-
-                    GameList.Add(Res);
-                }
-                else
-                {
-                    Console.WriteLine(Hash + " - not found");
-                }
-            }
-        }
+        public GameFinder(Tenhou.TenhouHashList Hashes) : base(Hashes)
+        { }
 
         // Finder can use results of previous queries
-        public GameFinder(List<Result> Results)
-        {
-            // Reset marks 
-            foreach (Result R in Results)
-            {
-                R.ReplayMark = true;
-
-                for (int i = 0; i < R.RoundMark.Count; i++)
-                {
-                    //R.RoundMark[i] = true;
-                    for (int j = 0; j < R.Replay.PlayerCount; j++) R.HandMark[i][j] = true;
-                }
-
-                for (int i = 0; i < R.Replay.PlayerCount; i++) R.PlayerMark[i] = true;
-                GameList.Add(R);
-            }
-        }
+        public GameFinder(List<Result> Results) : base(Results)
+        { }
 
         public void ResetFlags()
         {
@@ -266,98 +205,46 @@ namespace TenhouViewer.Search
             }
         }
 
-        public List<Result> Find()
+        protected override void CustomFilters(Result R)
         {
-            List<Result> ResultList = new List<Result>();
-            int FoundGames = 0;
+ 	         base.CustomFilters(R);
 
-            for (int i = 0; i < GameList.Count; i++)
-            {
-                Result R = GameList[i];
-
-                Console.Title = String.Format("Finding {0:d}/{1:d}, found {2:d}", i + 1, GameList.Count, ResultList.Count);
-
-                if (Last != -1) if (i < GameList.Count - Last) continue;
-
-                // filters
-                CheckHash(R);
-                CheckPlayerCount(R);
-                CheckNickName(R);
-                CheckYaku(R);
-                CheckHan(R);
-                CheckFu(R);
-                CheckPlace(R);
-                CheckRank(R);
-                CheckPayment(R);
-                CheckDealer(R);
-                CheckWinner(R);
-                CheckLoser(R);
-                CheckRating(R);
-                CheckShanten(R);
-                CheckSteps(R);
-                CheckWaitings(R);
-                CheckDraw(R);
-                CheckLobby(R);
-                CheckWind(R);
-                CheckDangerSteps(R);
-                CheckFuriten(R);
-                CheckNaki(R);
-                CheckRiichi(R);
-                CheckAgari(R);
-                CheckRound(R);
-                CheckForm(R);
-                CheckTiles(R);
-                CheckSex(R);
-                CheckColor(R);
-                CheckSuji(R);
-                CheckDora(R);
-                CheckDeadOuts(R);
-                CheckChiitoi(R);
-
-                // Check mark
-                EmbedMarksToHandMark(R);
-                if (!IsQueryOk(R)) continue;
-
-                if (Limit != -1)
-                {
-                    if (FoundGames >= Limit) break;
-                    FoundGames++;
-                }
-                ResultList.Add(R);
-            }
-
-            return ResultList;
+             // filters
+             CheckHash(R);
+             CheckPlayerCount(R);
+             CheckNickName(R);
+             CheckYaku(R);
+             CheckHan(R);
+             CheckFu(R);
+             CheckPlace(R);
+             CheckRank(R);
+             CheckPayment(R);
+             CheckDealer(R);
+             CheckWinner(R);
+             CheckLoser(R);
+             CheckRating(R);
+             CheckShanten(R);
+             CheckSteps(R);
+             CheckWaitings(R);
+             CheckDraw(R);
+             CheckLobby(R);
+             CheckWind(R);
+             CheckDangerSteps(R);
+             CheckFuriten(R);
+             CheckNaki(R);
+             CheckRiichi(R);
+             CheckAgari(R);
+             CheckRound(R);
+             CheckForm(R);
+             CheckTiles(R);
+             CheckSex(R);
+             CheckColor(R);
+             CheckSuji(R);
+             CheckDora(R);
+             CheckDeadOuts(R);
+             CheckChiitoi(R);
         }
-
-        private bool IsQueryOk(Result R)
-        {
-            if (!R.ReplayMark) return false;
-            if (!R.PlayerMark.Contains(true)) return false;
-
-            for (int i = 0; i < R.RoundMark.Count; i++)
-            {
-                // If any round contain positive result...
-                if (R.RoundMark[i]) return true;
-            }
-
-            return false;
-        }
-
-        private void EmbedMarksToHandMark(Result R)
-        {
-            for (int i = 0; i < R.RoundMark.Count; i++)
-            {
-                for (int j = 0; j < R.Replay.PlayerCount; j++)
-                {
-                    if (!R.PlayerMark[j]) R.HandMark[i][j] = false;
-                    if (!R.RoundMark[i]) R.HandMark[i][j] = false;
-                }
-
-                // Exclude rounds which has no suitable hands
-                R.RoundMark[i] = (R.RoundMark[i] && R.HandMark[i].Contains(true));
-            }
-        }
-
+        
         private bool CheckFormInHand(Mahjong.Hand H)
         {
             int[] Tehai = new int[38];
@@ -403,7 +290,6 @@ namespace TenhouViewer.Search
         private bool CheckChiitoiHand(Mahjong.Hand H)
         {
             if(H.Shanten != 0) return false;
-
             Mahjong.ShantenCalculator Sh = new Mahjong.ShantenCalculator(H);
 
             Sh.GetShanten();
@@ -652,74 +538,44 @@ namespace TenhouViewer.Search
         {
             if (Hash == null) return;
 
-            if (R.Replay.Hash.CompareTo(Hash) != 0) R.ReplayMark = false;
+            CheckReplay(R, Rp => Rp.Hash.CompareTo(Hash) == 0);
         }
 
         private void CheckPlayerCount(Result R)
         {
             if (PlayerCount == -1) return;
 
-            for (int i = 0; i < R.Replay.Rounds.Count; i++)
-            {
-                Mahjong.Round Rnd = R.Replay.Rounds[i];
-
-                if (Rnd.PlayerCount != PlayerCount) R.RoundMark[i] = false;
-            }
+            CheckReplay(R, Rp => Rp.PlayerCount == PlayerCount);
         }
 
         private void CheckNickName(Result R)
         {
             if (NickName == null) return;
 
-            for (int i = 0; i < R.Replay.PlayerCount; i++)
-            {
-                if (R.Replay.Players[i].NickName.CompareTo(NickName) != 0)
-                    R.PlayerMark[i] = false;
-            }
+            CheckPlayer(R, (Rp, P, i) => P.NickName.CompareTo(NickName) == 0);
         }
 
         private void CheckSex(Result R)
         {
             if (Sex == Mahjong.Sex.Unknown) return;
 
-            for (int i = 0; i < R.Replay.PlayerCount; i++)
-            {
-                if (R.Replay.Players[i].Sex != Sex)
-                    R.PlayerMark[i] = false;
-            }
+            CheckPlayer(R, (Rp, P, i) => P.Sex == Sex);
         }
 
         private void CheckPlace(Result R)
         {
             if (Place == -1) return;
 
-            for (int i = 0; i < R.Replay.PlayerCount; i++)
-            {
-                if (R.Replay.Place[i] == Place)
-                    R.PlayerMark[i] = false;
-            }
+            CheckPlayer(R, (Rp, P, i) => Rp.Place[i] == Place);
         }
 
         private void CheckRound(Result R)
         {
             if (RenchanStick != -1)
-            {
-                for (int i = 0; i < R.Replay.Rounds.Count; i++)
-                {
-                    Mahjong.Round Rnd = R.Replay.Rounds[i];
+                CheckRounds(R, (Rp, Rnd, i) => Rnd.RenchanStick == RenchanStick);
 
-                    if (Rnd.RenchanStick != RenchanStick) R.RoundMark[i] = false;
-                }
-            }
             if (RoundIndex != -1)
-            {
-                for (int i = 0; i < R.Replay.Rounds.Count; i++)
-                {
-                    Mahjong.Round Rnd = R.Replay.Rounds[i];
-
-                    if (Rnd.Index != RoundIndex) R.RoundMark[i] = false;
-                }
-            }
+                CheckRounds(R, (Rp, Rnd, i) => Rnd.Index == RoundIndex);
         }
 
         private void CheckHan(Result R)
@@ -763,58 +619,19 @@ namespace TenhouViewer.Search
 
         private void CheckLobby(Result R)
         {
-            if (Lobby != -1) { if (R.Replay.Lobby != Lobby) R.ReplayMark = false; }
-
-            if(Aka != -1)
-            {
-                // Check aka-dora setting
-                if ((Aka == 0) != !R.Replay.LobbyType.HasFlag(LobbyType.NOAKA)) R.ReplayMark = false;
-            }
-
-            if (Kuitan != -1)
-            {
-                // Check open tanyao setting
-                if ((Kuitan == 0) != !R.Replay.LobbyType.HasFlag(LobbyType.NOKUI)) R.ReplayMark = false;
-            }
-
-            if (Nan != -1)
-            {
-                // Check game length setting 
-                if ((Nan == 0) != R.Replay.LobbyType.HasFlag(LobbyType.NAN)) R.ReplayMark = false;
-            }
-
-            if (Toku != -1)
-            {
-                // Check lobby level
-                if ((Toku == 0) != R.Replay.LobbyType.HasFlag(LobbyType.TOKU)) R.ReplayMark = false;
-            }
-
-            if (Saku != -1)
-            {
-                // Check game speed
-                if ((Saku == 0) != R.Replay.LobbyType.HasFlag(LobbyType.SAKU)) R.ReplayMark = false;
-            }
-
-            if (High != -1)
-            {
-                // Check lobby level
-                if ((High == 0) != R.Replay.LobbyType.HasFlag(LobbyType.HIGH)) R.ReplayMark = false;
-            }
+            if (Lobby != -1)  CheckReplay(R, Rp => Rp.Lobby == Lobby);
+            if (Aka != -1)    CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.NOAKA) == (Aka == 0));
+            if (Kuitan != -1) CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.NOKUI) == (Kuitan == 0));
+            if (Nan != -1)    CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.NAN) == (Nan != 0));
+            if (Toku != -1)   CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.TOKU) == (Toku != 0));
+            if (Saku != -1)   CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.SAKU) == (Saku != 0)); 
+            if (High != -1)   CheckReplay(R, Rp => Rp.LobbyType.HasFlag(LobbyType.HIGH) == (High != 0));
         }
 
         private void CheckRating(Result R)
         {
-            for (int i = 0; i < R.Replay.PlayerCount; i++)
-            {
-                if (RatingMin != -1)
-                {
-                    if (R.Replay.Players[i].Rating < RatingMin) R.PlayerMark[i] = false;
-                }
-                if (RatingMax != -1)
-                {
-                    if (R.Replay.Players[i].Rating > RatingMax) R.PlayerMark[i] = false;
-                }
-            }
+            if (RatingMin != -1) CheckPlayer(R, (Rp, P, i) => P.Rating >= RatingMin);
+            if (RatingMax != -1) CheckPlayer(R, (Rp, P, i) => P.Rating <= RatingMax);
         }
 
         private void CheckShanten(Result R)
@@ -1049,20 +866,7 @@ namespace TenhouViewer.Search
         private void CheckRiichi(Result R)
         {
             if (RiichiCount != -1)
-            {
-                for (int i = 0; i < R.Replay.Rounds.Count; i++)
-                {
-                    Mahjong.Round Rnd = R.Replay.Rounds[i];
-                    int Count = 0;
-
-                    for (int j = 0; j < R.Replay.PlayerCount; j++)
-                    {
-                        if (Rnd.Riichi[j] >= 0) Count++;
-                    }
-
-                    if (Count != RiichiCount) R.RoundMark[i] = false;
-                }
-            }
+                CheckRounds(R, (Rp, Rnd, i) => Rnd.Riichi.Count(r => r >= 0) == RiichiCount);
 
             if (Riichi != -1)
             {
