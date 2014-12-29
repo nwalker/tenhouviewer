@@ -9,59 +9,59 @@ namespace TenhouViewer.Paifu
 {
     class PaifuGenerator
     {
-        readonly Font Fbig = new Font("Arial", 36.0f);
-        readonly Font Fsmall = new Font("Arial", 12.0f);
-        readonly Font Fcomment = new Font("Arial", 10.0f);
+        private readonly Font Fbig = new Font("Arial", 36.0f);
+        private readonly Font Fsmall = new Font("Arial", 12.0f);
+        private readonly Font Fcomment = new Font("Arial", 10.0f);
 
-        const float Scale = 0.7f;
+        private const float Scale = 0.7f;
 
-        int Width = 1100;
-        int Height = 500;
+        private int Width = 1100;
+        private int Height = 500;
 
-        const int PaddingV = 10;
-        const int PaddingH = 10;
-        int PlayerColumnWidth = 100;
-        int RoundColumnWidth = 100;
-        int TilesColumnWidth = 1050;
-        int YakuWidth = 180;
-        int NoYakuWidth = 70;
+        private const int PaddingV = 10;
+        private const int PaddingH = 10;
+        private int PlayerColumnWidth = 100;
+        private int RoundColumnWidth = 100;
+        private int TilesColumnWidth = 1050;
+        private int YakuWidth = 180;
+        private int NoYakuWidth = 70;
 
-        int CostOffset = 95;
-        int YakuOffset = 5;
+        private int CostOffset = 95;
+        private int YakuOffset = 5;
 
-        const int InternalPadding = 4;
+        private const int InternalPadding = 4;
 
-        int InternalWidth;
-        int InternalHeight;
+        private int InternalWidth;
+        private int InternalHeight;
 
-        int FieldHeight;
+        private int FieldHeight;
 
-        readonly string[] Winds = { "東", "南", "西", "北" };
+        private readonly string[] Winds = { "東", "南", "西", "北" };
 
-        Mahjong.Replay R;
-        Mahjong.Round Rnd;
+        private Mahjong.Replay R;
+        private Mahjong.Round Rnd;
 
-        bool Red = true;
+        private bool Red = true;
 
-        int[] Players = new int[4];
-        int[] PlayerIndex = new int[4];
-        int Dealer = 0;
+        private int[] Players = new int[4];
+        private int[] PlayerIndex = new int[4];
+        private int Dealer = 0;
 
-        int Column = 0;
-        int LastTile = -1;
+        private int Column = 0;
+        private int LastTile = -1;
 
-        int TileWidth = 0;
-        int TileHeight = 0;
+        private int TileWidth = 0;
+        private int TileHeight = 0;
 
-        Bitmap B;
-        Graphics G;
+        private Bitmap B;
+        private Graphics G;
 
-        List<int>[] DangerTiles = new List<int>[4];
-        Color DangerColor = Color.FromArgb(200, 204, 119, 0);
+        private List<int>[] DangerTiles = new List<int>[4];
+        private Color DangerColor = Color.FromArgb(200, 204, 119, 0);
 
-        Color FuritenColor = Color.FromArgb(200, 204, 119, 0);
+        private Color FuritenColor = Color.FromArgb(200, 204, 119, 0);
 
-        Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red, Color.DarkRed};
+        private Color[] ShantenColor = { Color.Green, Color.GreenYellow, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Red, Color.DarkRed };
 
         public int ShowShanten = 0;  // show shanten info: false
         public int ShowDanger = 1;   // show danger tiles: true
@@ -222,8 +222,6 @@ namespace TenhouViewer.Paifu
 
                 DrawDoraTile(i, DoraY, Tile);
             }
-
-
         }
 
         private void DrawHandInfo(int Index)

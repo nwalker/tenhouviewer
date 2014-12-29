@@ -53,10 +53,12 @@ namespace TenhouViewer.Paifu
         {
             Bmp = new Bitmap(Original);
 
-            Graphics G = Graphics.FromImage(Bmp);
-            Brush B = new SolidBrush(Color.FromArgb(50, Target));
+            using(Graphics G = Graphics.FromImage(Bmp))
+            {
+                Brush B = new SolidBrush(Color.FromArgb(50, Target));
 
-            G.FillRectangle(B, new Rectangle(0, 0, Bmp.Width, Bmp.Height));
+                G.FillRectangle(B, new Rectangle(0, 0, Bmp.Width, Bmp.Height));
+            }
         }
     }
 }
