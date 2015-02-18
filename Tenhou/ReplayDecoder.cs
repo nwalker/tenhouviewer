@@ -237,7 +237,7 @@ namespace TenhouViewer.Tenhou
 
         private void TAIKYOKU(XmlReader Reader)
         {
-
+            // Определение дилера (лол, oya=0)
         }
 
         private void RYUUKYOKU(XmlReader Reader)
@@ -490,6 +490,35 @@ namespace TenhouViewer.Tenhou
             CurrentRound.Steps.Add(Step);
         }
 
+        /// <summary>
+        /// Игрок взял тайл со стены
+        /// </summary>
+        /// <param name="Player"></param>
+        /// <param name="Tile"></param>
+        /// <returns></returns>
+        private Mahjong.Step DrawTilePlayer(int Player, int Tile)
+        {
+            var Step = new Mahjong.Step(Player);
+            Step.DrawTile(Tile);
+
+            return Step;
+        }
+
+        /// <summary>
+        /// Игрок сбросил тайл
+        /// </summary>
+        /// <param name="Player"></param>
+        /// <param name="Tile"></param>
+        /// <returns></returns>
+        private Mahjong.Step DiscardTilePlayer(int Player, int Tile)
+        {
+            var Step = new Mahjong.Step(Player);
+            Step.DiscardTile(Tile);
+            CurrentRound.StepCount[Player]++;
+            CheckDealer(Player);
+            return Step;
+        }
+
         private void ACTION(XmlReader Reader)
         {
             // Step!
@@ -508,48 +537,15 @@ namespace TenhouViewer.Tenhou
 
             switch (Reader.Name[0])
             {
-                case 'T': // first player draw tile
-                    Step = new Mahjong.Step(0);
-                    Step.DrawTile(Tile);
-                    break;
-                case 'D': // first player discard tile
-                    Step = new Mahjong.Step(0);
-                    Step.DiscardTile(Tile);
-                    CurrentRound.StepCount[0]++;
-                    CheckDealer(0);
-                    break;
-                case 'U': // second player draw tile
-                    Step = new Mahjong.Step(1);
-                    Step.DrawTile(Tile);
-                    break;
-                case 'E': // second player discard tile
-                    Step = new Mahjong.Step(1);
-                    Step.DiscardTile(Tile);
-                    CurrentRound.StepCount[1]++;
-                    CheckDealer(1);
-                    break;
-                case 'V': // third player draw tile
-                    Step = new Mahjong.Step(2);
-                    Step.DrawTile(Tile);
-                    break;
-                case 'F': // third player discard tile
-                    Step = new Mahjong.Step(2);
-                    Step.DiscardTile(Tile);
-                    CurrentRound.StepCount[2]++;
-                    CheckDealer(2);
-                    break;
-                case 'W': // fourth player draw tile
-                    Step = new Mahjong.Step(3);
-                    Step.DrawTile(Tile);
-                    break;
-                case 'G': // fourth player discard tile
-                    Step = new Mahjong.Step(3);
-                    Step.DiscardTile(Tile);
-                    CurrentRound.StepCount[3]++;
-                    CheckDealer(3);
-                    break;
-                default:
-                    return;
+                case 'T': Step = DrawTilePlayer(0, Tile); break;
+                case 'D': Step = DiscardTilePlayer(0, Tile); break;
+                case 'U': Step = DrawTilePlayer(1, Tile); break;
+                case 'E': Step = DiscardTilePlayer(1, Tile); break;
+                case 'V': Step = DrawTilePlayer(2, Tile); break;
+                case 'F': Step = DiscardTilePlayer(2, Tile); break;
+                case 'W': Step = DrawTilePlayer(3, Tile); break;
+                case 'G': Step = DiscardTilePlayer(3, Tile); break;
+                default: return;
             }
 
             CurrentRound.Steps.Add(Step);
