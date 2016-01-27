@@ -1,0 +1,83 @@
+# Details #
+  * TenhouViewer -DHash - download game;
+  * TenhouViewer -dLog.txt - download all games from log Log.txt;
+  * TenhouViewer -PHash - parse game;
+  * TenhouViewer -pLog.txt - parse all games from log Log.txt;
+  * TenhouViewer -fLog.txt - find games from log Log.txt with query:
+  * shanten=N - find all hands started with N shanten number (0-6);
+  * shantenmin=N - find all hands started with shanten number greater (or equal) than N (0-6);
+    * shantenmax=N - find all hands started with shanten number less (or equal) than N (0-6);
+    * ratingmin=N - find all players, who has rating greater (or equal) than N (1000-3000);
+    * ratingmax=N - find all players, who has rating less (or equal) than N (1000-3000);
+    * paymentmin=N - find all players, who receive or pay greater (or equal) than N pt (-1000000-1000000);
+    * paymentmax=N - find all players, who receive or pay less (or equal) than N pt (-1000000-1000000);
+    * waitmin=N - find all hands which has N or greater sides of winning waiting (1-13);
+    * waitmax=N - find all hands which has N or less sides of winning waiting (1-13);
+    * hanmin=N - find all hands which has han count greater (or equal) than N (1-13);
+    * hanmax=N - find all hands which has han count less (or equal) than N (1-13);
+    * fumin=N - find all hands which has fu count greater (or equal) than N (1-120);
+    * fumax=N - find all hands which has fu count less (or equal) than N (1-120);
+    * place=N - find all players, who took N place (1-4);
+    * rank=N - find all players, who has rank N (0-20);
+    * nickname=N - find player, who has nickname N (string);
+    * steps=N - find all hands, who exist less (or equal) than N steps (0-60);
+    * yaku=N,M,X - find all hands, which has N,M,X,... yaku (0-54);
+    * wait=N,M,X - find all hands, which has at least one tile from list in waiting: N,M,X,... (0-36);
+    * dealer - find all dealer's hands;
+    * winner - find all completed hands;
+    * loser - find all players (games), who dealt into ron;
+    * players - count of players in game (3-4);
+  * TenhouViewer -g[nickname](nickname.md) [fields](fields.md) - graph rounds (which found by -f flag) with fields:
+    * index - round index in list;
+    * initshanten - shanten in start hand in round;
+    * pay - payment in round;
+    * tempai - is hand was tempai (1 or 0);
+    * dealer - is hand was dealer (1 or 0);
+    * loser - is player dealt in other hand (1 or 0);
+    * winner - is hand completed (1 or 0);
+    * riichi - is riichi declared (1 or 0);
+    * concealed - is hand was concealed (1 or 0);
+    * openedsets - amount of opened sets;
+    * cost - cost of hand;
+    * fu - count of minipoints in hand;
+    * han - count of game points in hand;
+    * step - count of steps to end in round;
+    * balance - balance in hand (pts);
+    * waiting - amount of tile types in waiting;
+    * round - index of round(0=1e,1=2e,2=3e...);
+    * players - count of players in round;
+  * TenhouViewer -G[nickname](nickname.md) [fields](fields.md) - graph games (which found by -f flag) with fields:
+    * index - game index in list;
+    * rating - player rating before this game;
+    * rank - player rank before this game (1=1ku, 10=1dan,...);
+    * place - place in game;
+    * result - game result with uma;
+    * balance - balance in the end of game;
+    * players - count of players in game;
+    * datetime - date of game;
+  * TenhouViewer -o[nickname](nickname.md) [fields](fields.md) - format output results:
+    * link - link to the round;
+    * nickname - nickname of the player;
+    * rating - rating of the player;
+    * rank - rank of the player;
+    * place - place (result) in game;
+    * pay - player payment in round;
+    * dealer - is player dealer;
+    * winner - is player complete hand;
+    * loser - is player dealt in other player's hand;
+    * concealed - is hand concealed;
+    * cost - cost of hand;
+    * han - amount of game points in hand;
+    * waiting - amount of tile types in waiting;
+    * step - amount of player steps in round;
+    * yaku - list of yaku;
+    * round - current round (0-1e, 1-2e, ...);
+    * roundindex - index of round in game;
+    * place - player's place in game;
+  * TenhouViewer -s[filename](filename.md) - save find or graph result to specified file;
+  * TenhouViewer -U[hash](hash.md) [params](params.md) - get paifu:
+    * dir - directory to save result (for all rounds);
+    * filename - filename to save result (for specified round, without extension);
+    * round - round index (from 0);
+  * TenhouViewer -u [params](params.md) - get paifu for all rounds, which was found before:
+    * dir - directory to save result (for all rounds);
